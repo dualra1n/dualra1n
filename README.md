@@ -6,6 +6,8 @@ this is a script to dualboot your iphone on ios 15 with 14
 
 test it on iphone 6s on ios 15.7 using macos big sur
 
+in the case that you dont trust about binary, you can download of palera1n binary both are the same binary and compile https://github.com/Ralph0045/dtree_patcher.git and copy to binary Darwin directory this is the only binary that palera1n does not have it  
+
 
 
 THANKS PALERA1N, PEOPLE WHO CREATED THE PATCHER OF BOOT FILES
