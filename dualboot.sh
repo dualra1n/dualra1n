@@ -620,6 +620,7 @@ if [ ! -f blobs/"$deviceid"-"$version".shsh2 ]; then
     remote_cmd "cat /dev/rdisk1" | dd of=dump.raw bs=256 count=$((0x4000)) 
     "$dir"/img4tool --convert -s blobs/"$deviceid"-"$version".shsh2 dump.raw
     echo "[*] Converting blob"
+    sleep 3
     "$dir"/img4tool -e -s $(pwd)/blobs/"$deviceid"-"$version".shsh2 -m work/IM4M
     rm dump.raw
 
