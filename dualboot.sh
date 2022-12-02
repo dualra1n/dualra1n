@@ -20,9 +20,9 @@ disk=8
 extractedIpsw="ipsw/extracted/"
 
 if [ ! -d "ramdisk/" ]; then
-    git clone https://github.com/palera1n/ramdisk.git #download ramdisk of palera1n
-fi
+    git clone https://github.com/palera1n/ramdisk.git
 
+fi
 # =========
 # Functions
 # =========
