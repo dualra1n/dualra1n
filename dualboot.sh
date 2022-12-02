@@ -631,8 +631,7 @@ if [ ! -f blobs/"$deviceid"-"$version".shsh2 ]; then
             remote_cmd "/sbin/newfs_apfs -o role=0 -A -v DataB /dev/disk0s1"
             remote_cmd "/sbin/newfs_apfs -o role=D -A -v PrebootB /dev/disk0s1"  && { 
             echo "[*] partitions created, continuing..."
-            } 
-            remote_cmd "mount_filesystems"
+            }
             remote_cmd "/sbin/mount_apfs /dev/disk0s1s${disk} /mnt8/"
             remote_cmd "/sbin/mount_apfs /dev/dis0s1s${dataB} /mnt9/"
             remote_cmd "/sbin/mount_apfs /dev/disk0s1s${prebootB} /mnt4/"
