@@ -281,6 +281,39 @@ _kill_if_running() {
     fi
 }
 
+_boot() {
+    _pwn
+    _reset
+    
+    echo "[*] Booting device"
+
+    "$dir"/irecovery -f "boot/${deviceid}/iBSS.img4"
+    sleep 1
+
+    "$dir"/irecovery -f "boot/${deviceid}/iBEC.img4"
+    sleep 1
+
+    if [ "$check" = '0x8010' ] || [ "$check" = '0x8015' ] || [ "$check" = '0x8011' ] || [ "$check" = '0x8012' ]; then
+        sleep 1
+        "$oscheck"/irecovery -c go
+    fi
+
+    "$dir"/irecovery -f "boot/${deviceid}/devicetree.img4"
+    sleep 1 
+
+    "$dir"/irecovery -c "devicetree"
+    sleep 1
+
+    "$dir"/irecovery -c "firmware"
+    sleep 1
+
+    "$dir"/irecovery -f "boot/${deviceid}/kernelcache.img4"
+    sleep 1
+
+    "$dir"/irecovery -c "bootx"
+    exit;
+}
+
 _exit_handler() {
     if [ "$os" = 'Darwin' ]; then
         defaults write -g ignore-devices -bool false
@@ -452,36 +485,7 @@ sleep 2
 
 
 if [ "$boot" = "1" ]; then
-    _pwn
-    _reset
-    
-    echo "[*] Booting device"
-
-    "$dir"/irecovery -f "boot/${deviceid}/iBSS.img4"
-    sleep 1
-
-    "$dir"/irecovery -f "boot/${deviceid}/iBEC.img4"
-    sleep 1
-
-    if [ "$check" = '0x8010' ] || [ "$check" = '0x8015' ] || [ "$check" = '0x8011' ] || [ "$check" = '0x8012' ]; then
-        sleep 1
-        "$oscheck"/irecovery -c go
-    fi
-
-    "$dir"/irecovery -f "boot/${deviceid}/devicetree.img4"
-    sleep 1 
-
-    "$dir"/irecovery -c "devicetree"
-    sleep 1
-
-    "$dir"/irecovery -c "firmware"
-    sleep 1
-
-    "$dir"/irecovery -f "boot/${deviceid}/kernelcache.img4"
-    sleep 1
-
-    "$dir"/irecovery -c "bootx"
-    exit;
+    _boot
 fi
 
 if [ ! "${version:0:2}" = "14" ]; then
@@ -658,7 +662,7 @@ if [ ! -f blobs/"$deviceid"-"$version".shsh2 ]; then
             remote_cmd "/System/Library/Filesystems/apfs.fs/apfs_invert -d /dev/disk0s1 -s ${disk} -n out.dmg"
             sleep 1
             remote_cmd "/sbin/mount_apfs /dev/disk0s1s${disk} /mnt8/"
-            remote_cmd "/sbin/mount_apfs /dev/dis0s1s${dataB} /mnt9/"
+            remote_cmd "/sbin/mount_apfs /dev/disk0s1s${dataB} /mnt9/"
             remote_cmd "/sbin/mount_apfs /dev/disk0s1s${prebootB} /mnt4/"
             remote_cmd "cp -av /mnt8/private/var/* /mnt9/"
             remote_cmd "mount_filesystems"
@@ -698,6 +702,7 @@ if [ ! -f blobs/"$deviceid"-"$version".shsh2 ]; then
         cp -rv work/*.img4 "boot/${deviceid}"
 
         echo "so we finish, now you can execute './dualboot boot' to boot to second ios after that we need that you record a video when your iphone is booting to see what is the uuid and note that name of the uuid"       
+        _boot        
     fi
 fi
 
