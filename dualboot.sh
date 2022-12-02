@@ -438,7 +438,7 @@ if [ "$dfuhelper" = "1" ]; then
 fi
 
 if [ "$restorerootfs" = "1" ]; then
-    rm -rf "blobs/"$deviceid"-"$version".shsh2" "boot-$deviceid" work .tweaksinstalled
+    rm -rf "blobs/"$deviceid"-"$version".shsh2" "boot-$deviceid" .tweaksinstalled
 fi
 
 # Have the user put the device into DFU
