@@ -631,9 +631,13 @@ if [ ! -f blobs/"$deviceid"-"$version".shsh2 ]; then
             remote_cmd "/sbin/newfs_apfs -o role=D -A -v PrebootB /dev/disk0s1"  && { 
             echo "[*] partitions created, continuing..."
             }
+            echo "mounting filesystems "
             remote_cmd "/sbin/mount_apfs /dev/disk0s1s${disk} /mnt8/"
+            sleep 1
             remote_cmd "/sbin/mount_apfs /dev/disk0s1s${dataB} /mnt9/"
+            sleep 1
             remote_cmd "/sbin/mount_apfs /dev/disk0s1s${prebootB} /mnt4/"
+            sleep 1
             remote_cmd "cp -av /mnt2/keybags mnt9/"
             if ["$os" = "Darwin"]; then
                 echo "copying filesystem so hang on that could take 20 minute because is trought ssh"
@@ -652,6 +656,7 @@ if [ ! -f blobs/"$deviceid"-"$version".shsh2 ]; then
                 sleep 1
             done
             remote_cmd "/System/Library/Filesystems/apfs.fs/apfs_invert -d /dev/disk0s1 -s ${disk} -n out.dmg"
+            sleep 1
             remote_cmd "/sbin/mount_apfs /dev/disk0s1s${disk} /mnt8/"
             remote_cmd "/sbin/mount_apfs /dev/dis0s1s${dataB} /mnt9/"
             remote_cmd "/sbin/mount_apfs /dev/disk0s1s${prebootB} /mnt4/"
