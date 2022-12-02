@@ -20,9 +20,7 @@ disk=8
 extractedIpsw="ipsw/extracted/"
 
 if [ ! -d "ramdisk/" ]; then
-    git clone --recursive https://github.com/verygenericname/SSHRD_Script.git
-    mv SSHRD_Script ramdisk
-
+    git clone --recursive https://github.com/palera1n/ramdisk.git
 fi
 # =========
 # Functions
