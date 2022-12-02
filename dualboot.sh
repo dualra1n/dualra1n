@@ -1,6 +1,7 @@
 #!/usr/bin/env bash
 
 mkdir -p logs
+mkdir -p boot
 set -e
 
 {
@@ -298,10 +299,15 @@ _boot() {
         "$oscheck"/irecovery -c go
     fi
 
+    "$dir"/irecovery -c "ramdisk"
+
     "$dir"/irecovery -f "boot/${deviceid}/devicetree.img4"
     sleep 1 
 
     "$dir"/irecovery -c "devicetree"
+    sleep 1
+
+    "$dir"/irecovery -v -f "boot/${deviceid}/trustcache.img4"
     sleep 1
 
     "$dir"/irecovery -c "firmware"
@@ -401,7 +407,7 @@ if [ "$debug" = "1" ]; then
 fi
 
 if [ "$clean" = "1" ]; then
-    rm -rf boot* work .tweaksinstalled blobs/
+    rm -rf  work blobs/
     echo "[*] Removed the created boot files"
     exit
 fi
@@ -680,8 +686,15 @@ if [ ! -f blobs/"$deviceid"-"$version".shsh2 ]; then
         cp -r "$extractedIpsw$(awk "/""${model}""/{x=1}x&&/iBEC[.]/{print;exit}" work/BuildManifest.plist | grep '<string>' |cut -d\> -f2 |cut -d\< -f1)" "work/"
         cp -r "$extractedIpsw$(awk "/""${model}""/{x=1}x&&/DeviceTree[.]/{print;exit}" work/BuildManifest.plist | grep '<string>' |cut -d\> -f2 |cut -d\< -f1)" "work/"
         cp -r "$extractedIpsw$(awk "/""${model}""/{x=1}x&&/kernelcache.release/{print;exit}" work/BuildManifest.plist | grep '<string>' |cut -d\> -f2 |cut -d\< -f1)" "work/"
+        [ "$os" = 'Darwin' ]; then
+        if [ "$os" = 'Darwin' ]; then
+            cp -r "$extractedIpsw"/Firmware/"$(/usr/bin/plutil -extract "BuildIdentities".0."Manifest"."RestoreRamDisk"."Info"."Path" xml1 -o - work/BuildManifest.plist | grep '<string>' |cut -d\> -f2 |cut -d\< -f1 | head -1)".trustcache work/
+        else
+            cp -r "$extractedIpsw"/Firmware/"$(binaries/Linux/PlistBuddy work/BuildManifest.plist -c "Print BuildIdentities:0:Manifest:RestoreRamDisk:Info:Path" | sed 's/"//g')".trustcache work/
+        fi
 
         echo "patching file boots ..."
+        "$dir"/img4 -i work/*.trustcache -o work/trustcache.img4 -M work/IM4M -T rtsc
         "$dir"/gaster decrypt work/"$(awk "/""${model}""/{x=1}x&&/iBSS[.]/{print;exit}" work/BuildManifest.plist | grep '<string>' |cut -d\> -f2 |cut -d\< -f1 | sed 's/Firmware[/]dfu[/]//')" work/iBSS.dec
         "$dir"/iBoot64Patcher work/iBSS.dec work/iBSS.patched
         "$dir"/img4 -i work/iBSS.patched -o work/iBSS.img4 -M work/IM4M -A -T ibss
