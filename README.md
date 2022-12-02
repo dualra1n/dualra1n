@@ -13,7 +13,7 @@ https://user-images.githubusercontent.com/85508740/205308846-edc2673f-4e8c-4265-
 
 
 so you will see that is booting however that will reboot because the preboot directory is not created so we have to create it. 
-you have to record a video which look like above. after you have take a photo or note the name of the directory 
+you have to record a video which look like above. after you have take a photo or to note the name of the directory 
 
 ![IMG_0774](https://user-images.githubusercontent.com/85508740/205313633-567ff020-1279-4fdc-88b1-bc0914bdda82.jpg)
 
@@ -21,7 +21,13 @@ like this so note the name /private/preboot/*thisName*/usr/standalone/firmware
 now boot ./sshrd.sh or any ssh ramdisk after execute mount_filesystem, execute mount_apfs /dev/disk0s1s10 /mnt4/ after that execute mkdir "*thisName*" | mkdir "*thisName*"/usr | cp -av /mnt6/"theonlydirectorythatexist"/usr mnt4/"*thisName*"/
 reboot and your iphone should boot without error 
 
-any error you could create issues 
+for any error you could create issues 
+
+
+this is a video booting my second ios 
+
+
+https://user-images.githubusercontent.com/85508740/205317738-84b00b64-778a-41ae-bb97-a28b2953b816.mp4
 
 
 test it on iphone 6s on ios 15.7 using macos big sur
