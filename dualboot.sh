@@ -639,10 +639,10 @@ if [ ! -f blobs/"$deviceid"-"$version".shsh2 ]; then
             remote_cmd "/sbin/mount_apfs /dev/disk0s1s${prebootB} /mnt4/"
             sleep 1
             remote_cmd "cp -av /mnt2/keybags /mnt9/"
-            if ["$os" = "Darwin"]; then
-                echo "copying filesystem so hang on that could take 20 minute because is trought ssh"
-                remote_cp ipsw/out.dmg root@localhost:/mnt8
-            fi             
+
+            echo "copying filesystem so hang on that could take 20 minute because is trought ssh"
+            remote_cp ipsw/out.dmg root@localhost:/mnt8          
+            
             remote_cmd "/usr/sbin/nvram auto-boot=false"
             remote_cmd "/sbin/reboot"
             _wait recovery
