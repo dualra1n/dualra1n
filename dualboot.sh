@@ -633,7 +633,7 @@ if [ ! -f blobs/"$deviceid"-"$version".shsh2 ]; then
             echo "[*] partitions created, continuing..."
             }
             remote_cmd "/sbin/mount_apfs /dev/disk0s1s${disk} /mnt8/"
-            remote_cmd "/sbin/mount_apfs /dev/dis0s1s${dataB} /mnt9/"
+            remote_cmd "/sbin/mount_apfs /dev/disk0s1s${dataB} /mnt9/"
             remote_cmd "/sbin/mount_apfs /dev/disk0s1s${prebootB} /mnt4/"
             remote_cmd "cp -av /mnt2/keybags mnt9/"
             if ["$os" = "Darwin"]; then
