@@ -649,14 +649,6 @@ if [ ! -f blobs/"$deviceid"-"$version".shsh2 ]; then
         python3 kerneldiff.py work/kcache.patched work/kcache.patchedB work/kc.bpatch
         "$dir"/img4 -i work/"$(awk "/""${model}""/{x=1}x&&/kernelcache.release/{print;exit}" work/BuildManifest.plist | grep '<string>' |cut -d\> -f2 |cut -d\< -f1)" -o work/kernelcache.img4 -M work/IM4M -T rkrn -P work/kc.bpatch `if [ "$os" = 'Linux' ]; then echo "-J"; fi`
 
-        echo "now installing trollstore and pogo"
-
-        remote_cmd "trollstoreinstaller TV"
-        echo "installed trollstore on TV app"
-
-        remote_cmd "pogoinstaller Tips"
-        echo "installed pogo on Tips app"
-
         echo "now boot your second ios install trollstore after install 2 ipa in the dualboot repository after open taurine and jailbreak it when that reboot, boot again to the second ios and execute open pongo which was installed by trollstore and click do all (never click install that can break the jailbreak so only you will use pongo to press do all)"
 
         remote_cmd "/sbin/reboot"
