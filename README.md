@@ -24,6 +24,12 @@ like this so note the name /private/preboot/*thisName*/usr/standalone/firmware
 now boot ./sshrd.sh or any ssh ramdisk after execute mount_filesystem, execute mount_apfs /dev/disk0s1s10 /mnt4/ after that execute mkdir "*thisName*" | mkdir "*thisName*"/usr | cp -av /mnt6/"theonlydirectorythatexist"/usr mnt4/"*thisName*"/
 reboot and your iphone should boot without error 
 
+
+to jailbreak your device: ./dualboot.sh --jailbreak 15.7 (or your version)
+install trollstore after install 2 ipa in the dualboot repository after open taurine and jailbreak it when that reboot, boot again to the second ios and execute open pongo which was installed by trollstore and click do all (never click install that can break the jailbreak so only you will use pongo to press do all
+
+
+
 for any error you could create issues 
 
 
