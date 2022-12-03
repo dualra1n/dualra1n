@@ -1,9 +1,9 @@
 # dualboot-ios-15-with-14-script
 this is a script to dualboot your iphone on ios 15 with 14
 
-1: download your ipsw and put it on ipsw/ directory (you can download of ipsw.me. please only ios 14.* also please download exactly your ipsw for your iphone)
+1: download your ipsw and put it on ipsw/ directory (you can download of ipsw.me. please only ios 14.* also please download exactly your ipsw for your iphone) (your ios version that you want to dualboot with also is recommended ios 14.3 because you can jailbreak with taurine)
 
-2: execute ./dualboot --dualboot 14.3 (or your ios version that you want to dualboot with also is recommended ios 14.3 because you can jailbreak with taurine) 
+2: execute ./dualboot --dualboot 15.7 (the version of your iphone is ) 
 
 3: ./dualboot --boot 
 
