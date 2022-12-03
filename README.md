@@ -5,7 +5,10 @@ this is a script to dualboot your iphone on ios 15 with 14
 
 2: execute ./dualboot --dualboot 14.3 (or your ios version that you want to dualboot with also is recommended ios 14.3 because you can jailbreak with taurine) 
 
-3: when the script finished, you will have to record a video of iphone's screen because you have to note the name of the preboot directory when that is booting. 
+3: ./dualboot --boot 
+
+in case that your iphone not boot on the second ios try to do this:
+you will have to record a video of iphone's screen because you have to note the name of the preboot directory when that is booting. 
 
 
 
