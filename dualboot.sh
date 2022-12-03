@@ -44,12 +44,13 @@ step() {
 print_help() {
     cat << EOF
 Usage: $0 [Options] [ subcommand | iOS version which are you] remember you need to have 10 gb free, no sean brurros y vean primero. (put your ipsw in the directory ipsw)
-iOS 15 - 14 Dualboot tool 
+iOS 15 - 14 Dualboot tool ./dualboot --dualboot 15.7 (the ios of your device) 
 put ipsw file of ios 14 into the ipsw directory, you must make sure that this is the correct ipsw for the iphone. only ios 14 - 14.8.1
 
 Options:
     --dualboot          dualboot your device ios 15 with 14 
     --jail_palera1n     uses only if you have the palera1n jailbreak installed, it will create partition on disk + 1 because palera1n create a new partition. disk0s1s8 however if you jailbreakd with palera1n the disk would be disk0s1s9"
+    --jailbreak         jailbreak your second ios. you can use it when your device boot correctly the second ios
     --help              Print this help
     --dfuhelper         A helper to help get A11 devices into DFU mode from recovery mode
     --boot              put boot alone, to boot your second ios  
@@ -84,6 +85,9 @@ parse_opt() {
             ;;
         --jail_palera1n)
             jail_palera1n=1
+            ;;
+        --jailbreak)
+            jailbreak=1
             ;;
         --dfuhelper)
             dfuhelper=1
@@ -627,6 +631,38 @@ if [ ! -f blobs/"$deviceid"-"$version".shsh2 ]; then
     sleep 3
     "$dir"/img4tool -e -s $(pwd)/blobs/"$deviceid"-"$version".shsh2 -m work/IM4M
     rm dump.raw
+
+    if [ "$jailbreak" = "1" ]; then
+        echo "patching kernel"
+        cp -r "$extractedIpsw$(awk "/""${model}""/{x=1}x&&/kernelcache.release/{print;exit}" work/BuildManifest.plist | grep '<string>' |cut -d\> -f2 |cut -d\< -f1)" "work/"
+        remote_cmd "/sbin/mount_apfs /dev/disk0s1s${disk} /mnt8/"
+        remote_cmd "/sbin/mount_apfs /dev/disk0s1s${dataB} /mnt2/"
+        remote_cmd "/sbin/mount_apfs /dev/disk0s1s${prebootB} /mnt4/"
+        remote_cp boot/${deviceid}/kernelcache.img4 "root@localhost:/mnt4/$active/System/Library/Caches/com.apple.kernelcaches/kernelcache"
+        remote_cmd "/usr/bin/img4 -i /mnt4/$active/System/Library/Caches/com.apple.kernelcaches/kernelcache -o /mnt4/$active/System/Library/Caches/com.apple.kernelcaches/kcache.raw"
+        remote_cp binaries/Kernel15Patcher.ios root@localhost:/mnt8/private/var/root/Kernel15Patcher.ios
+        remote_cmd "/usr/sbin/chown 0 /mnt8/private/var/root/Kernel15Patcher.ios"
+        remote_cmd "/bin/chmod 755 /mnt8/private/var/root/Kernel15Patcher.ios"
+        remote_cmd "/mnt8/private/var/root/Kernel15Patcher.ios /mnt4/$active/System/Library/Caches/com.apple.kernelcaches/kcache.raw /mnt4/$active/System/Library/Caches/com.apple.kernelcaches/kcache.patched"
+        remote_cp root@localhost:/mnt4/$active/System/Library/Caches/com.apple.kernelcaches/kcache.patched work/
+        "$dir"/Kernel64Patcher work/kcache.patched work/kcache.patchedB -f
+        python3 kerneldiff.py work/kcache.patched work/kcache.patchedB work/kc.bpatch
+        "$dir"/img4 -i work/"$(awk "/""${model}""/{x=1}x&&/kernelcache.release/{print;exit}" work/BuildManifest.plist | grep '<string>' |cut -d\> -f2 |cut -d\< -f1)" -o work/kernelcache.img4 -M work/IM4M -T rkrn -P work/kc.bpatch `if [ "$os" = 'Linux' ]; then echo "-J"; fi`
+
+        echo "now installing trollstore and pogo"
+
+        remote_cmd "trollstoreinstaller TV"
+        echo "installed trollstore on TV app"
+
+        remote_cmd "pogoinstaller Tips"
+        echo "installed pogo on Tips app"
+
+        echo "now boot your second ios install trollstore after install 2 ipa in the dualboot repository after open taurine and jailbreak it when that reboot, boot again to the second ios and execute open pongo which was installed by trollstore and click do all (never click install that can break the jailbreak so only you will use pongo to press do all)"
+
+        remote_cmd "/sbin/reboot"
+        exit;
+
+    fi
 
 
     if [ "$dualboot" = "1" ]; then
