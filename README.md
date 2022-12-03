@@ -26,6 +26,7 @@ reboot and your iphone should boot without error
 
 
 to jailbreak your device: ./dualboot.sh --jailbreak 15.7 (or your version)
+after install trollstore with https://github.com/verygenericname/SSHRD_Script
 install trollstore after install 2 ipa in the dualboot repository after open taurine and jailbreak it when that reboot, boot again to the second ios and execute open pongo which was installed by trollstore and click do all (never click install that can break the jailbreak so only you will use pongo to press do all
 
 
