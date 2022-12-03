@@ -606,7 +606,9 @@ if [ ! -f blobs/"$deviceid"-"$version".shsh2 ]; then
     mkdir -p "prebootBackup"
     if [ ! -d "prebootBackup/${deviceid}" ]; then
         mkdir -p "prebootBackup/${deviceid}"
-        remote_cp root@localhost:/mnt6/ "prebootBackup/${deviceid}"
+        if [ ! $(remote_cp root@localhost:/mnt6/ "prebootBackup/${deviceid}") ]; then # if that has a error that will not stop the script
+            echo "finish backup"
+        fi
     fi
 
     if [ "$fix_preboot" = "1" ]; then
@@ -665,11 +667,11 @@ if [ ! -f blobs/"$deviceid"-"$version".shsh2 ]; then
     if [ "$dualboot" = "1" ]; then
         if [ -z "$dont_createPart" ]; then # if you have already your second ios you can omited with this
             echo "[*] Creating partitions"
-            remote_cmd "/sbin/newfs_apfs -o role=i -A -v SystemB /dev/disk0s1"
-            remote_cmd "/sbin/newfs_apfs -o role=0 -A -v DataB /dev/disk0s1"
-            remote_cmd "/sbin/newfs_apfs -o role=D -A -v PrebootB /dev/disk0s1"  && { 
-            echo "[*] partitions created, continuing..."
-            }
+        	if [ ! $(remote_cmd "/sbin/newfs_apfs -o role=i -A -v SystemB /dev/disk0s1") ] && [ ! $(remote_cmd "/sbin/newfs_apfs -o role=0 -A -v DataB /dev/disk0s1") ] && [ ! $(remote_cmd "/sbin/newfs_apfs -o role=D -A -v PrebootB /dev/disk0s1") ]; then # i put this in case that resturn a error the script can continuing
+		        echo "is already created"
+                echo "[*] partitions created, continuing..."
+	        fi
+           
             echo "mounting filesystems "
             remote_cmd "/sbin/mount_apfs /dev/disk0s1s${disk} /mnt8/"
             sleep 1
@@ -677,7 +679,11 @@ if [ ! -f blobs/"$deviceid"-"$version".shsh2 ]; then
             sleep 1
             remote_cmd "/sbin/mount_apfs /dev/disk0s1s${prebootB} /mnt4/"
             sleep 1
-            remote_cmd "cp -av /mnt2/keybags /mnt9/" # this will copy keybash which is a fundamental thing so is very important
+            
+            if [ ! $(remote_cmd "cp -av /mnt2/keybags /mnt9/") ]; then 
+                echo "copied keybags"
+            fi
+             
 
             echo "copying filesystem so hang on that could take 20 minute because is trought ssh"
             remote_cp ipsw/out.dmg root@localhost:/mnt8 # this will copy the root file in order to it is mounted and restore partition      
