@@ -43,12 +43,13 @@ step() {
 
 print_help() {
     cat << EOF
-Usage: $0 [Options] [ subcommand | iOS version ] remember you need to have 10 gb free, no sean brurros y vean primero. (put your ipsw in the directory ipsw)
+Usage: $0 [Options] [ subcommand | iOS version which are you] remember you need to have 10 gb free, no sean brurros y vean primero. (put your ipsw in the directory ipsw)
 iOS 15 - 14 Dualboot tool 
+put ipsw file of ios 14 into the ipsw directory, you must make sure that this is the correct ipsw for the iphone. only ios 14 - 14.8.1
 
 Options:
     --dualboot          dualboot your device ios 15 with 14 
-    --jail_palera1n     it will create partition on disk + 1 because palera1n create a new partition. disk0s1s8 however if you jailbreakd with palera1n the disk would be disk0s1s9"
+    --jail_palera1n     uses only if you have the palera1n jailbreak installed, it will create partition on disk + 1 because palera1n create a new partition. disk0s1s8 however if you jailbreakd with palera1n the disk would be disk0s1s9"
     --help              Print this help
     --dfuhelper         A helper to help get A11 devices into DFU mode from recovery mode
     --boot              put boot alone, to boot your second ios  
@@ -494,11 +495,6 @@ if [ "$boot" = "1" ]; then
     _boot
 fi
 
-if [ ! "${version:0:2}" = "14" ]; then
-    echo "that work only ios 14 please"
-    exit;
-fi
-
     # =========
     # extract ipsw 
     # =========
@@ -531,7 +527,7 @@ if [ ! -f blobs/"$deviceid"-"$version".shsh2 ]; then
     chmod +x sshrd.sh
     echo "[*] Creating ramdisk"
     tweaks=1
-    ./sshrd.sh 15.6 `if [ -z "$tweaks" ]; then echo "rootless"; fi`
+    ./sshrd.sh "$version" `if [ -z "$tweaks" ]; then echo "rootless"; fi`
 
     echo "[*] Booting ramdisk"
     ./sshrd.sh boot
