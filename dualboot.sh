@@ -289,22 +289,27 @@ _kill_if_running() {
 
 _boot() {
     _pwn
+    sleep 1
     _reset
+    sleep 1
     
     echo "[*] Booting device"
 
     "$dir"/irecovery -f "boot/${deviceid}/iBSS.img4"
     sleep 1
 
+    #send ibss again
+    "$dir"/irecovery -f "boot/${deviceid}/iBSS.img4"
+    sleep 2
+
     "$dir"/irecovery -f "boot/${deviceid}/iBEC.img4"
-    sleep 1
+    sleep 2
 
-    if [ "$check" = '0x8010' ] || [ "$check" = '0x8015' ] || [ "$check" = '0x8011' ] || [ "$check" = '0x8012' ]; then
-        sleep 1
-        "$oscheck"/irecovery -c go
+    if [ "$cpid" = '0x8010' ] || [ "$cpid" = '0x8015' ] || [ "$cpid" = '0x8011' ] || [ "$cpid" = '0x8012' ]; then
+        "$dir"/irecovery -f "boot/${deviceid}/iBEC.img4"
+        sleep 2  
+        "$os"/irecovery -c "go"
     fi
-
-    "$dir"/irecovery -c "ramdisk"
 
     "$dir"/irecovery -f "boot/${deviceid}/devicetree.img4"
     sleep 1 
@@ -504,11 +509,11 @@ fi
     # =========
 
 # extracting ipsw
-echo "extracting ipsw, hang on please ..."
+echo "extracting ipsw, hang on please ..." # this will extract the ipsw into ipsw/extracted
 unzip -n $ipsw -d "ipsw/extracted"
 cp -rv "$extractedIpsw/BuildManifest.plist" work/
 if [ "$os" = 'Darwin' ]; then
-    if [ ! -f "ipsw/out.dmg" ]; then
+    if [ ! -f "ipsw/out.dmg" ]; then # this would create a dmg file which can be mounted an restore a patition
         asr -source "$extractedIpsw$(/usr/bin/plutil -extract "BuildIdentities".0."Manifest"."OS"."Info"."Path" xml1 -o - work/BuildManifest.plist | grep '<string>' |cut -d\> -f2 |cut -d\< -f1 | head -1)" -target ipsw/out.dmg --embed -erase -noprompt --chunkchecksum --puppetstrings
     fi
 #else
@@ -576,7 +581,7 @@ if [ ! -f blobs/"$deviceid"-"$version".shsh2 ]; then
 
     # that is in order to know the partitions needed
     if [ "$jail_palera1n" = "1" ]; then
-        disk=$(($disk + 1))
+        disk=$(($disk + 1)) # if you have the palera1n jailbreak that would create + 1 partition for example your jailbreak is installed on disk0s1s8 that will create a new partition on disk0s1s9 so only you have to use it if you have palera1n
         echo $disk
     fi
     echo $disk
@@ -597,7 +602,7 @@ if [ ! -f blobs/"$deviceid"-"$version".shsh2 ]; then
     fi
     active=$(remote_cmd "cat /mnt6/active" 2> /dev/null)
 
-    echo "backup preboot partition... please dont delete directory prebootBackup"
+    echo "backup preboot partition... please dont delete directory prebootBackup" # this will backup your perboot parition in case that was deleted by error 
     mkdir -p "prebootBackup"
     if [ ! -d "prebootBackup/${deviceid}" ]; then
         mkdir -p "prebootBackup/${deviceid}"
@@ -606,7 +611,7 @@ if [ ! -f blobs/"$deviceid"-"$version".shsh2 ]; then
 
     if [ "$fix_preboot" = "1" ]; then
         remote_cp "prebootBackup/${deviceid}/mnt6" root@localhost:/
-        echo "finish to bring back preboot:)"
+        echo "finish to bring back preboot:)" # that will restore preboot
         exit;
     fi
 
@@ -615,7 +620,7 @@ if [ ! -f blobs/"$deviceid"-"$version".shsh2 ]; then
         echo "[*] Removing dualboot"
         if [ "$(remote_cmd "/System/Library/Filesystems/apfs.fs/apfs.util -p /dev/disk0s1s${disk}")" == 'Update' ]; then
             echo "error partition, maybe that partition is important so it could be deleted by apfs_deletefs, that is bad"
-            exit;
+            exit; # that eliminate dualboot paritions 
         fi
         remote_cmd "/sbin/apfs_deletefs disk0s1s${disk} > /dev/null || true"
         remote_cmd "/sbin/apfs_deletefs disk0s1s${dataB} > /dev/null || true"
@@ -633,7 +638,7 @@ if [ ! -f blobs/"$deviceid"-"$version".shsh2 ]; then
     rm dump.raw
 
     if [ "$jailbreak" = "1" ]; then
-        echo "patching kernel"
+        echo "patching kernel" # this will send and patch the kernel
         cp -r "$extractedIpsw$(awk "/""${model}""/{x=1}x&&/kernelcache.release/{print;exit}" work/BuildManifest.plist | grep '<string>' |cut -d\> -f2 |cut -d\< -f1)" "work/"
         remote_cmd "/sbin/mount_apfs /dev/disk0s1s${disk} /mnt8/"
         remote_cmd "/sbin/mount_apfs /dev/disk0s1s${dataB} /mnt2/"
@@ -658,7 +663,7 @@ if [ ! -f blobs/"$deviceid"-"$version".shsh2 ]; then
 
 
     if [ "$dualboot" = "1" ]; then
-        if [ -z "$dont_createPart" ]; then
+        if [ -z "$dont_createPart" ]; then # if you have already your second ios you can omited with this
             echo "[*] Creating partitions"
             remote_cmd "/sbin/newfs_apfs -o role=i -A -v SystemB /dev/disk0s1"
             remote_cmd "/sbin/newfs_apfs -o role=0 -A -v DataB /dev/disk0s1"
@@ -668,14 +673,14 @@ if [ ! -f blobs/"$deviceid"-"$version".shsh2 ]; then
             echo "mounting filesystems "
             remote_cmd "/sbin/mount_apfs /dev/disk0s1s${disk} /mnt8/"
             sleep 1
-            remote_cmd "/sbin/mount_apfs /dev/disk0s1s${dataB} /mnt9/"
+            remote_cmd "/sbin/mount_apfs /dev/disk0s1s${dataB} /mnt9/" # this mount partitions which are needed by dualboot
             sleep 1
             remote_cmd "/sbin/mount_apfs /dev/disk0s1s${prebootB} /mnt4/"
             sleep 1
-            remote_cmd "cp -av /mnt2/keybags /mnt9/"
+            remote_cmd "cp -av /mnt2/keybags /mnt9/" # this will copy keybash which is a fundamental thing so is very important
 
             echo "copying filesystem so hang on that could take 20 minute because is trought ssh"
-            remote_cp ipsw/out.dmg root@localhost:/mnt8          
+            remote_cp ipsw/out.dmg root@localhost:/mnt8 # this will copy the root file in order to it is mounted and restore partition      
             
             remote_cmd "/usr/sbin/nvram auto-boot=false"
             remote_cmd "/sbin/reboot"
@@ -689,14 +694,14 @@ if [ ! -f blobs/"$deviceid"-"$version".shsh2 ]; then
             while ! (remote_cmd "echo connected" &> /dev/null); do
                 sleep 1
             done
-            remote_cmd "/System/Library/Filesystems/apfs.fs/apfs_invert -d /dev/disk0s1 -s ${disk} -n out.dmg"
+            remote_cmd "/System/Library/Filesystems/apfs.fs/apfs_invert -d /dev/disk0s1 -s ${disk} -n out.dmg" # this will mount the root file system and would restore the partition 
             sleep 1
             remote_cmd "/sbin/mount_apfs /dev/disk0s1s${disk} /mnt8/"
             remote_cmd "/sbin/mount_apfs /dev/disk0s1s${dataB} /mnt9/"
             remote_cmd "/sbin/mount_apfs /dev/disk0s1s${prebootB} /mnt4/"
-            remote_cmd "cp -av /mnt8/private/var/* /mnt9/"
+            remote_cmd "cp -av /mnt8/private/var/* /mnt9/" # this will copy all file which is needed by dataB
             remote_cmd "mount_filesystems"
-            remote_cmd "cp -av /mnt6/* /mnt4/"
+            remote_cmd "cp -av /mnt6/* /mnt4/" # copy preboot to prebootB
         fi
         remote_cmd "/usr/sbin/nvram auto-boot=false"
         remote_cmd "/sbin/reboot"
