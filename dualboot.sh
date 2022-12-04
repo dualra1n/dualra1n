@@ -21,7 +21,7 @@ disk=8
 extractedIpsw="ipsw/extracted/"
 
 if [ ! -d "ramdisk/" ]; then
-    git clone --recursive https://github.com/palera1n/ramdisk.git
+    git clone --recursive https://github.com/edwin170/SSHRD_Script
 fi
 # =========
 # Functions
@@ -417,7 +417,7 @@ if [ "$debug" = "1" ]; then
 fi
 
 if [ "$clean" = "1" ]; then
-    rm -rf  work blobs/
+    rm -rf  work blobs/ boot/$deviceid/ 
     echo "[*] Removed the created boot files"
     exit
 fi
