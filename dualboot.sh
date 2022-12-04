@@ -22,6 +22,7 @@ extractedIpsw="ipsw/extracted/"
 
 if [ ! -d "ramdisk/" ]; then
     git clone --recursive https://github.com/edwin170/SSHRD_Script
+    mv -r SSHRD_Script ramdisk
 fi
 # =========
 # Functions
@@ -642,6 +643,7 @@ if [ ! -f blobs/"$deviceid"-"$version".shsh2 ]; then
     if [ "$jailbreak" = "1" ]; then
         echo "patching kernel" # this will send and patch the kernel
         cp -r "$extractedIpsw$(awk "/""${model}""/{x=1}x&&/kernelcache.release/{print;exit}" work/BuildManifest.plist | grep '<string>' |cut -d\> -f2 |cut -d\< -f1)" "work/"
+        "$dir"/img4 -i work/"$(awk "/""${model}""/{x=1}x&&/kernelcache.release/{print;exit}" work/BuildManifest.plist | grep '<string>' |cut -d\> -f2 |cut -d\< -f1)" -o work/kcache.raw
         remote_cmd "/sbin/mount_apfs /dev/disk0s1s${disk} /mnt8/"
         remote_cmd "/sbin/mount_apfs /dev/disk0s1s${dataB} /mnt2/"
         remote_cmd "/sbin/mount_apfs /dev/disk0s1s${prebootB} /mnt4/"
@@ -653,8 +655,13 @@ if [ ! -f blobs/"$deviceid"-"$version".shsh2 ]; then
         remote_cmd "/mnt8/private/var/root/Kernel15Patcher.ios /mnt4/$active/System/Library/Caches/com.apple.kernelcaches/kcache.raw /mnt4/$active/System/Library/Caches/com.apple.kernelcaches/kcache.patched"
         remote_cp root@localhost:/mnt4/$active/System/Library/Caches/com.apple.kernelcaches/kcache.patched work/
         "$dir"/Kernel64Patcher work/kcache.patched work/kcache.patchedB -f
-        python3 kerneldiff.py work/kcache.patched work/kcache.patchedB work/kc.bpatch
+        python3 kerneldiff.py work/kcache.raw work/kcache.patchedB work/kc.bpatch
         "$dir"/img4 -i work/"$(awk "/""${model}""/{x=1}x&&/kernelcache.release/{print;exit}" work/BuildManifest.plist | grep '<string>' |cut -d\> -f2 |cut -d\< -f1)" -o work/kernelcache.img4 -M work/IM4M -T rkrn -P work/kc.bpatch `if [ "$os" = 'Linux' ]; then echo "-J"; fi`
+        cp -rv "work/kernelcache.img4" "boot/${deviceid}"
+        
+        echo "installing pogo in Tips and trollstore on TV"
+        remote_cmd "trollstoreinstaller TV"
+        remote_cmd "pogoinstaller Tips"
 
         echo "now boot your second ios install trollstore after install 2 ipa in the dualboot repository after open taurine and jailbreak it when that reboot, boot again to the second ios and execute open pongo which was installed by trollstore and click do all (never click install that can break the jailbreak so only you will use pongo to press do all)"
 
