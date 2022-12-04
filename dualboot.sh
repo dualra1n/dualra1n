@@ -308,7 +308,7 @@ _boot() {
     if [ "$cpid" = '0x8010' ] || [ "$cpid" = '0x8015' ] || [ "$cpid" = '0x8011' ] || [ "$cpid" = '0x8012' ]; then
         "$dir"/irecovery -f "boot/${deviceid}/iBEC.img4"
         sleep 2  
-        "$os"/irecovery -c "go"
+        "$dir"/irecovery -c "go"
     fi
 
     "$dir"/irecovery -f "boot/${deviceid}/devicetree.img4"
