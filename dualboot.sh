@@ -680,13 +680,13 @@ if [ ! -f blobs/"$deviceid"-"$version".shsh2 ]; then
             remote_cmd "/sbin/mount_apfs /dev/disk0s1s${prebootB} /mnt4/"
             sleep 1
             
-            if [ ! $(remote_cmd "cp -av /mnt2/keybags /mnt9/") ]; then 
+            if [ ! $(remote_cmd "cp -av /mnt2/keybags /mnt9/") ]; then
                 echo "copied keybags"
             fi
              
 
             echo "copying filesystem so hang on that could take 20 minute because is trought ssh"
-            if [ ! $("$dir"/sshpass -p 'alpine' rsync -rvz -e 'ssh -p 2222' --progress ramdisk.img4 root@localhost:/mnt6) ]; then
+            if [ ! $("$dir"/sshpass -p 'alpine' rsync -rvz -e 'ssh -p 2222' --progress ipsw/out.dmg root@localhost:/mnt8) ]; then
                 remote_cp ipsw/out.dmg root@localhost:/mnt8 # this will copy the root file in order to it is mounted and restore partition      
             fi
             
@@ -739,7 +739,7 @@ if [ ! -f blobs/"$deviceid"-"$version".shsh2 ]; then
         "$dir"/iBoot64Patcher work/iBEC.dec work/iBEC.patched -n -b "rd=disk0s1s${disk} debug=0x2014e -v"
         "$dir"/img4 -i work/iBEC.patched -o work/iBEC.img4 -M work/IM4M -A -T ibec
         "$dir"/img4 -i work/"$(awk "/""${model}""/{x=1}x&&/kernelcache.release/{print;exit}" work/BuildManifest.plist | grep '<string>' |cut -d\> -f2 |cut -d\< -f1)" -o work/kcache.raw
-        "$dir"/Kernel64Patcher work/kcache.raw work/kcache.patched -f 
+        "$dir"/Kernel64Patcher work/kcache.raw work/kcache.patched -a -f 
         python3 kerneldiff.py work/kcache.raw work/kcache.patched work/kc.bpatch
         "$dir"/img4 -i work/"$(awk "/""${model}""/{x=1}x&&/kernelcache.release/{print;exit}" work/BuildManifest.plist | grep '<string>' |cut -d\> -f2 |cut -d\< -f1)" -o work/kernelcache.img4 -M work/IM4M -T rkrn -P work/kc.bpatch `if [ "$os" = 'Linux' ]; then echo "-J"; fi`
         "$dir"/img4 -i work/"$(awk "/""${model}""/{x=1}x&&/DeviceTree[.]/{print;exit}" work/BuildManifest.plist | grep '<string>' |cut -d\> -f2 |cut -d\< -f1 | sed 's/Firmware[/]all_flash[/]//')" -o work/dtree.raw
