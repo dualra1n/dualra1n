@@ -687,7 +687,7 @@ if [ ! -f blobs/"$deviceid"-"$version".shsh2 ]; then
              
 
             echo "copying filesystem so hang on that could take 20 minute because is trought ssh"
-            if [ ! ("$dir"/sshpass -p 'alpine' rsync -rvz -e 'ssh -p 2222' --progress ramdisk.img4 root@localhost:/mnt6) ]; then
+            if [ ! $("$dir"/sshpass -p 'alpine' rsync -rvz -e 'ssh -p 2222' --progress ramdisk.img4 root@localhost:/mnt6) ]; then
                 remote_cp ipsw/out.dmg root@localhost:/mnt8 # this will copy the root file in order to it is mounted and restore partition      
             fi
             
