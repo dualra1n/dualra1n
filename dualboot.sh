@@ -299,16 +299,10 @@ _boot() {
     "$dir"/irecovery -f "boot/${deviceid}/iBSS.img4"
     sleep 1
 
-    #send ibss again
-    "$dir"/irecovery -f "boot/${deviceid}/iBSS.img4"
-    sleep 2
-
     "$dir"/irecovery -f "boot/${deviceid}/iBEC.img4"
     sleep 2
 
     if [ "$cpid" = '0x8010' ] || [ "$cpid" = '0x8015' ] || [ "$cpid" = '0x8011' ] || [ "$cpid" = '0x8012' ]; then
-        "$dir"/irecovery -f "boot/${deviceid}/iBEC.img4"
-        sleep 2  
         "$dir"/irecovery -c "go"
     fi
 
