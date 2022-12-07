@@ -3,21 +3,31 @@ this is a script to dualboot your iphone on ios 15 with 14
 
 # tutorial
 
-Usage: $0 [Options] [ subcommand | iOS version which are you] remember you need to have 10 gb free, no sean brurros y vean primero. (put your ipsw in the directory ipsw)
-iOS 15 - 14 Dualboot tool ./dualboot --dualboot 15.7 (the ios of your device) 
-put ipsw file of ios 14 into the ipsw directory, you must make sure that this is the correct ipsw for the iphone. only ios 14 - 14.8.1
+
 
 Options:
     --dualboot          dualboot your device ios 15 with 14 
     --jail_palera1n     uses only if you have the palera1n jailbreak installed, it will create partition on disk + 1 because palera1n create a new partition. disk0s1s8 however if you jailbreakd with palera1n the disk would be disk0s1s9"
-    --jailbreak         jailbreak your second ios. you can use it when your device boot correctly the second ios
+    
+    for example ./dualboot.sh --dualboot 14.3 --jail_palera1n 
+    
+    
+    --jailbreak         jailbreak your second ios. you can use it when your device boot correctly the second ios. example ./dualboot.sh --jailbreak 14.3
+    
     --help              Print this help
-    --bypass            that will bypass to second ios in case that you dont know the password of icloud however you could not login on icloud, but you can login on appstore and download apps. thank you for share mobileactivationd @MatthewPierson" 
+    
+    --bypass            that will bypass to second ios in case that you dont know the password of icloud however you could not login on icloud, but you can login on appstore and download apps. thank you for share mobileactivationd @MatthewPierson". example./dualboot.sh --jailbreak 14.3
+    
     --dfuhelper         A helper to help get A11 devices into DFU mode from recovery mode
-    --boot              put boot alone, to boot your second ios  
-    --dont_createPart   Don't create the partitions if you have already created 
-    --restorerootfs     Remove partitions of dualboot 
-    --fix_preboot       that restore preboot with the prebootBackup
+    
+    --boot              put boot alone, to boot your second ios. /dualboot.sh --boot
+    
+    --dont_createPart   Don't create the partitions if you have already created. ./dualboot.sh --dualboot 14.3 --dont_createPart
+    
+    --restorerootfs     Remove partitions of dualboot. ./dualboot.sh --restorerootfs
+    
+    --fix_preboot       that restore preboot with the prebootBackup. --fix_preboot
+    
     --debug             Debug the script
 
 Subcommands:
