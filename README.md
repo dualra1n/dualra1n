@@ -5,12 +5,12 @@ this is a script to dualboot your iphone on ios 15 with 14
 
 1: download your ipsw and put it on ipsw/ directory (you can download of ipsw.me. please only ios 14.* also please download exactly your ipsw for your iphone) (your ios version that you want to dualboot with also is recommended ios 14.3 because you can jailbreak with taurine)
 
-2: execute ./dualboot --dualboot 15.7 (the version of your ipsw downloaded which is the version that you want to dualboot ) 
+2: execute ./dualboot --dualboot 14.3 (the version of your ipsw downloaded which is the version that you want to dualboot ) 
 
 3: ./dualboot --boot 
 
 ---
-# only in case kenelpanic
+# just in case kenelpanic
 in case that your iphone not boot on the second ios try to do this:
 you will have to record a video of iphone's screen because you have to note the name of the preboot directory when that is booting. 
 
@@ -52,5 +52,5 @@ you can not do it on linux because dtree_patcher does not work and asr command n
 
 # thanks
 
-THANKS PALERA1N, https://dualbootfun.github.io/, MatthewPierson, Ralph0045 and all people who created the boot patcher tool. thanks
+THANKS PALERA1N, https://dualbootfun.github.io/, MatthewPierson, Ralph0045, people who help me test on discord like @something, @samm and others and all people who created the boot patcher tool. thanks
 
