@@ -52,16 +52,15 @@ Options:
     --jail_palera1n     uses only if you have the palera1n jailbreak installed, it will create partition on disk + 1 because palera1n create a new partition. disk0s1s8 however if you jailbreakd with palera1n the disk would be disk0s1s9"
     --jailbreak         jailbreak your second ios. you can use it when your device boot correctly the second ios
     --help              Print this help
+    --bypass            that will bypass to second ios in case that you dont know the password of icloud however you could not login on icloud, but you can login on appstore and download apps. thank you for share mobileactivationd @MatthewPierson" 
     --dfuhelper         A helper to help get A11 devices into DFU mode from recovery mode
     --boot              put boot alone, to boot your second ios  
     --dont_createPart   Don't create the partitions if you have already created 
-    --no-baseband       Indicate that the device does not have a baseband
     --restorerootfs     Remove partitions of dualboot 
     --fix_preboot       that restore preboot with the prebootBackup
     --debug             Debug the script
 
 Subcommands:
-    dfuhelper           An alias for --dfuhelper
     clean               Deletes the created boot files
 
 The iOS version argument should be the iOS version of your device.
@@ -79,6 +78,9 @@ parse_opt() {
             ;;
         --boot)
             boot=1
+            ;;
+        --bypass)
+            bypass=1
             ;;
         --fix_preboot)
             fix_preboot=1
@@ -400,7 +402,7 @@ chmod +x "$dir"/*
 # ============
 
 echo "dualboot | Version beta"
-echo "Written by edwin and most code of palera1n :) thanks Nebula and Mineek | Some code and ramdisk from Nathan | Loader app by Amy | thanks MatthewPierson, Ralph0045, and all people creator of path file boot"
+echo "Written by edwin and most code of palera1n :) thanks Nebula and Mineek | Some code also the ramdisk from Nathan | thanks MatthewPierson, Ralph0045, and all people creator of path file boot"
 echo ""
 
 version="beta"
@@ -616,11 +618,13 @@ if [ ! -f blobs/"$deviceid"-"$version".shsh2 ]; then
         echo "[*] Removing dualboot"
         if [ "$(remote_cmd "/System/Library/Filesystems/apfs.fs/apfs.util -p /dev/disk0s1s${disk}")" == 'Update' ]; then
             echo "error partition, maybe that partition is important so it could be deleted by apfs_deletefs, that is bad"
-            exit; # that eliminate dualboot paritions 
+            exit; 
         fi
+        # that eliminate dualboot paritions 
         remote_cmd "/sbin/apfs_deletefs disk0s1s${disk} > /dev/null || true"
         remote_cmd "/sbin/apfs_deletefs disk0s1s${dataB} > /dev/null || true"
         remote_cmd "/sbin/apfs_deletefs disk0s1s${prebootB} > /dev/null || true"
+        remote_cmd "/usr/sbin/nvram auto-boot=true"
         echo "[*] Done! Rebooting your device"
         remote_cmd "/sbin/reboot"
         exit;
@@ -638,6 +642,7 @@ if [ ! -f blobs/"$deviceid"-"$version".shsh2 ]; then
         cp -r "$extractedIpsw$(awk "/""${model}""/{x=1}x&&/kernelcache.release/{print;exit}" work/BuildManifest.plist | grep '<string>' |cut -d\> -f2 |cut -d\< -f1)" "work/"
         "$dir"/img4 -i work/"$(awk "/""${model}""/{x=1}x&&/kernelcache.release/{print;exit}" work/BuildManifest.plist | grep '<string>' |cut -d\> -f2 |cut -d\< -f1)" -o work/kcache.raw
         remote_cmd "/sbin/mount_apfs /dev/disk0s1s${disk} /mnt8/"
+        remote_cmd "umount /dev/disk0s1s2"
         remote_cmd "/sbin/mount_apfs /dev/disk0s1s${dataB} /mnt2/"
         remote_cmd "/sbin/mount_apfs /dev/disk0s1s${prebootB} /mnt4/"
         remote_cp boot/${deviceid}/kernelcache.img4 "root@localhost:/mnt4/$active/System/Library/Caches/com.apple.kernelcaches/kernelcache"
@@ -663,6 +668,18 @@ if [ ! -f blobs/"$deviceid"-"$version".shsh2 ]; then
 
     fi
 
+    if [ "$bypass" = "1" ]; then
+        remote_cmd "/sbin/mount_apfs /dev/disk0s1s${disk} /mnt8/"
+        remote_cmd "/sbin/mount_apfs /dev/disk0s1s${dataB} /mnt9/"
+        remote_cmd "/sbin/mount_apfs /dev/disk0s1s${prebootB} /mnt4/"
+        remote_cmd "cp -av /mnt2/root/Library/Lockdown/* /mnt9/root/Library/Lockdown/. "
+        remote_cmd "mv /mnt8/usr/libexec/mobileactivationd /mnt8/usr/libexec/mobileactivationdBackup  "
+        remote_cp other/mobileactivationd root@localhost:/mnt8/usr/libexec/
+        echo "thank you for share mobileactivationd @MatthewPierson"
+        echo "[*] DONE ... now reboot and boot again"
+        remote_cmd "/sbin/reboot"
+        
+    fi
 
     if [ "$dualboot" = "1" ]; then
         if [ -z "$dont_createPart" ]; then # if you have already your second ios you can omited with this
@@ -732,22 +749,27 @@ if [ ! -f blobs/"$deviceid"-"$version".shsh2 ]; then
 
         echo "patching file boots ..."
         "$dir"/img4 -i work/*.trustcache -o work/trustcache.img4 -M work/IM4M -T rtsc
+
         "$dir"/gaster decrypt work/"$(awk "/""${model}""/{x=1}x&&/iBSS[.]/{print;exit}" work/BuildManifest.plist | grep '<string>' |cut -d\> -f2 |cut -d\< -f1 | sed 's/Firmware[/]dfu[/]//')" work/iBSS.dec
         "$dir"/iBoot64Patcher work/iBSS.dec work/iBSS.patched
         "$dir"/img4 -i work/iBSS.patched -o work/iBSS.img4 -M work/IM4M -A -T ibss
+
         "$dir"/gaster decrypt work/"$(awk "/""${model}""/{x=1}x&&/iBEC[.]/{print;exit}" work/BuildManifest.plist | grep '<string>' |cut -d\> -f2 |cut -d\< -f1 | sed 's/Firmware[/]dfu[/]//')" work/iBEC.dec
-        "$dir"/iBoot64Patcher work/iBEC.dec work/iBEC.patched -n -b "rd=disk0s1s${disk} debug=0x2014e -v"
+        "$dir"/iBoot64Patcher work/iBEC.dec work/iBEC.patched -n -b "rd=disk0s1s${disk} debug=0x2014e wdt=-1 -v"
         "$dir"/img4 -i work/iBEC.patched -o work/iBEC.img4 -M work/IM4M -A -T ibec
+
         "$dir"/img4 -i work/"$(awk "/""${model}""/{x=1}x&&/kernelcache.release/{print;exit}" work/BuildManifest.plist | grep '<string>' |cut -d\> -f2 |cut -d\< -f1)" -o work/kcache.raw
         "$dir"/Kernel64Patcher work/kcache.raw work/kcache.patched -a -f 
         python3 kerneldiff.py work/kcache.raw work/kcache.patched work/kc.bpatch
         "$dir"/img4 -i work/"$(awk "/""${model}""/{x=1}x&&/kernelcache.release/{print;exit}" work/BuildManifest.plist | grep '<string>' |cut -d\> -f2 |cut -d\< -f1)" -o work/kernelcache.img4 -M work/IM4M -T rkrn -P work/kc.bpatch `if [ "$os" = 'Linux' ]; then echo "-J"; fi`
+
         "$dir"/img4 -i work/"$(awk "/""${model}""/{x=1}x&&/DeviceTree[.]/{print;exit}" work/BuildManifest.plist | grep '<string>' |cut -d\> -f2 |cut -d\< -f1 | sed 's/Firmware[/]all_flash[/]//')" -o work/dtree.raw
         if [ "$os" = "Linux" ]; then
             echo "devicetree patcher is fall down, not work on linux, however you can use https://github.com/darlinghq/darling.git to execute binary dtree_patcher"
         fi
         "$dir"/dtree_patcher work/dtree.raw work/dtree.patched -d -p 
         "$dir"/img4 -i work/dtree.patched -o work/devicetree.img4 -A -M work/IM4M -T rdtr  
+        
         mkdir -p "boot/${deviceid}"
         cp -rv work/*.img4 "boot/${deviceid}"
 
