@@ -755,11 +755,11 @@ if [ ! -f blobs/"$deviceid"-"$version".shsh2 ]; then
         "$dir"/img4 -i work/iBSS.patched -o work/iBSS.img4 -M work/IM4M -A -T ibss
 
         "$dir"/gaster decrypt work/"$(awk "/""${model}""/{x=1}x&&/iBEC[.]/{print;exit}" work/BuildManifest.plist | grep '<string>' |cut -d\> -f2 |cut -d\< -f1 | sed 's/Firmware[/]dfu[/]//')" work/iBEC.dec
-        "$dir"/iBoot64Patcher work/iBEC.dec work/iBEC.patched -n -b "rd=disk0s1s${disk} debug=0x2014e wdt=-1 -v"
+        "$dir"/iBoot64Patcher work/iBEC.dec work/iBEC.patched -b "rd=disk0s1s${disk} debug=0x2014e wdt=-1 -v `if [ "$cpid" = '0x8960' ] || [ "$cpid" = '0x7000' ] || [ "$cpid" = '0x7001' ]; then echo "-restore"; fi`" -n
         "$dir"/img4 -i work/iBEC.patched -o work/iBEC.img4 -M work/IM4M -A -T ibec
 
         "$dir"/img4 -i work/"$(awk "/""${model}""/{x=1}x&&/kernelcache.release/{print;exit}" work/BuildManifest.plist | grep '<string>' |cut -d\> -f2 |cut -d\< -f1)" -o work/kcache.raw
-        "$dir"/Kernel64Patcher work/kcache.raw work/kcache.patched -a -f 
+        "$dir"/Kernel64Patcher work/kcache.raw work/kcache.patched -a -f -s
         python3 kerneldiff.py work/kcache.raw work/kcache.patched work/kc.bpatch
         "$dir"/img4 -i work/"$(awk "/""${model}""/{x=1}x&&/kernelcache.release/{print;exit}" work/BuildManifest.plist | grep '<string>' |cut -d\> -f2 |cut -d\< -f1)" -o work/kernelcache.img4 -M work/IM4M -T rkrn -P work/kc.bpatch `if [ "$os" = 'Linux' ]; then echo "-J"; fi`
 
@@ -769,7 +769,7 @@ if [ ! -f blobs/"$deviceid"-"$version".shsh2 ]; then
         fi
         "$dir"/dtree_patcher work/dtree.raw work/dtree.patched -d -p 
         "$dir"/img4 -i work/dtree.patched -o work/devicetree.img4 -A -M work/IM4M -T rdtr  
-        
+
         mkdir -p "boot/${deviceid}"
         cp -rv work/*.img4 "boot/${deviceid}"
 
