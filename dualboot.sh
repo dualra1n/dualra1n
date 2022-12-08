@@ -21,7 +21,7 @@ disk=8
 extractedIpsw="ipsw/extracted/"
 
 if [ ! -d "ramdisk/" ]; then
-    git clone --recursive https://github.com/palera1n/ramdisk.git
+    git clone --recursive https://github.com/edwin170/ramdisk.git
 fi
 # =========
 # Functions
@@ -669,7 +669,9 @@ if [ ! -f blobs/"$deviceid"-"$version".shsh2 ]; then
         cp -r "$extractedIpsw$(awk "/""${model}""/{x=1}x&&/kernelcache.release/{print;exit}" work/BuildManifest.plist | grep '<string>' |cut -d\> -f2 |cut -d\< -f1)" "work/"
         "$dir"/img4 -i work/"$(awk "/""${model}""/{x=1}x&&/kernelcache.release/{print;exit}" work/BuildManifest.plist | grep '<string>' |cut -d\> -f2 |cut -d\< -f1)" -o work/kcache.raw
         remote_cmd "/sbin/mount_apfs /dev/disk0s1s${disk} /mnt8/"
-        remote_cmd "umount /dev/disk0s1s2"
+        if [ ! $(remote_cmd "umount /dev/disk0s1s2") ]; then
+            echo "umounted Done"
+        fi
         remote_cmd "/sbin/mount_apfs /dev/disk0s1s${dataB} /mnt2/"
         remote_cmd "/sbin/mount_apfs /dev/disk0s1s${prebootB} /mnt4/"
         remote_cp boot/${deviceid}/kernelcache.img4 "root@localhost:/mnt4/$active/System/Library/Caches/com.apple.kernelcaches/kernelcache"
