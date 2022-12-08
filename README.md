@@ -1,5 +1,5 @@
 # dualboot-ios-15-with-14-script
-this is a script to dualboot your iphone on ios 15 with 14 that work only for a8-a11
+this is a script to dualboot your iphone on ios 15 with 14 that work only for a8-a11 (checkm8 devices)
 
 iphone 6s and 6s+ work very nice
 iphone 7 and 7+ work however home button does not work yet but there are tweak that you can use as a iphone x so you dont have to use button
