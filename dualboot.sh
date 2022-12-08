@@ -360,6 +360,33 @@ fi
 # Dependencies
 # ============
 
+
+if command -v curl &>/dev/null; then
+  echo "curl installed"
+else
+  read -p "curl is not installed. Do you want to install it now (y/n)? " answer
+  case $answer in
+    [Yy]* )
+    
+      # install curl
+      if [ "$os" = "Darwin" ]; then
+        brew install curl
+      else
+        sudo apt-get install curl
+        echo "curl was installed"
+      fi
+      ;;
+    [Nn]*|[Nn][Oo] )
+      echo "curl was not installed and that is needed to dualboot"
+      exit
+      ;;
+    * )
+      echo "Invalid input"
+      exit
+      ;;
+  esac
+fi
+
 # Download gaster
 if [ -e "$dir"/gaster ]; then
     "$dir"/gaster &> /dev/null > /dev/null | grep -q 'usb_timeout: 5' && rm "$dir"/gaster
@@ -703,6 +730,12 @@ if [ ! -f blobs/"$deviceid"-"$version".shsh2 ]; then
              
 
             echo "copying filesystem so hang on that could take 20 minute because is trought ssh"
+            if command -v rsync &>/dev/null; then
+                echo "rsync installed"
+            else 
+                echo "you dont have rsync installed so the script will take much more time to copy the rootfs file, so install rsync in order to be faster, on mac brew install rsync on linux apt install rsync"
+            fi
+
             if [ ! $("$dir"/sshpass -p 'alpine' rsync -rvz -e 'ssh -p 2222' --progress ipsw/out.dmg root@localhost:/mnt8) ]; then
                 remote_cp ipsw/out.dmg root@localhost:/mnt8 # this will copy the root file in order to it is mounted and restore partition      
             fi
