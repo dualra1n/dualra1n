@@ -1,4 +1,4 @@
-# dualboot-ios-15-with-14-script
+# dualboot-ios-15-with-14-script palera1n's younger brother
 this is a script to dualboot your iphone on ios 15 with 14 that work only for a8-a11 (checkm8 devices)
 
 iphone 6s and 6s+ work very nice
