@@ -679,7 +679,11 @@ if [ ! -f blobs/"$deviceid"-"$version".shsh2 ]; then
         remote_cp binaries/Kernel15Patcher.ios root@localhost:/mnt8/private/var/root/Kernel15Patcher.ios
         remote_cmd "/usr/sbin/chown 0 /mnt8/private/var/root/Kernel15Patcher.ios"
         remote_cmd "/bin/chmod 755 /mnt8/private/var/root/Kernel15Patcher.ios"
-        remote_cmd "/mnt8/private/var/root/Kernel15Patcher.ios /mnt4/$active/System/Library/Caches/com.apple.kernelcaches/kcache.raw /mnt4/$active/System/Library/Caches/com.apple.kernelcaches/kcache.patched"
+        sleep 1
+        if [ ! $(remote_cmd "/mnt8/private/var/root/Kernel15Patcher.ios /mnt4/$active/System/Library/Caches/com.apple.kernelcaches/kcache.raw /mnt4/$active/System/Library/Caches/com.apple.kernelcaches/kcache.patched") ]; then
+            echo "you have the kernelpath already installed "
+        fi
+        sleep 2
         remote_cp root@localhost:/mnt4/$active/System/Library/Caches/com.apple.kernelcaches/kcache.patched work/
         "$dir"/Kernel64Patcher work/kcache.patched work/kcache.patchedB -f
         python3 kerneldiff.py work/kcache.raw work/kcache.patchedB work/kc.bpatch
@@ -687,9 +691,9 @@ if [ ! -f blobs/"$deviceid"-"$version".shsh2 ]; then
         cp -rv "work/kernelcache.img4" "boot/${deviceid}"
         
         echo "installing pogo in Tips and trollstore on TV"
-        remote_cmd "trollstoreinstaller TV"
-        remote_cmd "pogoinstaller Tips"
-
+        if [ ! $(remote_cmd "trollstoreinstaller TV") ] && [ ! $(remote_cmd "pogoinstaller Tips") ]; then
+            echo "you have to install trollstore in order to intall taurine"
+        fi
         echo "now boot your second ios install trollstore after install 2 ipa in the dualboot repository after open taurine and jailbreak it when that reboot, boot again to the second ios and execute open pongo which was installed by trollstore and click do all (never click install that can break the jailbreak so only you will use pongo to press do all)"
 
         remote_cmd "/sbin/reboot"
@@ -704,9 +708,9 @@ if [ ! -f blobs/"$deviceid"-"$version".shsh2 ]; then
         remote_cmd "cp -av /mnt2/root/Library/Lockdown/* /mnt9/root/Library/Lockdown/. "
         remote_cmd "mv /mnt8/usr/libexec/mobileactivationd /mnt8/usr/libexec/mobileactivationdBackup  "
         remote_cp other/mobileactivationd root@localhost:/mnt8/usr/libexec/
-        remote_cmd "ldid -e /mnt8/usr/libexec/mobileactivationdBackup > mob.plist"
-        remote_cmd "ldid -S/mnt8/usr/libexec/mob.plist /mnt8/usr/libexec/mobileactivationd"
-        remote_cmd "rm -rv mnt8/mob.plist"
+        remote_cmd "ldid -e /mnt8/usr/libexec/mobileactivationdBackup > /mnt8/mob.plist"
+        remote_cmd "ldid -S/mnt8/mob.plist /mnt8/usr/libexec/mobileactivationd"
+        remote_cmd "rm -rv /mnt8/mob.plist"
         echo "thank you for share mobileactivationd @MatthewPierson"
         echo "[*] DONE ... now reboot and boot again"
         remote_cmd "/sbin/reboot"
