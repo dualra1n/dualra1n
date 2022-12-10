@@ -21,7 +21,7 @@ disk=8
 extractedIpsw="ipsw/extracted/"
 
 if [ ! -d "ramdisk/" ]; then
-    git clone --recursive https://github.com/edwin170/ramdisk
+    git clone --recursive https://github.com/edwin170/ramdisk.git
 fi
 # =========
 # Functions
