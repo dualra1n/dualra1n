@@ -21,7 +21,7 @@ disk=8
 extractedIpsw="ipsw/extracted/"
 
 if [ ! -d "ramdisk/" ]; then
-    git clone --recursive https://github.com/edwin170/ramdisk.git
+    git clone --recursive https://github.com/palera1n/ramdisk.git
 fi
 # =========
 # Functions
@@ -667,15 +667,22 @@ if [ ! -f blobs/"$deviceid"-"$version".shsh2 ]; then
     if [ "$jailbreak" = "1" ]; then
         echo "patching kernel" # this will send and patch the kernel
         cp -r "$extractedIpsw$(awk "/""${model}""/{x=1}x&&/kernelcache.release/{print;exit}" work/BuildManifest.plist | grep '<string>' |cut -d\> -f2 |cut -d\< -f1)" "work/"
-        "$dir"/img4 -i work/"$(awk "/""${model}""/{x=1}x&&/kernelcache.release/{print;exit}" work/BuildManifest.plist | grep '<string>' |cut -d\> -f2 |cut -d\< -f1)" -o work/kcache.raw
+        cp -rv work/"$(awk "/""${model}""/{x=1}x&&/kernelcache.release/{print;exit}" work/BuildManifest.plist | grep '<string>' |cut -d\> -f2 |cut -d\< -f1)" work/kernelcache 
+        
+        if [[ "$deviceid" == "iPhone8"* ]] || [[ "$deviceid" == "iPad6"* ]] || [[ "$deviceid" == *'iPad5'* ]]; then
+            python3 -m pyimg4 im4p extract -i work/kernelcache -o work/kcache.raw --extra work/kpp.bin
+        else
+            python3 -m pyimg4 im4p extract -i work/kernelcache -o work/kcache.raw
+        fi
+        
         remote_cmd "/sbin/mount_apfs /dev/disk0s1s${disk} /mnt8/"
         if [ ! $(remote_cmd "umount /dev/disk0s1s2") ]; then
             echo "umounted Done"
         fi
         remote_cmd "/sbin/mount_apfs /dev/disk0s1s${dataB} /mnt2/"
         remote_cmd "/sbin/mount_apfs /dev/disk0s1s${prebootB} /mnt4/"
+        remote_cp work/kcache.raw root@localhost:/mnt4/$active/System/Library/Caches/com.apple.kernelcaches/kcache.raw
         remote_cp boot/${deviceid}/kernelcache.img4 "root@localhost:/mnt4/$active/System/Library/Caches/com.apple.kernelcaches/kernelcache"
-        remote_cmd "/usr/bin/img4 -i /mnt4/$active/System/Library/Caches/com.apple.kernelcaches/kernelcache -o /mnt4/$active/System/Library/Caches/com.apple.kernelcaches/kcache.raw"
         remote_cp binaries/Kernel15Patcher.ios root@localhost:/mnt8/private/var/root/Kernel15Patcher.ios
         remote_cmd "/usr/sbin/chown 0 /mnt8/private/var/root/Kernel15Patcher.ios"
         remote_cmd "/bin/chmod 755 /mnt8/private/var/root/Kernel15Patcher.ios"
@@ -685,9 +692,21 @@ if [ ! -f blobs/"$deviceid"-"$version".shsh2 ]; then
         fi
         sleep 2
         remote_cp root@localhost:/mnt4/$active/System/Library/Caches/com.apple.kernelcaches/kcache.patched work/
-        "$dir"/Kernel64Patcher work/kcache.patched work/kcache.patchedB -f
+        "$dir"/Kernel64Patcher work/kcache.patched work/kcache.patchedB -f -e 
+
+        if [[ "$deviceid" == *'iPhone8'* ]] || [[ "$deviceid" == *'iPad6'* ]] || [[ "$deviceid" == *'iPad5'* ]]; then
+            python3 -m pyimg4 im4p create -i work/kcache.patchedB -o work/kcache.im4p -f krnl --extra work/kpp.bin --lzss
+        elif [ "$tweaks" = "1" ]; then
+            python3 -m pyimg4 im4p create -i work/kcache.patchedB -o work/kcache.im4p -f krnl --lzss
+        fi
+
+        remote_cp work/kcache.im4p root@localhost:/mnt4/$active/System/Library/Caches/com.apple.kernelcaches/
+        remote_cmd "img4 -i /mnt4/$active/System/Library/Caches/com.apple.kernelcaches/kcache.im4p -o /mnt4/$active/System/Library/Caches/com.apple.kernelcaches/kernelcache -M /mnt4/$active/System/Library/Caches/apticket.der"
+        remote_cmd "rm -f /mnt4/$active/System/Library/Caches/com.apple.kernelcaches/kcache.raw /mnt4/$active/System/Library/Caches/com.apple.kernelcaches/kcache.patched /mnt4/$active/System/Library/Caches/com.apple.kernelcaches/kcache.im4p"
+
         python3 kerneldiff.py work/kcache.raw work/kcache.patchedB work/kc.bpatch
         "$dir"/img4 -i work/"$(awk "/""${model}""/{x=1}x&&/kernelcache.release/{print;exit}" work/BuildManifest.plist | grep '<string>' |cut -d\> -f2 |cut -d\< -f1)" -o work/kernelcache.img4 -M work/IM4M -T rkrn -P work/kc.bpatch `if [ "$os" = 'Linux' ]; then echo "-J"; fi`
+        #remote_cp root@localhost:/mnt4/$active/System/Library/Caches/com.apple.kernelcaches/kernelcachd work/kernelcache.img4
         cp -rv "work/kernelcache.img4" "boot/${deviceid}"
         
         echo "installing pogo in Tips and trollstore on TV"
@@ -814,7 +833,7 @@ if [ ! -f blobs/"$deviceid"-"$version".shsh2 ]; then
 
         mkdir -p "boot/${deviceid}"
         cp -rv work/*.img4 "boot/${deviceid}"
-
+        rm -rv blobs/"$deviceid"-"$version".shsh2
         echo "so we finish, now you can execute './dualboot boot' to boot to second ios after that we need that you record a video when your iphone is booting to see what is the uuid and note that name of the uuid"       
         _boot        
     fi
