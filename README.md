@@ -1,4 +1,4 @@
-# dualboot-ios-15-with-14-script
+# dualboot-ios-15-with-14-script palera1n's younger brother
 this is a script to dualboot your iphone on ios 15 with 14 that work only for a8-a11 (checkm8 devices)
 
 iphone 6s and 6s+ work very nice
@@ -72,7 +72,7 @@ reboot and your iphone should boot without error
 # how to jailbreak 
 ---
 to jailbreak your device: ./dualboot.sh --jailbreak 15.7 (or your version)
-after install trollstore with https://github.com/verygenericname/SSHRD_Script, after install 2 ipa in the dualboot repository 3 taurine and pogo also filza if you want, after open taurine and jailbreak it when that reboot, boot again to the second ios, open pongo which was installed by trollstore and click do all (never click install that can break the jailbreak so only you will use pongo to press do all) after that you can use sileo to install package and install libhooker to inyect tweaks (if you reboot your device, the tweaks will be disable so you have to reinstall libhooker opening sileo and press reinstall )
+after install trollstore with https://github.com/verygenericname/SSHRD_Script, after install 2 ipa in the dualboot repository 3 taurine and pogo also filza if you want, after open taurine and jailbreak it when that reboot, boot again to the second ios, open pongo which was installed by trollstore and click do all (never click install that can break the jailbreak so only you will use pongo to press do all) after that you can use sileo to install package and install libhooker to inyect tweaks (if you reboot your device, the tweaks will be disable so you have to reinstall libhooker opening sileo and press reinstall ) or you can use pogo install to install the jailbreak but never both together.
 
 ---
 
