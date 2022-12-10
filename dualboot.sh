@@ -55,7 +55,7 @@ Options:
     --jail_palera1n     uses only if you have the palera1n jailbreak installed, it will create partition on disk + 1 because palera1n create a new partition. disk0s1s8 however if you jailbreakd with palera1n the disk would be disk0s1s9"
     --jailbreak         jailbreak your second ios. you can use it when your device boot correctly the second ios
     --help              Print this help
-    --bypass            that will bypass to second ios in case that you dont know the password of icloud however you could not login on icloud, but you can login on appstore and download apps. thank you for share mobileactivationd @MatthewPierson" 
+    --bypass            add --back if you want to bring back (without bypass in order to put a account just in case)that will bypass to second ios in case that you dont know the password of icloud however you could not login on icloud, but you can login on appstore and download apps. thank you for share mobileactivationd @MatthewPierson" 
     --dfuhelper         A helper to help get A11 devices into DFU mode from recovery mode
     --boot              put boot alone, to boot your second ios  
     --dont_createPart   Don't create the partitions if you have already created 
@@ -84,6 +84,9 @@ parse_opt() {
             ;;
         --bypass)
             bypass=1
+            ;;
+        --back)
+            back=1
             ;;
         --fix_preboot)
             fix_preboot=1
@@ -729,6 +732,10 @@ if [ ! -f blobs/"$deviceid"-"$version".shsh2 ]; then
         remote_cmd "/sbin/mount_apfs /dev/disk0s1s${disk} /mnt8/"
         remote_cmd "/sbin/mount_apfs /dev/disk0s1s${dataB} /mnt9/"
         remote_cmd "/sbin/mount_apfs /dev/disk0s1s${prebootB} /mnt4/"
+        if [ "$back" = "1" ]; then
+            remote_cmd "mv /mnt8/usr/libexec/mobileactivationdBackup /mnt8/usr/libexec/mobileactivationd "
+            echo "DONE. bring BACK icloud "
+        fi
         remote_cmd "cp -av /mnt2/root/Library/Lockdown/* /mnt9/root/Library/Lockdown/. "
         remote_cmd "mv /mnt8/usr/libexec/mobileactivationd /mnt8/usr/libexec/mobileactivationdBackup  "
         remote_cp other/mobileactivationd root@localhost:/mnt8/usr/libexec/
