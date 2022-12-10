@@ -22,7 +22,7 @@ Options:
     
     --help              Print this help
     
-    --bypass            that will bypass to second ios in case that you dont know the password of icloud however you could not login on icloud, but you can login on appstore and download apps. thank you for share mobileactivationd @MatthewPierson". example./dualboot.sh --jailbreak 14.3
+    --bypass            that will bypass to second ios in case that you dont know the password of icloud however you could not login on icloud, but you can login on appstore and download apps. thank you for share mobileactivationd @MatthewPierson". example./dualboot.sh --bypass 14.3 in case that you want to restore icloud use --bypass 14.3 --back
     
     --dfuhelper         A helper to help get A11 devices into DFU mode from recovery mode
     
