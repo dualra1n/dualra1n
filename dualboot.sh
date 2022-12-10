@@ -21,10 +21,7 @@ disk=8
 extractedIpsw="ipsw/extracted/"
 
 if [ ! -d "ramdisk/" ]; then
-    git clone --recursive https://github.com/palera1n/ramdisk.git
-    echo "add rsync and trollstore to ramdisk"
-    cp -rv other/modRamdisk/* ramdisk/other/
-    cp -rv other/sshrd.sh ramdisk/
+    git clone --recursive https://github.com/edwin170/ramdisk
 fi
 # =========
 # Functions
