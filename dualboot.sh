@@ -560,14 +560,14 @@ fi
 # ============
 
 # Dump blobs, and install pogo if needed 
-if [ ! -f blobs/"$deviceid"-"$version".shsh2 ]; then
+if [ true ]; then
     mkdir -p blobs
 
     cd ramdisk
     chmod +x sshrd.sh
     echo "[*] Creating ramdisk"
     tweaks=1
-    ./sshrd.sh "$version" `if [ -z "$tweaks" ]; then echo "rootless"; fi`
+    ./sshrd.sh 15.6 `if [ -z "$tweaks" ]; then echo "rootless"; fi`
 
     echo "[*] Booting ramdisk"
     ./sshrd.sh boot
@@ -600,10 +600,10 @@ if [ ! -f blobs/"$deviceid"-"$version".shsh2 ]; then
 
     echo $disk
     echo "[*] Testing for baseband presence"
-    if [ "$(remote_cmd "/usr/bin/mgask HasBaseband | grep -E 'true|false'")" = "true" ] && [ "${cpid}" == *"0x7001"* ]; then
+    if [ "$(remote_cmd "/usr/bin/mgask HasBaseband | grep -E 'true|false'")" = "true" ] && [[ "${cpid}" == *"0x700"* ]]; then
         disk=7
     elif [ "$(remote_cmd "/usr/bin/mgask HasBaseband | grep -E 'true|false'")" = "false" ]; then
-        if [ "${cpid}" == *"0x7001"* ]; then
+        if [[ "${cpid}" == *"0x700"* ]]; then
             disk=6
         else
             disk=7
