@@ -94,5 +94,5 @@ you can not do it on linux because dtree_patcher does not work and asr command n
 
 # thanks
 
-THANKS PALERA1N,nathan ,https://dualbootfun.github.io/, MatthewPierson, Ralph0045, people who help me test on discord like @something, @samm and others and @fatih to help me give support on linux and all people who created the boot patcher tool. thanks
+THANKS PALERA1N,nathan for beautiful ramdisk,https://dualbootfun.github.io/ for the knowdlege, MatthewPierson, Ralph0045, people who help me test on discord like @something, @samm and others and @fatih to help me give support on linux and all people who created the boot patcher tool, thank @darlinghq for the amazing emulator. thanks all.
 
