@@ -11,7 +11,8 @@ works on ipad too but i wont say all ipad so a8-a11
 
 # tutorial
 
-Options:
+Options: example ./dualboot.sh --dualboot 14.3 
+
     --dualboot          dualboot your device ios 15 with 14 
     
     
