@@ -544,12 +544,10 @@ if [ "$os" = 'Darwin' ]; then
     if [ ! -f "ipsw/out.dmg" ]; then # this would create a dmg file which can be mounted an restore a patition
         asr -source "$extractedIpsw$(/usr/bin/plutil -extract "BuildIdentities".0."Manifest"."OS"."Info"."Path" xml1 -o - work/BuildManifest.plist | grep '<string>' |cut -d\> -f2 |cut -d\< -f1 | head -1)" -target ipsw/out.dmg --embed -erase -noprompt --chunkchecksum --puppetstrings
     fi
-#else
-#   mv -v  "$extractedIpsw$(binaries/Linux/PlistBuddy work/BuildManifest.plist -c "Print BuildIdentities:0:Manifest:OS:Info:Path" | sed 's/"//g')" "work/"
-fi
-echo "asr -source "$extractedIpsw$(/usr/bin/plutil -extract "BuildIdentities".0."Manifest"."OS"."Info"."Path" xml1 -o - work/BuildManifest.plist | grep '<string>' |cut -d\> -f2 |cut -d\< -f1 | head -1)" -target ipsw/out.dmg --embed -erase -noprompt --chunkchecksum --puppetstrings"
-if [ "$os" == "Linux" ]; then
-    echo "if you have linux, you must look for a mac and executing 'asr -source xxx.xxxxx.xxx.dmg -target out.dmg --embed -erase -noprompt --chunkchecksum --puppetstrings in order to apfs_invert can mount the root dmg on the partition. linux does not have it so you must use a mac and put this command ' after copy the result file which is out.dmg to linux on the directory ipsw/out.dmg"
+else
+    if [ ! -f "ipsw/out.dmg" ]; then # this would create a dmg file which can be mounted an restore a patition
+        "$dir"/img4 -i  "$extractedIpsw$(binaries/Linux/PlistBuddy work/BuildManifest.plist -c "Print BuildIdentities:0:Manifest:OS:Info:Path" | sed 's/"//g')" -o ipsw/out.dmg 
+    fi
 fi
 
 # ============
@@ -773,10 +771,21 @@ if [ true ]; then
                 echo "you dont have rsync installed so the script will take much more time to copy the rootfs file, so install rsync in order to be faster, on mac brew install rsync on linux apt install rsync"
             fi
 
-            if [ ! $("$dir"/sshpass -p 'alpine' rsync -rvz -e 'ssh -p 2222' --progress ipsw/out.dmg root@localhost:/mnt8) ]; then
-                remote_cp ipsw/out.dmg root@localhost:/mnt8 # this will copy the root file in order to it is mounted and restore partition      
+            if [ "$os" = "Darwin" ]; then
+                if [ ! $("$dir"/sshpass -p 'alpine' rsync -rvz -e 'ssh -p 2222' --progress ipsw/out.dmg root@localhost:/mnt8) ]; then
+                    remote_cp ipsw/out.dmg root@localhost:/mnt8 # this will copy the root file in order to it is mounted and restore partition      
+                fi
+            else 
+                if [ ! $("$dir"/sshpass -p 'alpine' rsync -rvz -e 'ssh -p 2222' --progress ipsw/out.dmg root@localhost:/mnt8) ]; then
+                    remote_cp ipsw/out.dmg root@localhost:/mnt8 # this will copy the root file in order to it is mounted and restore partition      
+                fi
+                remote_cmd "/usr/sbin/hdik /mnt8/out.dmg"
+                remote_cmd "mount_hfs -o ro /dev/disk2 /mnt5"
+                remote_cmd "cp -av /mnt5/* /mnt8/"
+                remote_cmd "rm -rv /mnt8/out.dmg"
+                
             fi
-            
+
             remote_cmd "/usr/sbin/nvram auto-boot=false"
             remote_cmd "/sbin/reboot"
             _wait recovery
@@ -789,7 +798,9 @@ if [ true ]; then
             while ! (remote_cmd "echo connected" &> /dev/null); do
                 sleep 1
             done
-            remote_cmd "/System/Library/Filesystems/apfs.fs/apfs_invert -d /dev/disk0s1 -s ${disk} -n out.dmg" # this will mount the root file system and would restore the partition 
+            if [ "$os" = "Darwin" ]; then
+                remote_cmd "/System/Library/Filesystems/apfs.fs/apfs_invert -d /dev/disk0s1 -s ${disk} -n out.dmg" # this will mount the root file system and would restore the partition 
+            fi
             sleep 1
             remote_cmd "/sbin/mount_apfs /dev/disk0s1s${disk} /mnt8/"
             remote_cmd "/sbin/mount_apfs /dev/disk0s1s${dataB} /mnt9/"
