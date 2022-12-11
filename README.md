@@ -87,11 +87,6 @@ https://user-images.githubusercontent.com/85508740/205317738-84b00b64-778a-41ae-
 
 test it on iphone 6s on ios 15.7 using macos big sur
 
-in the case that you dont trust about binary, you can download of palera1n binary both are the same binary and compile https://github.com/Ralph0045/dtree_patcher.git and copy to binary Darwin directory this is the only binary that palera1n does not have it  
-
-you can not do it on linux because dtree_patcher does not work and asr command not exist, if you have any solution, share please.
-
-
 # thanks
 
 THANKS PALERA1N,nathan for beautiful ramdisk,https://dualbootfun.github.io/ for the knowdlege, MatthewPierson, Ralph0045, people who help me test on discord like @something, @samm and others and @fatih to help me give support on linux and all people who created the boot patcher tool, thank @darlinghq for the amazing emulator. thanks all.
