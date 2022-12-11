@@ -366,35 +366,36 @@ if [ "$os" = "Linux"  ]; then
     if command -v darling &>/dev/null; then
         echo "darling is installed"
     else 
-        echo "you have to install https://github.com/darlinghq/darling/releases/tag/v0.1.20220704 in order to this work on linux"
-        exit;
+        sudo wget https://github.com/darlinghq/darling/releases/download/v0.1.20220704/darling_0.1.20220704.focal_amd64.deb -P other/
+        sudo dpkg -i other/darling_0.1.20220704.focal_amd64.deb
     fi
 fi
 
-if command -v curl &>/dev/null; then
-  echo "curl installed"
+if [ "$os" = "Linux" ]; then
+    sudo apt-get install curl wget rsync
 else
-  read -p "curl is not installed. Do you want to install it now (y/n)? " answer
-  case $answer in
-    [Yy]* )
-    
-      # install curl
-      if [ "$os" = "Darwin" ]; then
-        brew install curl
-      else
-        sudo apt-get install curl
-        echo "curl was installed"
-      fi
-      ;;
-    [Nn]*|[Nn][Oo] )
-      echo "curl was not installed and that is needed to dualboot"
-      exit
-      ;;
-    * )
-      echo "Invalid input"
-      exit
-      ;;
-  esac
+    if command -v curl &>/dev/null; then
+      echo "curl installed"
+    else
+      read -p "curl is not installed. Do you want to install it now (y/n)? " answer
+      case $answer in
+        [Yy]* )
+
+            # install curl
+            if [ "$os" = "Darwin" ]; then
+                brew install curl
+            fi
+            ;;
+        [Nn]*|[Nn][Oo] )
+          echo "curl was not installed and that is needed to dualboot"
+          exit
+          ;;
+        * )
+          echo "Invalid input"
+          exit
+          ;;
+      esac
+    fi
 fi
 
 # Download gaster
@@ -854,7 +855,7 @@ if [ true ]; then
         "$dir"/img4 -i work/"$(awk "/""${model}""/{x=1}x&&/DeviceTree[.]/{print;exit}" work/BuildManifest.plist | grep '<string>' |cut -d\> -f2 |cut -d\< -f1 | sed 's/Firmware[/]all_flash[/]//')" -o work/dtree.raw
         if [ "$os" = "Linux" ]; then
             echo "devicetree patcher is fall down, not work on linux, however you can use https://github.com/darlinghq/darling.git to execute binary dtree_patcher"
-            darling shell binaries/Darwin/dtree_patcher work/dtree.raw work/dtree.patched -d -p
+            /usr/bin/darling shell binaries/Darwin/dtree_patcher work/dtree.raw work/dtree.patched -d -p
             "$dir"/img4 -i work/dtree.patched -o work/devicetree.img4 -A -M work/IM4M -T rdtr
         else 
             "$dir"/dtree_patcher work/dtree.raw work/dtree.patched -d -p 
