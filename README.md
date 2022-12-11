@@ -13,9 +13,9 @@ works on ipad too but i wont say all ipad so a8-a11
 
 Options:
     --dualboot          dualboot your device ios 15 with 14 
-    --jail_palera1n     uses only if you have the palera1n jailbreak semi-untethered installed, it will create partition on disk + 1 because palera1n create a new partition. disk0s1s8 however if you jailbreakd with palera1n the disk would be disk0s1s9"
     
-    for example ./dualboot.sh --dualboot 14.3 --jail_palera1n 
+    
+    --jail_palera1n uses only if you have the palera1n jailbreak semi-untethered installed, it will create partition on disk + 1 because palera1n create a new partition. disk0s1s8 however if you jailbreakd with palera1n the disk would be disk0s1s9", for example ./dualboot.sh --dualboot 14.3 --jail_palera1n 
     
     
     --jailbreak         jailbreak your second ios. you can use it when your device boot correctly the second ios. example ./dualboot.sh --jailbreak 14.3
