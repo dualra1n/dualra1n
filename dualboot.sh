@@ -554,7 +554,7 @@ if [ "$os" = 'Darwin' ]; then
     fi
 else
     if [ ! -f "ipsw/out.dmg" ]; then # this would create a dmg file which can be mounted an restore a patition
-        "$dir"/img4 -i  "$extractedIpsw$(binaries/Linux/PlistBuddy work/BuildManifest.plist -c "Print BuildIdentities:0:Manifest:OS:Info:Path" | sed 's/"//g')" -o ipsw/out.dmg 
+        mv -v "$extractedIpsw$(binaries/Linux/PlistBuddy work/BuildManifest.plist -c "Print BuildIdentities:0:Manifest:OS:Info:Path" | sed 's/"//g')" ipsw/out.dmg 
     fi
 fi
 
