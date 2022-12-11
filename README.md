@@ -7,7 +7,7 @@ iphone 8 and 8+ does not tested yet but i supposed this work like iphone7
 iphone x work but touch does not work yet
 works on ipad too but i wont say all ipad so a8-a11 
 
-# now you can use linux and macos
+# now you can use linux remember with sudo and macos.
 
 # tutorial
 
