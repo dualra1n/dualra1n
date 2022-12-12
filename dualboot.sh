@@ -453,7 +453,7 @@ if [ "$debug" = "1" ]; then
 fi
 
 if [ "$clean" = "1" ]; then
-    rm -rf  work blobs/ boot/$deviceid/ 
+    rm -rf  work blobs/ boot/$deviceid/  ipsw/*
     echo "[*] Removed the created boot files"
     exit
 fi
@@ -788,8 +788,10 @@ if [ true ]; then
                     remote_cp ipsw/out.dmg root@localhost:/mnt8 # this will copy the root file in order to it is mounted and restore partition      
                 fi
                 remote_cmd "/usr/sbin/hdik /mnt8/out.dmg"
-                remote_cmd "mount_hfs -o ro /dev/disk2 /mnt5"
+                remote_cmd "/sbin/mount_apfs -o ro /dev/disk2s1s1 /mnt5/"
                 remote_cmd "cp -av /mnt5/* /mnt8/"
+                sleep 2
+                remote_cmd "/sbin/umount /dev/disk2s1s1"
                 remote_cmd "rm -rv /mnt8/out.dmg"
                 
             fi
