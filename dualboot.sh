@@ -27,10 +27,15 @@ fi
 # Functions
 # =========
 remote_cmd() {
+    sleep 1
     "$dir"/sshpass -p 'alpine' ssh -o StrictHostKeyChecking=no -p2222 root@localhost "$@"
+    sleep 1
 }
+
 remote_cp() {
+    sleep 1
     "$dir"/sshpass -p 'alpine' scp -r -o StrictHostKeyChecking=no -P2222 $@
+    sleep 1
 }
 
 step() {
@@ -50,6 +55,7 @@ put ipsw file of ios 14 into the ipsw directory, you must make sure that this is
 Options:
     --dualboot          dualboot your device ios 15 with 14 
     --jail_palera1n     uses only if you have the palera1n jailbreak installed, it will create partition on disk + 1 because palera1n create a new partition. disk0s1s8 however if you jailbreakd with palera1n the disk would be disk0s1s9"
+    --getIpsw           using this will download a ipsw of your version which you want to dualboot.
     --jailbreak         jailbreak your second ios. you can use it when your device boot correctly the second ios
     --help              Print this help
     --bypass            add --back if you want to bring back (without bypass in order to put a account just in case)that will bypass to second ios in case that you dont know the password of icloud however you could not login on icloud, but you can login on appstore and download apps. thank you for share mobileactivationd @MatthewPierson" 
@@ -78,6 +84,9 @@ parse_opt() {
             ;;
         --boot)
             boot=1
+            ;;
+        --getIpsw)
+            getIpsw=1
             ;;
         --bypass)
             bypass=1
@@ -542,6 +551,22 @@ if [ "$boot" = "1" ]; then
     _boot
 fi
 
+if [ "$getIpsw" = "1" ]; then
+    if  command -v ipsw &>/dev/null; then
+        echo "you have already installed ipsw"
+        ipsw download ipsw --device $deviceid --version $version
+        sleep 1
+        mv -v "*.ipsw" ipsw/
+        exit;
+    else 
+        if [ "$os" = "Darwin" ]; then
+            brew install blacktop/tap/ipsw
+        else
+            sudo apt-get install ipsw
+        fi
+    fi
+fi
+
     # =========
     # extract ipsw 
     # =========
@@ -554,11 +579,9 @@ if [ "$os" = 'Darwin' ]; then
     if [ ! -f "ipsw/out.dmg" ]; then # this would create a dmg file which can be mounted an restore a patition
         asr -source "$extractedIpsw$(/usr/bin/plutil -extract "BuildIdentities".0."Manifest"."OS"."Info"."Path" xml1 -o - work/BuildManifest.plist | grep '<string>' |cut -d\> -f2 |cut -d\< -f1 | head -1)" -target ipsw/out.dmg --embed -erase -noprompt --chunkchecksum --puppetstrings
     fi
-else
-    if [ ! -f "ipsw/out.dmg" ]; then # this would create a dmg file which can be mounted an restore a patition
-        mv -v "$extractedIpsw$(binaries/Linux/PlistBuddy work/BuildManifest.plist -c "Print BuildIdentities:0:Manifest:OS:Info:Path" | sed 's/"//g')" ipsw/out.dmg 
-    fi
 fi
+dmgfile="$(binaries/Linux/PlistBuddy work/BuildManifest.plist -c "Print BuildIdentities:0:Manifest:OS:Info:Path" | sed 's/"//g')"
+echo "$dmgfile"
 
 # ============
 # Ramdisk
@@ -780,22 +803,24 @@ if [ true ]; then
             else 
                 echo "you dont have rsync installed so the script will take much more time to copy the rootfs file, so install rsync in order to be faster, on mac brew install rsync on linux apt install rsync"
             fi
-
+            
+            echo "it is copying rootfs so hang on like 20 minute ......"
             if [ "$os" = "Darwin" ]; then
                 if [ ! $("$dir"/sshpass -p 'alpine' rsync -rvz -e 'ssh -p 2222' --progress ipsw/out.dmg root@localhost:/mnt8) ]; then
                     remote_cp ipsw/out.dmg root@localhost:/mnt8 # this will copy the root file in order to it is mounted and restore partition      
                 fi
             else 
-                if [ ! $("$dir"/sshpass -p 'alpine' rsync -rvz -e 'ssh -p 2222' --progress ipsw/out.dmg root@localhost:/mnt8) ]; then
-                    remote_cp ipsw/out.dmg root@localhost:/mnt8 # this will copy the root file in order to it is mounted and restore partition      
+                if [ ! $("$dir"/sshpass -p 'alpine' rsync -rvz -e 'ssh -p 2222' --progress "$extractedIpsw$(binaries/Linux/PlistBuddy work/BuildManifest.plist -c "Print BuildIdentities:0:Manifest:OS:Info:Path" | sed 's/"//g')" root@localhost:/mnt8) ]; then
+                    remote_cp "$extractedIpsw$(binaries/Linux/PlistBuddy work/BuildManifest.plist -c "Print BuildIdentities:0:Manifest:OS:Info:Path" | sed 's/"//g')" root@localhost:/mnt8 # this will copy the root file in order to it is mounted and restore partition      
                 fi
-                remote_cmd "/usr/sbin/hdik /mnt8/out.dmg"
+                sleep 2
+                remote_cmd "/usr/sbin/hdik /mnt8/${dmgfile}"
                 remote_cmd "/sbin/mount_apfs -o ro /dev/disk2s1s1 /mnt5/"
                 echo "it is extracting the files so please hang on ......."
                 remote_cmd "cp -a /mnt5/* /mnt8/"
                 sleep 2
                 remote_cmd "/sbin/umount /dev/disk2s1s1"
-                remote_cmd "rm -rv /mnt8/out.dmg"
+                remote_cmd "rm -rv /mnt8/${dmgfile}"
                 
             fi
 
