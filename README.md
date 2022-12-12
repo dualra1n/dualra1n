@@ -84,13 +84,7 @@ after install trollstore opening tv app and press install, after install 2 ipa i
 
 for any error you could create issues 
 
-
-this is a video booting my second ios:
-
-https://user-images.githubusercontent.com/85508740/205317738-84b00b64-778a-41ae-bb97-a28b2953b816.mp4
-
-
-test it on iphone 6s on ios 15.7 using macos big sur
+test it on iphone 6s on ios 15.7 using macos big sur and on kali linux
 
 # thanks
 
