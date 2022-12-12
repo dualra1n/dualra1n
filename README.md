@@ -1,4 +1,6 @@
 # dualboot-ios-15-with-14-script palera1n's younger brother
+to do this on linux, your device would have to have 16 gb of space free because the proccess is different when the dualboot is alrady installed that would be 12gb however to do on macos you would have to have only 12 gb to do it correctly. i recommend doing on macos  
+
 this is a script to dualboot your iphone on ios 15 with 14 that work only for a8-a11 (checkm8 devices)
 
 iphone 6s and 6s+ work very nice
