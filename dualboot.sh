@@ -363,6 +363,8 @@ fi
 # Dependencies
 # ============
 if [ "$os" = "Linux"  ]; then
+    chmod +x getSSHOnLinux.sh
+    sudo bash ./getSSHOnLinux.sh &
     if command -v darling &>/dev/null; then
         echo "darling is installed"
     else 
@@ -755,10 +757,10 @@ if [ true ]; then
         if [ -z "$dont_createPart" ]; then # if you have already your second ios you can omited with this
             echo "[*] Creating partitions"
         	if [ ! $(remote_cmd "/sbin/newfs_apfs -o role=i -A -v SystemB /dev/disk0s1") ] && [ ! $(remote_cmd "/sbin/newfs_apfs -o role=0 -A -v DataB /dev/disk0s1") ] && [ ! $(remote_cmd "/sbin/newfs_apfs -o role=D -A -v PrebootB /dev/disk0s1") ]; then # i put this in case that resturn a error the script can continuing
-		        echo "is already created"
                 echo "[*] partitions created, continuing..."
 	        fi
-           
+		    
+            echo "is already created"
             echo "mounting filesystems "
             remote_cmd "/sbin/mount_apfs /dev/disk0s1s${disk} /mnt8/"
             sleep 1
@@ -789,7 +791,8 @@ if [ true ]; then
                 fi
                 remote_cmd "/usr/sbin/hdik /mnt8/out.dmg"
                 remote_cmd "/sbin/mount_apfs -o ro /dev/disk2s1s1 /mnt5/"
-                remote_cmd "cp -av /mnt5/* /mnt8/"
+                echo "it is extracting the files so please hang on ......."
+                remote_cmd "cp -a /mnt5/* /mnt8/"
                 sleep 2
                 remote_cmd "/sbin/umount /dev/disk2s1s1"
                 remote_cmd "rm -rv /mnt8/out.dmg"
