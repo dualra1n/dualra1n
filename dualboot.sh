@@ -68,6 +68,10 @@ Options:
 
 Subcommands:
     clean               Deletes the created boot files
+help:
+    in case that the device does not boot use: ./dualboot.sh --dualboot 14.3 --debug --dont_createPart --fixBoot 
+
+
 
 The iOS version argument should be the iOS version of your device.
 It is required when starting from DFU mode.
@@ -84,6 +88,9 @@ parse_opt() {
             ;;
         --boot)
             boot=1
+            ;;
+        --fixBoot)
+            fixBoot=1
             ;;
         --getIpsw)
             getIpsw=1
@@ -328,6 +335,14 @@ _boot() {
     "$dir"/irecovery -v -f "boot/${deviceid}/trustcache.img4"
     sleep 1
 
+    if [ -d "boot/${deviceid}/FUD" ]; then
+        for i in $(ls boot/$deviceid/FUD/*.img4)
+        do
+            irecovery -f $i
+            sleep 1
+        done        
+    fi
+
     "$dir"/irecovery -c "firmware"
     sleep 1
 
@@ -526,6 +541,8 @@ echo "$cpid"
 echo "$model"
 echo "$deviceid"
 
+ipswurl=$(curl -sL "https://api.ipsw.me/v4/device/$deviceid?type=ipsw" | "$dir"/jq '.firmwares | .[] | select(.version=="'$version'")' | "$dir"/jq -s '.[0] | .url' --raw-output)
+
 if [ "$dfuhelper" = "1" ]; then
     echo "[*] Running DFU helper"
     _dfuhelper "$cpid"
@@ -660,7 +677,6 @@ if [ true ]; then
         exit
     fi
     active=$(remote_cmd "cat /mnt6/active" 2> /dev/null)
-
     echo "backup preboot partition... please dont delete directory prebootBackup" # this will backup your perboot parition in case that was deleted by error 
     mkdir -p "prebootBackup"
     if [ ! -d "prebootBackup/${deviceid}" ]; then
@@ -669,6 +685,9 @@ if [ true ]; then
             echo "finish backup"
         fi
     fi
+    
+    mkdir -p "boot/${deviceid}"
+    cp -rv "prebootBackup/${deviceid}/mnt6/${active}/usr/standalone/firmware/FUD" "boot/${deviceid}/"
 
     if [ "$fix_preboot" = "1" ]; then
         remote_cp "prebootBackup/${deviceid}/mnt6" root@localhost:/
@@ -728,7 +747,7 @@ if [ true ]; then
         fi
         sleep 2
         remote_cp root@localhost:/mnt4/$active/System/Library/Caches/com.apple.kernelcaches/kcache.patched work/
-        "$dir"/Kernel64Patcher work/kcache.patched work/kcache.patchedB -f -e 
+        "$dir"/Kernel64Patcher work/kcache.patched work/kcache.patchedB -f -s -u -t 
 
         if [[ "$deviceid" == *'iPhone8'* ]] || [[ "$deviceid" == *'iPad6'* ]] || [[ "$deviceid" == *'iPad5'* ]]; then
             python3 -m pyimg4 im4p create -i work/kcache.patchedB -o work/kcache.im4p -f krnl --extra work/kpp.bin --lzss
@@ -855,17 +874,32 @@ if [ true ]; then
         sleep 3
 
         echo "copying files to work"
-        cp -r "$extractedIpsw$(awk "/""${model}""/{x=1}x&&/iBSS[.]/{print;exit}" work/BuildManifest.plist | grep '<string>' |cut -d\> -f2 |cut -d\< -f1)" "work/"
-        cp -r "$extractedIpsw$(awk "/""${model}""/{x=1}x&&/iBEC[.]/{print;exit}" work/BuildManifest.plist | grep '<string>' |cut -d\> -f2 |cut -d\< -f1)" "work/"
-        cp -r "$extractedIpsw$(awk "/""${model}""/{x=1}x&&/DeviceTree[.]/{print;exit}" work/BuildManifest.plist | grep '<string>' |cut -d\> -f2 |cut -d\< -f1)" "work/"
-        cp -r "$extractedIpsw$(awk "/""${model}""/{x=1}x&&/kernelcache.release/{print;exit}" work/BuildManifest.plist | grep '<string>' |cut -d\> -f2 |cut -d\< -f1)" "work/"
+        if [ "$fixBoot" = "1" ]; then
+            cd work
+            "$dir"/pzb -g BuildManifest.plist "$ipswurl"
+            "$dir"/pzb -g "$(awk "/""${model}""/{x=1}x&&/iBSS[.]/{print;exit}" BuildManifest.plist | grep '<string>' |cut -d\> -f2 |cut -d\< -f1)" "$ipswurl"
+            "$dir"/pzb -g "$(awk "/""${model}""/{x=1}x&&/iBEC[.]/{print;exit}" BuildManifest.plist | grep '<string>' |cut -d\> -f2 |cut -d\< -f1)" "$ipswurl"
+            "$dir"/pzb -g "$(awk "/""${model}""/{x=1}x&&/DeviceTree[.]/{print;exit}" BuildManifest.plist | grep '<string>' |cut -d\> -f2 |cut -d\< -f1)" "$ipswurl"
+            "$dir"/pzb -g "$(awk "/""${model}""/{x=1}x&&/kernelcache.release/{print;exit}" BuildManifest.plist | grep '<string>' |cut -d\> -f2 |cut -d\< -f1)" "$ipswurl"
 
-        if [ "$os" = 'Darwin' ]; then
-            cp -r "$extractedIpsw"/Firmware/"$(/usr/bin/plutil -extract "BuildIdentities".0."Manifest"."RestoreRamDisk"."Info"."Path" xml1 -o - work/BuildManifest.plist | grep '<string>' |cut -d\> -f2 |cut -d\< -f1 | head -1)".trustcache work/
+            if [ "$os" = 'Darwin' ]; then
+                "$dir"/pzb -g Firmware/"$(/usr/bin/plutil -extract "BuildIdentities".0."Manifest"."RestoreRamDisk"."Info"."Path" xml1 -o - BuildManifest.plist | grep '<string>' |cut -d\> -f2 |cut -d\< -f1 | head -1)".trustcache "$ipswurl"
+            else
+                "$dir"/pzb -g Firmware/"$(../binaries/Linux/PlistBuddy BuildManifest.plist -c "Print BuildIdentities:0:Manifest:RestoreRamDisk:Info:Path" | sed 's/"//g')".trustcache "$ipswurl"
+            fi
+            cd ..
         else
-            cp -r "$extractedIpsw"/Firmware/"$(binaries/Linux/PlistBuddy work/BuildManifest.plist -c "Print BuildIdentities:0:Manifest:RestoreRamDisk:Info:Path" | sed 's/"//g')".trustcache work/
-        fi
+            cp -r "$extractedIpsw$(awk "/""${model}""/{x=1}x&&/iBSS[.]/{print;exit}" work/BuildManifest.plist | grep '<string>' |cut -d\> -f2 |cut -d\< -f1)" "work/"
+            cp -r "$extractedIpsw$(awk "/""${model}""/{x=1}x&&/iBEC[.]/{print;exit}" work/BuildManifest.plist | grep '<string>' |cut -d\> -f2 |cut -d\< -f1)" "work/"
+            cp -r "$extractedIpsw$(awk "/""${model}""/{x=1}x&&/DeviceTree[.]/{print;exit}" work/BuildManifest.plist | grep '<string>' |cut -d\> -f2 |cut -d\< -f1)" "work/"
+            cp -r "$extractedIpsw$(awk "/""${model}""/{x=1}x&&/kernelcache.release/{print;exit}" work/BuildManifest.plist | grep '<string>' |cut -d\> -f2 |cut -d\< -f1)" "work/"
 
+            if [ "$os" = 'Darwin' ]; then
+                cp -r "$extractedIpsw"/Firmware/"$(/usr/bin/plutil -extract "BuildIdentities".0."Manifest"."RestoreRamDisk"."Info"."Path" xml1 -o - work/BuildManifest.plist | grep '<string>' |cut -d\> -f2 |cut -d\< -f1 | head -1)".trustcache work/
+            else
+                cp -r "$extractedIpsw"/Firmware/"$(binaries/Linux/PlistBuddy work/BuildManifest.plist -c "Print BuildIdentities:0:Manifest:RestoreRamDisk:Info:Path" | sed 's/"//g')".trustcache work/
+            fi
+        fi
         echo "patching file boots ..."
         "$dir"/img4 -i work/*.trustcache -o work/trustcache.img4 -M work/IM4M -T rtsc
 
@@ -892,7 +926,6 @@ if [ true ]; then
             "$dir"/img4 -i work/dtree.patched -o work/devicetree.img4 -A -M work/IM4M -T rdtr
         fi
 
-        mkdir -p "boot/${deviceid}"
         cp -rv work/*.img4 "boot/${deviceid}"
         rm -rv blobs/"$deviceid"-"$version".shsh2
         echo "so we finish, now you can execute './dualboot boot' to boot to second ios after that we need that you record a video when your iphone is booting to see what is the uuid and note that name of the uuid"       
@@ -900,4 +933,4 @@ if [ true ]; then
     fi
 fi
 
-}
+} | tee logs/"$(date +%T)"-"$(date +%F)"-"$(uname)"-"$(uname -r)".log
