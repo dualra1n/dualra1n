@@ -58,6 +58,7 @@ Options:
     --getIpsw           using this will download a ipsw of your version which you want to dualboot.
     --jailbreak         jailbreak your second ios. you can use it when your device boot correctly the second ios
     --help              Print this help
+    --fix_HB              that will fix home button on a10 and a15 or well try it. that is ultra beta i dont have a10 or a11 to test but you can do it also if the device give error booting you can execute again ./dualboot.sh --dualboot 14.3 --dont_createPart and that will fix the problem.
     --bypass            add --back if you want to bring back (without bypass in order to put a account just in case)that will bypass to second ios in case that you dont know the password of icloud however you could not login on icloud, but you can login on appstore and download apps. thank you for share mobileactivationd @MatthewPierson" 
     --dfuhelper         A helper to help get A11 devices into DFU mode from recovery mode
     --boot              put boot alone, to boot your second ios  
@@ -91,6 +92,9 @@ parse_opt() {
             ;;
         --fixBoot)
             fixBoot=1
+            ;;
+        --fixHB)
+            fixHB=1
             ;;
         --getIpsw)
             getIpsw=1
@@ -320,7 +324,16 @@ _boot() {
     sleep 1
 
     "$dir"/irecovery -f "boot/${deviceid}/iBEC.img4"
-    sleep 2
+    sleep 3
+    
+    if [ "$fixHB" = "1" ]; then
+        "$dir"/irecovery -c "dorwx"
+        if [[ "$deviceid" == iPhone9,[1-4] ]]; then
+            "$dir"/irecovery -f other/payload/payload_t8010.bin
+        else
+            "$dir"/irecovery -f other/payload/payload_t8015.bin
+        fi
+    fi
 
     if [ "$cpid" = '0x8010' ] || [ "$cpid" = '0x8015' ] || [ "$cpid" = '0x8011' ] || [ "$cpid" = '0x8012' ]; then
         "$dir"/irecovery -c "go"
@@ -909,7 +922,17 @@ if [ true ]; then
 
         "$dir"/gaster decrypt work/"$(awk "/""${model}""/{x=1}x&&/iBEC[.]/{print;exit}" work/BuildManifest.plist | grep '<string>' |cut -d\> -f2 |cut -d\< -f1 | sed 's/Firmware[/]dfu[/]//')" work/iBEC.dec
         "$dir"/iBoot64Patcher work/iBEC.dec work/iBEC.patched -b "rd=disk0s1s${disk} debug=0x2014e wdt=-1 -v `if [ "$cpid" = '0x8960' ] || [ "$cpid" = '0x7000' ] || [ "$cpid" = '0x7001' ]; then echo "-restore"; fi`" -n
-        "$dir"/img4 -i work/iBEC.patched -o work/iBEC.img4 -M work/IM4M -A -T ibec
+        
+        if [ "$fixHB" = "1" ]; then
+           if [[ "$deviceid" == iPhone9,[1-4] ]]; then
+                "$dir"/iBootpatch2 --t8010 ibot.patched ibot.patched2
+            else
+                "$dir"/iBootpatch2 --t8015 ibot.patched ibot.patched2
+            fi
+            "$dir"/img4 -i work/iBEC.patched2 -o work/iBEC.img4 -M work/IM4M -A -T ibec
+        else 
+            "$dir"/img4 -i work/iBEC.patched -o work/iBEC.img4 -M work/IM4M -A -T ibec
+        fi
 
         "$dir"/img4 -i work/"$(awk "/""${model}""/{x=1}x&&/kernelcache.release/{print;exit}" work/BuildManifest.plist | grep '<string>' |cut -d\> -f2 |cut -d\< -f1)" -o work/kcache.raw
         "$dir"/Kernel64Patcher work/kcache.raw work/kcache.patched -a -f -s
@@ -929,7 +952,7 @@ if [ true ]; then
         cp -rv work/*.img4 "boot/${deviceid}"
         rm -rv blobs/"$deviceid"-"$version".shsh2
         echo "so we finish, now you can execute './dualboot boot' to boot to second ios after that we need that you record a video when your iphone is booting to see what is the uuid and note that name of the uuid"       
-        _boot        
+        _boot
     fi
 fi
 
