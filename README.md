@@ -27,6 +27,9 @@ Options: example ./dualboot.sh --dualboot 14.3
     
     --bypass            that will bypass to second ios in case that you dont know the password of icloud however you could not login on icloud, but you can login on appstore and download apps. thank you for share mobileactivationd @MatthewPierson". example./dualboot.sh --bypass 14.3 in case that you want to restore icloud use --bypass 14.3 --back
     
+     
+     --getIpsw           using this will download a ipsw of your version which you want to dualboot. ./dualboot.sh --getIpsw 14.3
+
     --dfuhelper         A helper to help get A11 devices into DFU mode from recovery mode
     
     --boot              put boot alone, to boot your second ios. /dualboot.sh --boot
