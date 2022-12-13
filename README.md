@@ -88,5 +88,5 @@ test it on iphone 6s on ios 15.7 using macos big sur and on kali linux
 
 # thanks
 
-THANKS PALERA1N,nathan for beautiful ramdisk,https://dualbootfun.github.io/ for the knowdlege, MatthewPierson, Ralph0045, people who help me test on discord like @something, @samm and others and @fatih to help me give support on linux and all people who created the boot patcher tool, thank @darlinghq for the amazing emulator,thank @blacktop. thanks all.
+THANKS PALERA1N,nathan for beautiful ramdisk,https://dualbootfun.github.io/ for the knowdlege, MatthewPierson, Ralph0045, people who help me test on discord like @something, @samm and others and @fatih to help me give support on linux and all people who created the boot patcher tool, thank @darlinghq for the amazing emulator,thank @blacktop. thank https://github.com/dora2-iOS for fix button. thanks all.
 
