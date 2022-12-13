@@ -58,7 +58,8 @@ Options:
     --getIpsw           using this will download a ipsw of your version which you want to dualboot.
     --jailbreak         jailbreak your second ios. you can use it when your device boot correctly the second ios
     --help              Print this help
-    --fix_HB              that will fix home button on a10 and a15 or well try it. that is ultra beta i dont have a10 or a11 to test but you can do it also if the device give error booting you can execute again ./dualboot.sh --dualboot 14.3 --dont_createPart and that will fix the problem.
+    --fix_HB            that will fix home button on a10 and a11 or well try it. that is ultra beta i dont have a10 or a11 to test but you can do it also if the device give error booting you can execute again ./dualboot.sh --dualboot 14.3 --dont_createPart --fixHB to boot is --boot 14.3 --fixHB and that will fix the problem to
+    --fixhardware       this should fix some problem like touch on ipad, i dont know if that work but you can do it to see if work. ./dualboot.sh --dualboot 14.3 --dont_createPart --fixhardware
     --bypass            add --back if you want to bring back (without bypass in order to put a account just in case)that will bypass to second ios in case that you dont know the password of icloud however you could not login on icloud, but you can login on appstore and download apps. thank you for share mobileactivationd @MatthewPierson" 
     --dfuhelper         A helper to help get A11 devices into DFU mode from recovery mode
     --boot              put boot alone, to boot your second ios  
@@ -95,6 +96,9 @@ parse_opt() {
             ;;
         --fixHB)
             fixHB=1
+            ;;
+        --fixhardware)
+            fixhardware=1
             ;;
         --getIpsw)
             getIpsw=1
@@ -345,17 +349,16 @@ _boot() {
     "$dir"/irecovery -c "devicetree"
     sleep 1
 
-    "$dir"/irecovery -v -f "boot/${deviceid}/trustcache.img4"
-    sleep 1
-
-    if [ -d "boot/${deviceid}/FUD" ]; then
+   if [ -d "boot/${deviceid}/FUD" ]; then
         for i in $(ls boot/$deviceid/FUD/*.img4)
         do
             irecovery -f $i
             sleep 1
         done        
+    else 
+        "$dir"/irecovery -v -f "boot/${deviceid}/trustcache.img4"
     fi
-
+    
     "$dir"/irecovery -c "firmware"
     sleep 1
 
@@ -700,7 +703,10 @@ if [ true ]; then
     fi
     
     mkdir -p "boot/${deviceid}"
-    cp -rv "prebootBackup/${deviceid}/mnt6/${active}/usr/standalone/firmware/FUD" "boot/${deviceid}/"
+    mkdir -p "boot/${deviceid}"
+    if [ "$fixhardware" = "1" ]; then
+        cp -rv "prebootBackup/${deviceid}/mnt6/${active}/usr/standalone/firmware/FUD" "boot/${deviceid}/"
+    fi
 
     if [ "$fix_preboot" = "1" ]; then
         remote_cp "prebootBackup/${deviceid}/mnt6" root@localhost:/
@@ -914,7 +920,9 @@ if [ true ]; then
             fi
         fi
         echo "patching file boots ..."
-        "$dir"/img4 -i work/*.trustcache -o work/trustcache.img4 -M work/IM4M -T rtsc
+        if [ ! "$fixhardware" = "1" ]; then
+            "$dir"/img4 -i work/*.trustcache -o work/trustcache.img4 -M work/IM4M -T rtsc
+        fi
 
         "$dir"/gaster decrypt work/"$(awk "/""${model}""/{x=1}x&&/iBSS[.]/{print;exit}" work/BuildManifest.plist | grep '<string>' |cut -d\> -f2 |cut -d\< -f1 | sed 's/Firmware[/]dfu[/]//')" work/iBSS.dec
         "$dir"/iBoot64Patcher work/iBSS.dec work/iBSS.patched
