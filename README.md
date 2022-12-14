@@ -1,3 +1,7 @@
+# what is ?
+
+this is a tool to dualboot your idevice, dualboot means having 2 version of ios on just one device. this is semi-untethered means that if you are for example on ios 14.3 with the dualboot when you reboot you come back on the normal ios that you had for me was 15.7 
+
 # dualboot-ios-15-with-14-script palera1n's younger brother
 to do this on linux, your device would have to have 16 gb of space free because the proccess is different when the dualboot is alrady installed that would be 12gb however to do on macos you would have to have only 12 gb to do it correctly. i recommend doing on macos  
 
