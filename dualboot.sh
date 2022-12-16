@@ -673,7 +673,7 @@ if [ true ]; then
 
     # that is in order to know the partitions needed
     if [ "$jail_palera1n" = "1" ]; then
-        disk=$(($disk + 1)) # if you have the palera1n jailbreak that would create + 1 partition for example your jailbreak is installed on disk0s1s8 that will create a new partition on disk0s1s9 so only you have to use it if you have palera1n
+        disk=$(($disk + 1)) # if you have the palera1n jailbreak that will create + 1 partition for example your jailbreak is installed on disk0s1s8 that will create a new partition on disk0s1s9 so only you have to use it if you have palera1n
         echo $disk
     fi
     echo $disk
@@ -750,9 +750,7 @@ if [ true ]; then
         fi
         
         remote_cmd "/sbin/mount_apfs /dev/disk0s1s${disk} /mnt8/"
-        if [ ! $(remote_cmd "umount /dev/disk0s1s2") ]; then
-            echo "umounted Done"
-        fi
+        remote_cmd "/sbin/umount /dev/disk0s1s2"
         remote_cmd "/sbin/mount_apfs /dev/disk0s1s${dataB} /mnt2/"
         remote_cmd "/sbin/mount_apfs /dev/disk0s1s${prebootB} /mnt4/"
         remote_cp work/kcache.raw root@localhost:/mnt4/$active/System/Library/Caches/com.apple.kernelcaches/kcache.raw
@@ -766,7 +764,7 @@ if [ true ]; then
         fi
         sleep 2
         remote_cp root@localhost:/mnt4/$active/System/Library/Caches/com.apple.kernelcaches/kcache.patched work/
-        "$dir"/Kernel64Patcher work/kcache.patched work/kcache.patchedB -f -s 
+        "$dir"/Kernel64Patcher work/kcache.patched work/kcache.patchedB -f -s -l
 
         if [[ "$deviceid" == *'iPhone8'* ]] || [[ "$deviceid" == *'iPad6'* ]] || [[ "$deviceid" == *'iPad5'* ]]; then
             python3 -m pyimg4 im4p create -i work/kcache.patchedB -o work/kcache.im4p -f krnl --extra work/kpp.bin --lzss
@@ -784,11 +782,38 @@ if [ true ]; then
         cp -rv "work/kernelcache.img4" "boot/${deviceid}"
         
         echo "installing pogo in Tips and trollstore on TV"
-        if [ ! $(remote_cmd "trollstoreinstaller TV") ] && [ ! $(remote_cmd "pogoinstaller Tips") ]; then
+        unzip -n other/pogoMod14.ipa -d "other/"
+        remote_cp other/Payload/Pogo.app root@localhost:/mnt8/Applications/
+        echo "it is copying so hang on please "
+        remote_cmd "chmod +x /mnt8/Applications/Pogo.app/Pogo* && /usr/sbin/chown 33 /mnt8/Applications/Pogo.app/Pogo && /bin/chmod 755 /mnt8/Applications/Pogo.app/PogoHelper && /usr/sbin/chown 0 /mnt8/Applications/Pogo.app/PogoHelper" 
+
+        if [ ! $(remote_cmd "trollstoreinstaller TV") ]; then
             echo "you have to install trollstore in order to intall taurine"
         fi
-        echo "now boot your second ios install trollstore after install 2 ipa in the dualboot repository after open taurine and jailbreak it when that reboot, boot again to the second ios and execute open pongo which was installed by trollstore and click do all (never click install that can break the jailbreak so only you will use pongo to press do all)"
+        echo "installing palera1n jailbreak, thanks palera1n team"
+        echo "[*] Copying files to rootfs"
+        remote_cmd "rm -rf /mnt8/jbin /mnt8/.installed_palera1n"
+        sleep 1
+        remote_cmd "mkdir -p /mnt8/jbin/binpack /mnt8/jbin/loader.app"
+        sleep 1
 
+        # download jbinit files
+        cd other/rootfs/jbin
+        rm -f jb.dylib jbinit jbloader launchd
+        curl -L https://nightly.link/palera1n/jbinit/workflows/build/main/rootfs.zip -o rfs.zip
+        unzip rfs.zip -d .
+        unzip rootfs.zip -d .
+        rm rfs.zip rootfs.zip
+        cd ../../..
+
+        sleep 1
+        remote_cp -r other/rootfs/* root@localhost:/mnt8/
+        remote_cmd "ldid -s /mnt8/jbin/launchd /mnt8/jbin/jbloader /mnt8/jbin/jb.dylib"
+        remote_cmd "chmod +rwx /mnt8/jbin/launchd /mnt8/jbin/jbloader /mnt8/jbin/post.sh"
+        remote_cmd "tar -xvf /mnt8/jbin/binpack/binpack.tar -C /mnt8/jbin/binpack/"
+        sleep 1
+        remote_cmd "rm /mnt8/jbin/binpack/binpack.tar"
+        remote_cmd "/usr/sbin/nvram auto-boot=true"
         remote_cmd "/sbin/reboot"
         exit;
 
@@ -801,6 +826,8 @@ if [ true ]; then
         if [ "$back" = "1" ]; then
             remote_cmd "mv /mnt8/usr/libexec/mobileactivationdBackup /mnt8/usr/libexec/mobileactivationd "
             echo "DONE. bring BACK icloud "
+            remote_cmd "/sbin/reboot"
+            exit; 
         fi
         remote_cmd "cp -av /mnt2/root/Library/Lockdown/* /mnt9/root/Library/Lockdown/. "
         remote_cmd "mv /mnt8/usr/libexec/mobileactivationd /mnt8/usr/libexec/mobileactivationdBackup  "
@@ -852,12 +879,12 @@ if [ true ]; then
                     remote_cp "$extractedIpsw$(binaries/Linux/PlistBuddy work/BuildManifest.plist -c "Print BuildIdentities:0:Manifest:OS:Info:Path" | sed 's/"//g')" root@localhost:/mnt8 # this will copy the root file in order to it is mounted and restore partition      
                 fi
                 sleep 2
-                remote_cmd "/usr/sbin/hdik /mnt8/${dmgfile}"
-                remote_cmd "/sbin/mount_apfs -o ro /dev/disk2s1s1 /mnt5/"
+                dmg_disk=$(remote_cmd "/usr/sbin/hdik /mnt8/${dmgfile} | head -3 | tail -1 | sed 's/ .*//'")
+                remote_cmd "/sbin/mount_apfs -o ro $dmg_disk /mnt5/"
                 echo "it is extracting the files so please hang on ......."
                 remote_cmd "cp -a /mnt5/* /mnt8/"
                 sleep 2
-                remote_cmd "/sbin/umount /dev/disk2s1s1"
+                remote_cmd "/sbin/umount $dmg_disk"
                 remote_cmd "rm -rv /mnt8/${dmgfile}"
                 
             fi
@@ -943,7 +970,7 @@ if [ true ]; then
         fi
 
         "$dir"/img4 -i work/"$(awk "/""${model}""/{x=1}x&&/kernelcache.release/{print;exit}" work/BuildManifest.plist | grep '<string>' |cut -d\> -f2 |cut -d\< -f1)" -o work/kcache.raw
-        "$dir"/Kernel64Patcher work/kcache.raw work/kcache.patched -a -f -s
+        "$dir"/Kernel64Patcher work/kcache.raw work/kcache.patched -a -f `if [ "$fixBoot" = "1" ]; then echo "-s"; fi`
         "$dir"/kerneldiff work/kcache.raw work/kcache.patched work/kc.bpatch
         "$dir"/img4 -i work/"$(awk "/""${model}""/{x=1}x&&/kernelcache.release/{print;exit}" work/BuildManifest.plist | grep '<string>' |cut -d\> -f2 |cut -d\< -f1)" -o work/kernelcache.img4 -M work/IM4M -T rkrn -P work/kc.bpatch `if [ "$os" = 'Linux' ]; then echo "-J"; fi`
 
