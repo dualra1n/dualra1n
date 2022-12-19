@@ -786,6 +786,7 @@ if [ true ]; then
         echo "installing pogo in Tips and trollstore on TV"
         unzip -n other/pogoMod14.ipa -d "other/"
         remote_cmd "/bin/mkdir /mnt8/Applications/Pogo.app"
+        echo "copying pogo so hang on please ..."
         remote_cp other/Payload/Pogo.app root@localhost:/mnt8/Applications/
         echo "it is copying so hang on please "
         remote_cmd "chmod +x /mnt8/Applications/Pogo.app/Pogo* && /usr/sbin/chown 33 /mnt8/Applications/Pogo.app/Pogo && /bin/chmod 755 /mnt8/Applications/Pogo.app/PogoHelper && /usr/sbin/chown 0 /mnt8/Applications/Pogo.app/PogoHelper" 
@@ -817,6 +818,7 @@ if [ true ]; then
         sleep 1
         remote_cmd "rm /mnt8/jbin/binpack/binpack.tar"
         remote_cmd "/usr/sbin/nvram auto-boot=true"
+        echo "[*] DONE ... now reboot and boot again"        
         remote_cmd "/sbin/reboot"
         exit;
 
