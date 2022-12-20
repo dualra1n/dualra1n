@@ -824,28 +824,6 @@ if [ true ]; then
 
     fi
 
-    if [ "$bypass" = "1" ]; then
-        remote_cmd "/sbin/mount_apfs /dev/disk0s1s${disk} /mnt8/"
-        remote_cmd "/sbin/mount_apfs /dev/disk0s1s${dataB} /mnt9/"
-        remote_cmd "/sbin/mount_apfs /dev/disk0s1s${prebootB} /mnt4/"
-        if [ "$back" = "1" ]; then
-            remote_cmd "mv /mnt8/usr/libexec/mobileactivationdBackup /mnt8/usr/libexec/mobileactivationd "
-            echo "DONE. bring BACK icloud "
-            remote_cmd "/sbin/reboot"
-            exit; 
-        fi
-        remote_cmd "cp -av /mnt2/root/Library/Lockdown/* /mnt9/root/Library/Lockdown/. "
-        remote_cmd "mv /mnt8/usr/libexec/mobileactivationd /mnt8/usr/libexec/mobileactivationdBackup  "
-        remote_cp other/mobileactivationd root@localhost:/mnt8/usr/libexec/
-        remote_cmd "ldid -e /mnt8/usr/libexec/mobileactivationdBackup > /mnt8/mob.plist"
-        remote_cmd "ldid -S/mnt8/mob.plist /mnt8/usr/libexec/mobileactivationd"
-        remote_cmd "rm -rv /mnt8/mob.plist"
-        echo "thank you for share mobileactivationd @MatthewPierson"
-        echo "[*] DONE ... now reboot and boot again"
-        remote_cmd "/sbin/reboot"
-        
-    fi
-
     if [ "$dualboot" = "1" ]; then
         if [ -z "$dont_createPart" ]; then # if you have already your second ios you can omited with this
             echo "[*] Creating partitions"
