@@ -332,14 +332,14 @@ _boot() {
     
     if [ "$fixHB" = "1" ]; then
         "$dir"/irecovery -c "dorwx"
-        if [[ "$deviceid" == iPhone9,[1-4] ]]; then
+        if [[ "$deviceid" == iPhone9,[1-4] ]] || [[ "$deviceid" == "iPhone10,"* ]]; then
             "$dir"/irecovery -f other/payload/payload_t8010.bin
         else
             "$dir"/irecovery -f other/payload/payload_t8015.bin
         fi
     fi
 
-    if [ "$cpid" = '0x8010' ] || [ "$cpid" = '0x8015' ] || [ "$cpid" = '0x8011' ] || [ "$cpid" = '0x8012' ]; then
+    if [[ "$cpid" == *"0x801"* ]]; then
         "$dir"/irecovery -c "go"
     fi
 
@@ -964,7 +964,7 @@ if [ true ]; then
         "$dir"/iBoot64Patcher work/iBEC.dec work/iBEC.patched -b "rd=disk0s1s${disk} debug=0x2014e wdt=-1 -v `if [ "$cpid" = '0x8960' ] || [ "$cpid" = '0x7000' ] || [ "$cpid" = '0x7001' ]; then echo "-restore"; fi`" -n
         
         if [ "$fixHB" = "1" ]; then
-           if [[ "$deviceid" == iPhone9,[1-4] ]]; then
+           if [[ "$deviceid" == iPhone9,[1-4] ]] || [[ "$deviceid" == "iPhone10,"* ]]; then
                 "$dir"/iBootpatch2 --t8010 ibot.patched ibot.patched2
             else
                 "$dir"/iBootpatch2 --t8015 ibot.patched ibot.patched2
