@@ -4,6 +4,11 @@ mkdir -p logs
 mkdir -p boot
 set -e
 
+log="$(date +%T)"-"$(date +%F)"-"$(uname)"-"$(uname -r)".log
+cd logs
+touch "$log"
+cd ..
+
 {
 
 echo "[*] Command ran:`if [ $EUID = 0 ]; then echo " sudo"; fi` ./dualboot.sh $@"
@@ -584,7 +589,7 @@ if [ "$boot" = "1" ]; then
     _boot
 fi
 
-if [ "$getIpsw" = "1" ]; then
+if [ "$getIpsw" = "1" ] || [ ! -f $ipsw ]; then
     if  command -v ipsw &>/dev/null; then
         echo "you have already installed ipsw"
         ipsw download ipsw --device $deviceid --version $version
@@ -996,4 +1001,4 @@ if [ true ]; then
     fi
 fi
 
-} | tee logs/"$(date +%T)"-"$(date +%F)"-"$(uname)"-"$(uname -r)".log
+} 2>&1 | tee logs/${log}
