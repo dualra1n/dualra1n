@@ -359,11 +359,12 @@ _boot() {
         do
             irecovery -f $i
             sleep 1
+            "$dir"/irecovery -c "firmware"
         done        
-    else 
-        "$dir"/irecovery -v -f "boot/${deviceid}/trustcache.img4"
     fi
     
+    "$dir"/irecovery -v -f "boot/${deviceid}/trustcache.img4"    
+
     "$dir"/irecovery -c "firmware"
     sleep 1
 
