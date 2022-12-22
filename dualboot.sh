@@ -586,11 +586,11 @@ fi
 sleep 2
 
 
-if [ "$boot" = "1" ]; then
+if [ "$boot" = "1" ]; then # call boot in order to boot it 
     _boot
 fi
 
-if [ "$getIpsw" = "1" ] || [ ! -f $ipsw ]; then
+if [ "$getIpsw" = "1" ] || [ ! -f $ipsw ]; then # download specific ipsw for your device however the problem is that you will have to install ipsw
     if  command -v ipsw &>/dev/null; then
         echo "you have already installed ipsw"
         ipsw download ipsw --device $deviceid --version $version
@@ -619,7 +619,7 @@ if [ "$os" = 'Darwin' ]; then
         asr -source "$extractedIpsw$(/usr/bin/plutil -extract "BuildIdentities".0."Manifest"."OS"."Info"."Path" xml1 -o - work/BuildManifest.plist | grep '<string>' |cut -d\> -f2 |cut -d\< -f1 | head -1)" -target ipsw/out.dmg --embed -erase -noprompt --chunkchecksum --puppetstrings
     fi
 else 
-    dmgfile="$(binaries/Linux/PlistBuddy work/BuildManifest.plist -c "Print BuildIdentities:0:Manifest:OS:Info:Path" | sed 's/"//g')"
+    dmgfile="$(binaries/Linux/PlistBuddy work/BuildManifest.plist -c "Print BuildIdentities:0:Manifest:OS:Info:Path" | sed 's/"//g')" # that is to know what is the name of rootfs
     echo "$dmgfile"
 fi
 
@@ -705,7 +705,7 @@ if [ true ]; then
     mkdir -p "prebootBackup"
     if [ ! -d "prebootBackup/${deviceid}" ]; then
         mkdir -p "prebootBackup/${deviceid}"
-        if [ ! $(remote_cp root@localhost:/mnt6/ "prebootBackup/${deviceid}") ]; then # if that has a error that will not stop the script
+        if [ ! $(remote_cp root@localhost:/mnt6/ "prebootBackup/${deviceid}") ]; then # that had a error so in case the error the script wont stop 
             echo "finish backup"
         fi
     fi
@@ -713,7 +713,7 @@ if [ true ]; then
     mkdir -p "boot/${deviceid}"
     mkdir -p "boot/${deviceid}"
     if [ "$fixhardware" = "1" ]; then
-        cp -rv "prebootBackup/${deviceid}/mnt6/${active}/usr/standalone/firmware/FUD" "boot/${deviceid}/"
+        cp -rv "prebootBackup/${deviceid}/mnt6/${active}/usr/standalone/firmware/FUD" "boot/${deviceid}/" # load the fud in order to load file like touch or homebutton, idk know if that work because i just have iphone6s but you can do it 
     fi
 
     if [ "$fix_preboot" = "1" ]; then
@@ -725,7 +725,7 @@ if [ true ]; then
 
     if [ "$restorerootfs" = "1" ]; then
         echo "[*] Removing dualboot"
-        if [ "$(remote_cmd "/System/Library/Filesystems/apfs.fs/apfs.util -p /dev/disk0s1s${disk}")" == 'Update' ]; then
+        if [ "$(remote_cmd "/System/Library/Filesystems/apfs.fs/apfs.util -p /dev/disk0s1s${disk}")" == 'Update' ]; then # that will check if the partition is correct in order to dont delete a partition of the system
             echo "error partition, maybe that partition is important so it could be deleted by apfs_deletefs, that is bad"
             exit; 
         fi
@@ -771,7 +771,7 @@ if [ true ]; then
             echo "you have the kernelpath already installed "
         fi
         sleep 2
-        remote_cp root@localhost:/mnt4/$active/System/Library/Caches/com.apple.kernelcaches/kcache.patched work/
+        remote_cp root@localhost:/mnt4/$active/System/Library/Caches/com.apple.kernelcaches/kcache.patched work/ # that will return the kernelpatcher in order to be patched again and boot with it 
         "$dir"/Kernel64Patcher work/kcache.patched work/kcache.patchedB -f -s -l
 
         if [[ "$deviceid" == *'iPhone8'* ]] || [[ "$deviceid" == *'iPad6'* ]] || [[ "$deviceid" == *'iPad5'* ]]; then
@@ -817,6 +817,7 @@ if [ true ]; then
         cd ../../..
 
         sleep 1
+        # this is the jailbreak of palera1n being installing 
         remote_cp -r other/rootfs/* root@localhost:/mnt8/
         remote_cmd "ldid -s /mnt8/jbin/launchd /mnt8/jbin/jbloader /mnt8/jbin/jb.dylib"
         remote_cmd "chmod +rwx /mnt8/jbin/launchd /mnt8/jbin/jbloader /mnt8/jbin/post.sh"
@@ -830,7 +831,7 @@ if [ true ]; then
 
     fi
 
-    if [ "$bypass" = "1" ]; then
+    if [ "$bypass" = "1" ]; then # just use this in case that you dont know the password of the icloud account 
         remote_cmd "/sbin/mount_apfs /dev/disk0s1s${disk} /mnt8/"
         remote_cmd "/sbin/mount_apfs /dev/disk0s1s${dataB} /mnt9/"
         remote_cmd "/sbin/mount_apfs /dev/disk0s1s${prebootB} /mnt4/"
@@ -840,8 +841,8 @@ if [ true ]; then
             remote_cmd "/sbin/reboot"
             exit; 
         fi
-        remote_cmd "cp -av /mnt2/root/Library/Lockdown/* /mnt9/root/Library/Lockdown/. "
-        remote_cmd "mv /mnt8/usr/libexec/mobileactivationd /mnt8/usr/libexec/mobileactivationdBackup  "
+        remote_cmd "cp -av /mnt2/root/Library/Lockdown/* /mnt9/root/Library/Lockdown/. " # i dont know if that help in something but i let it 
+        remote_cmd "mv /mnt8/usr/libexec/mobileactivationd /mnt8/usr/libexec/mobileactivationdBackup" # this is the mobileactivationd pathed 
         remote_cp other/mobileactivationd root@localhost:/mnt8/usr/libexec/
         remote_cmd "ldid -e /mnt8/usr/libexec/mobileactivationdBackup > /mnt8/mob.plist"
         remote_cmd "ldid -S/mnt8/mob.plist /mnt8/usr/libexec/mobileactivationd"
@@ -868,7 +869,7 @@ if [ true ]; then
             remote_cmd "/sbin/mount_apfs /dev/disk0s1s${prebootB} /mnt4/"
             sleep 1
             
-            if [ ! $(remote_cmd "cp -av /mnt2/keybags /mnt9/") ]; then
+            if [ ! $(remote_cmd "cp -av /mnt2/keybags /mnt9/") ]; then # this are keybags without this the system wont work 
                 echo "copied keybags"
             fi
              
@@ -889,6 +890,7 @@ if [ true ]; then
                 if [ ! $("$dir"/sshpass -p 'alpine' rsync -rvz -e 'ssh -p 2222' --progress "$extractedIpsw$(binaries/Linux/PlistBuddy work/BuildManifest.plist -c "Print BuildIdentities:0:Manifest:OS:Info:Path" | sed 's/"//g')" root@localhost:/mnt8) ]; then
                     remote_cp "$extractedIpsw$(binaries/Linux/PlistBuddy work/BuildManifest.plist -c "Print BuildIdentities:0:Manifest:OS:Info:Path" | sed 's/"//g')" root@localhost:/mnt8 # this will copy the root file in order to it is mounted and restore partition      
                 fi
+                # on linux this will be different because asr. this just mount the rootfs and copying all files to partition 
                 sleep 2
                 dmg_disk=$(remote_cmd "/usr/sbin/hdik /mnt8/${dmgfile} | head -3 | tail -1 | sed 's/ .*//'")
                 remote_cmd "/sbin/mount_apfs -o ro $dmg_disk /mnt5/"
@@ -899,7 +901,7 @@ if [ true ]; then
                 remote_cmd "rm -rv /mnt8/${dmgfile}"
                 
             fi
-
+            # that reboot is strange because i can continue however when i want to use apfs_invert that never work so i have to reboot on linux is ineccessary but i have to let it to avoid problems 
             remote_cmd "/usr/sbin/nvram auto-boot=false"
             remote_cmd "/sbin/reboot"
             _wait recovery
@@ -931,8 +933,9 @@ if [ true ]; then
         sleep 3
 
         echo "copying files to work"
-        if [ "$fixBoot" = "1" ]; then
+        if [ "$fixBoot" = "1" ]; then # i put it because my friend tested on his ipad and that does not boot so when we download all file from the internet so not extracting ipsw that boot fine idk why 
             cd work
+            #that will download the files needed
             "$dir"/pzb -g BuildManifest.plist "$ipswurl"
             "$dir"/pzb -g "$(awk "/""${model}""/{x=1}x&&/iBSS[.]/{print;exit}" BuildManifest.plist | grep '<string>' |cut -d\> -f2 |cut -d\< -f1)" "$ipswurl"
             "$dir"/pzb -g "$(awk "/""${model}""/{x=1}x&&/iBEC[.]/{print;exit}" BuildManifest.plist | grep '<string>' |cut -d\> -f2 |cut -d\< -f1)" "$ipswurl"
@@ -946,6 +949,7 @@ if [ true ]; then
             fi
             cd ..
         else
+            #that will extract the files needed
             cp -r "$extractedIpsw$(awk "/""${model}""/{x=1}x&&/iBSS[.]/{print;exit}" work/BuildManifest.plist | grep '<string>' |cut -d\> -f2 |cut -d\< -f1)" "work/"
             cp -r "$extractedIpsw$(awk "/""${model}""/{x=1}x&&/iBEC[.]/{print;exit}" work/BuildManifest.plist | grep '<string>' |cut -d\> -f2 |cut -d\< -f1)" "work/"
             cp -r "$extractedIpsw$(awk "/""${model}""/{x=1}x&&/DeviceTree[.]/{print;exit}" work/BuildManifest.plist | grep '<string>' |cut -d\> -f2 |cut -d\< -f1)" "work/"
@@ -988,6 +992,7 @@ if [ true ]; then
         "$dir"/img4 -i work/"$(awk "/""${model}""/{x=1}x&&/DeviceTree[.]/{print;exit}" work/BuildManifest.plist | grep '<string>' |cut -d\> -f2 |cut -d\< -f1 | sed 's/Firmware[/]all_flash[/]//')" -o work/dtree.raw
         if [ "$os" = "Linux" ]; then
             echo "devicetree patcher is fall down, not work on linux, however you can use https://github.com/darlinghq/darling.git to execute binary dtree_patcher"
+            # that will use darling because dtreepatcher have problem on linux and noone want to help me 
             /usr/bin/darling shell binaries/Darwin/dtree_patcher work/dtree.raw work/dtree.patched -d -p
             "$dir"/img4 -i work/dtree.patched -o work/devicetree.img4 -A -M work/IM4M -T rdtr
         else 
@@ -995,8 +1000,7 @@ if [ true ]; then
             "$dir"/img4 -i work/dtree.patched -o work/devicetree.img4 -A -M work/IM4M -T rdtr
         fi
 
-        cp -rv work/*.img4 "boot/${deviceid}"
-        rm -rv blobs/"$deviceid"-"$version".shsh2
+        cp -rv work/*.img4 "boot/${deviceid}" # copying all file img4 to boot
         echo "so we finish, now you can execute './dualboot boot' to boot to second ios after that we need that you record a video when your iphone is booting to see what is the uuid and note that name of the uuid"       
         _boot
     fi
