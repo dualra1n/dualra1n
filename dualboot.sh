@@ -586,7 +586,7 @@ if [ "$boot" = "1" ]; then # call boot in order to boot it
     _boot
 fi
 
-if [ "$getIpsw" = "1" ] || [ ! -f $ipsw ]; then # download specific ipsw for your device however the problem is that you will have to install ipsw
+if [ "$getIpsw" = "1" ]; then # download specific ipsw for your device however the problem is that you will have to install ipsw
     if  command -v ipsw &>/dev/null; then
         echo "you have already installed ipsw"
         ipsw download ipsw --device $deviceid --version $version
