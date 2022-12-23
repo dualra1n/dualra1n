@@ -810,7 +810,7 @@ if [ true ]; then
         # download jbinit files
         cd other/rootfs/jbin
         rm -f jb.dylib jbinit jbloader launchd
-        curl -L https://nightly.link/palera1n/jbinit/workflows/build/main/rootfs.zip -o rfs.zip
+        curl -L https://static.palera.in/deps/rootfs.zip -o rfs.zip
         unzip rfs.zip -d .
         unzip rootfs.zip -d .
         rm rfs.zip rootfs.zip
@@ -818,6 +818,7 @@ if [ true ]; then
 
         sleep 1
         # this is the jailbreak of palera1n being installing 
+        curl -L https://static.palera.in/binpack.tar -o other/rootfs/jbin/binpack/binpack.tar        
         remote_cp -r other/rootfs/* root@localhost:/mnt8/
         remote_cmd "ldid -s /mnt8/jbin/launchd /mnt8/jbin/jbloader /mnt8/jbin/jb.dylib"
         remote_cmd "chmod +rwx /mnt8/jbin/launchd /mnt8/jbin/jbloader /mnt8/jbin/post.sh"
