@@ -828,17 +828,6 @@ if [ true ]; then
 
     fi
 
-        remote_cmd "cp -av /mnt2/root/Library/Lockdown/* /mnt9/root/Library/Lockdown/. " # i dont know if that help in something but i let it 
-        remote_cmd "mv /mnt8/usr/libexec/mobileactivationd /mnt8/usr/libexec/mobileactivationdBackup" # this is the mobileactivationd pathed 
-        remote_cp other/mobileactivationd root@localhost:/mnt8/usr/libexec/
-        remote_cmd "ldid -e /mnt8/usr/libexec/mobileactivationdBackup > /mnt8/mob.plist"
-        remote_cmd "ldid -S/mnt8/mob.plist /mnt8/usr/libexec/mobileactivationd"
-        remote_cmd "rm -rv /mnt8/mob.plist"
-        echo "thank you for share mobileactivationd @MatthewPierson"
-        echo "[*] DONE ... now reboot and boot again"
-        remote_cmd "/sbin/reboot"
-        
-    fi
 
     if [ "$dualboot" = "1" ]; then
         if [ -z "$dont_createPart" ]; then # if you have already your second ios you can omited with this
