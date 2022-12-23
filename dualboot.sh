@@ -559,6 +559,12 @@ echo "$cpid"
 echo "$model"
 echo "$deviceid"
 
+if [ "$dfuhelper" = "1" ]; then
+    echo "[*] Running DFU helper"
+    _dfuhelper "$cpid"
+    exit
+fi
+
 ipswurl=$(curl -sL "https://api.ipsw.me/v4/device/$deviceid?type=ipsw" | "$dir"/jq '.firmwares | .[] | select(.version=="'$version'")' | "$dir"/jq -s '.[0] | .url' --raw-output)
 
 if [ "$dfuhelper" = "1" ]; then
@@ -951,9 +957,9 @@ if [ true ]; then
         
         if [ "$fixHB" = "1" ]; then
            if [[ "$deviceid" == iPhone9,[1-4] ]] || [[ "$deviceid" == "iPhone10,"* ]]; then
-                "$dir"/iBootpatch2 --t8010 iBEC.patched iBEC.patched2
+                "$dir"/iBootpatch2 --t8010 work/iBEC.patched work/iBEC.patched2
             else
-                "$dir"/iBootpatch2 --t8015 iBEC.patched iBEC.patched2
+                "$dir"/iBootpatch2 --t8015 work/iBEC.patched work/iBEC.patched2
             fi
             "$dir"/img4 -i work/iBEC.patched2 -o work/iBEC.img4 -M work/IM4M -A -T ibec
         else 
