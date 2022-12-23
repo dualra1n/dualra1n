@@ -65,7 +65,7 @@ Options:
     --help              Print this help
     --fix_HB            that will fix home button on a10 and a11 or well try it. that is ultra beta i dont have a10 or a11 to test but you can do it also if the device give error booting you can execute again ./dualboot.sh --dualboot 14.3 --dont_createPart --fixHB to boot is --boot 14.3 --fixHB and that will fix the problem to
     --fixhardware       this should fix some problem like touch on ipad, i dont know if that work but you can do it to see if work. ./dualboot.sh --dualboot 14.3 --dont_createPart --fixhardware
-    --bypass            add --back if you want to bring back (without bypass in order to put a account just in case)that will bypass to second ios in case that you dont know the password of icloud however you could not login on icloud, but you can login on appstore and download apps. thank you for share mobileactivationd @MatthewPierson" 
+    --jump              "that will fix the icloud in case that you dont remember"
     --dfuhelper         A helper to help get A11 devices into DFU mode from recovery mode
     --boot              put boot alone, to boot your second ios  
     --dont_createPart   Don't create the partitions if you have already created 
@@ -108,8 +108,8 @@ parse_opt() {
         --getIpsw)
             getIpsw=1
             ;;
-        --bypass)
-            bypass=1
+        --jump)
+            jump=1
             ;;
         --back)
             back=1
@@ -832,7 +832,7 @@ if [ true ]; then
 
     fi
 
-    if [ "$bypass" = "1" ]; then # just use this in case that you dont know the password of the icloud account 
+    if [ "$jump" = "1" ]; then # just use this in case that you dont know the password of the icloud account 
         remote_cmd "/sbin/mount_apfs /dev/disk0s1s${disk} /mnt8/"
         remote_cmd "/sbin/mount_apfs /dev/disk0s1s${dataB} /mnt9/"
         remote_cmd "/sbin/mount_apfs /dev/disk0s1s${prebootB} /mnt4/"
