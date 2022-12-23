@@ -289,8 +289,8 @@ _dfuhelper() {
     step 3 "Get ready"
     step 4 "$step_one" &
     sleep 3
-    "$dir"/irecovery -c "reset"
-    step 1 "Keep holding"
+    "$dir"/irecovery -c "reset" &
+    wait
     if [[ "$1" = 0x801* && "$deviceid" != *"iPad"* ]]; then
         step 10 'Release side button, but keep holding volume down'
     else
