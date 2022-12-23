@@ -821,6 +821,7 @@ if [ true ]; then
         sleep 1
         # this is the jailbreak of palera1n being installing 
         curl -L https://static.palera.in/binpack.tar -o other/rootfs/jbin/binpack/binpack.tar        
+        cp -v other/post.sh other/jbin/
         remote_cp -r other/rootfs/* root@localhost:/mnt8/
         remote_cmd "ldid -s /mnt8/jbin/launchd /mnt8/jbin/jbloader /mnt8/jbin/jb.dylib"
         remote_cmd "chmod +rwx /mnt8/jbin/launchd /mnt8/jbin/jbloader /mnt8/jbin/post.sh"
