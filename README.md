@@ -29,9 +29,6 @@ Options: example ./dualboot.sh --dualboot 14.3
     
     --help              Print this help
     
-    
-    --jump              "that will fix the icloud in case that you dont remember"
-
      
      --getIpsw           using this will download a ipsw of your version which you want to dualboot. ./dualboot.sh --getIpsw 14.3
 
