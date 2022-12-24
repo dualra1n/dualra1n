@@ -50,16 +50,24 @@ Options: example ./dualboot.sh --dualboot 14.3
 Subcommands:
     clean               Deletes the created boot files
 
-The iOS version argument should be the iOS version of your device.
-It is required when starting from DFU mode.
 
 
+
+important if you have palera1n semi-tethered jailbreak always put --jail_palera1n always 
 
 1: download your ipsw and put it on ipsw/ directory (you can download of ipsw.me. please only ios 14.* also please download exactly your ipsw for your device) (your ios version that you want to dualboot with also is recommended ios 14.3 because you can jailbreak with taurine)
 
 2: execute ./dualboot --dualboot 14.3 (the version of your ipsw downloaded which is the version that you want to dualboot ) 
 
 3: ./dualboot --boot 
+
+
+# other options
+
+to download the ipsw you can use --getIpsw that will download the ipsw however you must have installed brew if not, you have to download manual
+after that boot and finished to dualboot you can jailbreak it using --jailbreak 
+screen blue and does not boot for example using --dualboot 14.3 --dont_createPart --fixBoot that will fix the boot files after that boot it and that will boot well
+
 
 ---
 # just in case kenelpanic
