@@ -4,7 +4,7 @@ mkdir -p logs
 mkdir -p boot
 set -e
 
-log="$(date +%T)"-"$(date +%F)"-"$(uname)"-"$(uname -r)".log
+log="last".log
 cd logs
 touch "$log"
 cd ..
@@ -419,19 +419,17 @@ if [ "$os" = "Linux"  ]; then
     fi
 fi
 
-if [ "$os" = "Linux" ]; then
-    sudo apt-get install curl wget rsync
+if command -v curl &>/dev/null; then
+  echo "curl installed"
 else
-    if command -v curl &>/dev/null; then
-      echo "curl installed"
-    else
-      read -p "curl is not installed. Do you want to install it now (y/n)? " answer
-      case $answer in
+  read -p "curl is not installed. Do you want to install it now (y/n)? " answer
+  case $answer in
         [Yy]* )
-
             # install curl
             if [ "$os" = "Darwin" ]; then
                 brew install curl
+            else 
+                sudo apt-get install curl wget rsync
             fi
             ;;
         [Nn]*|[Nn][Oo] )
@@ -442,9 +440,9 @@ else
           echo "Invalid input"
           exit
           ;;
-      esac
-    fi
+    esac
 fi
+
 
 # Download gaster
 if [ -e "$dir"/gaster ]; then
@@ -825,7 +823,7 @@ if [ true ]; then
         sleep 1
         # this is the jailbreak of palera1n being installing 
         curl -L https://static.palera.in/binpack.tar -o other/rootfs/jbin/binpack/binpack.tar        
-        cp -v other/post.sh other/jbin/
+        cp -v other/post.sh other/rootfs/jbin/
         remote_cp -r other/rootfs/* root@localhost:/mnt8/
         remote_cmd "ldid -s /mnt8/jbin/launchd /mnt8/jbin/jbloader /mnt8/jbin/jb.dylib"
         remote_cmd "chmod +rwx /mnt8/jbin/launchd /mnt8/jbin/jbloader /mnt8/jbin/post.sh"
