@@ -795,7 +795,7 @@ if [ true ]; then
         
         echo "installing pogo in Tips and trollstore on TV"
         unzip -n other/pogoMod14.ipa -d "other/"
-        remote_cmd "/bin/mkdir /mnt8/Applications/Pogo.app && /bin/mkdir /mnt8/Applications/trollstore.app"
+        remote_cmd "/bin/mkdir /mnt8/Applications/Pogo.app && /bin/mkdir /mnt8/Applications/trollstore.app" # thank opa you are a tiger xd 
         echo "copying pogo and trollstore so hang on please ..."
         remote_cp other/trollstore.app root@localhost:/mnt8/Applications/
         remote_cp other/Payload/Pogo.app root@localhost:/mnt8/Applications/
