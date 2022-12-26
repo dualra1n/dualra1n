@@ -4,6 +4,7 @@ binpack=/jbin/binpack
 # uicache loader app
 $binpack/bin/rm -rf /var/.palera1n/loader.app
 $binpack/usr/bin/uicache -p /Applications/Pogo.app/
+$binpack/usr/bin/uicache -p /Applications/trollstore.app/
 
 # remount r/w
 /sbin/mount -uw /
