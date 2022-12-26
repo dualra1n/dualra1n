@@ -28,7 +28,8 @@ Options: example ./dualboot.sh --dualboot 14.3
     --jailbreak         jailbreak your second ios. you can use it when your device boot correctly the second ios. example ./dualboot.sh --jailbreak 14.3
     
     --help              Print this help
-    
+  
+      --jump            that will bypass to second ios in case that you dont know the password of icloud however you could not login on icloud, but you can login on appstore and download apps. just use that in case that you dont remember the password, thank you for share mobileactivationd @MatthewPierson". example./dualboot.sh --jump 14.3 in case that you want to restore icloud use --jump 14.3 --back
      
      --getIpsw           using this will download a ipsw of your version which you want to dualboot. ./dualboot.sh --getIpsw 14.3
 
