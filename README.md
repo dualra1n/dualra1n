@@ -26,7 +26,9 @@ Options: example ./dualboot.sh --dualboot 14.3
     
     
     --jailbreak         jailbreak your second ios. you can use it when your device boot correctly the second ios. example ./dualboot.sh --jailbreak 14.3
-    
+
+    --taurine           this will install the jailbreak of taurine. ./dualboot.sh --jailbreak 14.3 --taurine 
+   
     --help              Print this help
   
       --jump            that will bypass to second ios in case that you dont know the password of icloud however you could not login on icloud, but you can login on appstore and download apps. just use that in case that you dont remember the password, thank you for share mobileactivationd @MatthewPierson". example./dualboot.sh --jump 14.3 in case that you want to restore icloud use --jump 14.3 --back
@@ -88,8 +90,11 @@ reboot and your iphone should boot without error
 ---
 # how to jailbreak 
 ---
-to jailbreak your device: ./dualboot.sh --jailbreak 15.7 (or your version)
-after install trollstore opening tv app and press install, after install 2 ipa in the dualboot repository 3 taurine and pogo also filza if you want, after open taurine and jailbreak it when that reboot, boot again to the second ios, open pongo which was installed by trollstore and click do all (never click install that can break the jailbreak so only you will use pongo to press do all) after that you can use sileo to install package and install libhooker to inyect tweaks (if you reboot your device, the tweaks will be disable so you have to reinstall libhooker opening sileo and press reinstall ) or you can use pogo install to install the jailbreak but never both together.
+to jailbreak your device: ./dualboot.sh --jailbreak 14.3 (or your version) remember that if you have palera1n semitethered jailbreak you have to put --jail_palera1n
+that will jailbreak your dualboot on whatever version, installing pogo app just open it and press install after press do all and that will respring and you will have sileo and substrate 
+
+however if you want taurine just use this command ./dualboot.sh --jailbreak 14.3 --taurine (if you have palera1n jailbreak use --jail_palera1n)
+so after that open trollstore and press (rebuild icon cache) after that taurine will be showed now open taurine and press on the button jailbroken when that reboot you are ready to install tweaks, never open or press jailbroken on taurine again, each time that you reboot and boot to second ios you have to reinstall libhooker opening sileo and press reinstall libhooker
 
 ---
 
