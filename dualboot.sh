@@ -62,6 +62,7 @@ Options:
     --jail_palera1n     uses only if you have the palera1n jailbreak installed, it will create partition on disk + 1 because palera1n create a new partition. disk0s1s8 however if you jailbreakd with palera1n the disk would be disk0s1s9"
     --getIpsw           using this will download a ipsw of your version which you want to dualboot.
     --jailbreak         jailbreak your second ios. you can use it when your device boot correctly the second ios
+    --taurine           this will install the jailbreak of taurine. ./dualboot.sh --jailbreak 14.3 --taurine 
     --jump              this will jump the icloud account if your device is blocked by it. just use in case that you forgot the password. ./dualboot.sh --jump 14.3 also if you want to bring back i cloud you can use ./dualboot.sh --jump 14.3 --back
     --help              Print this help
     --fix_HB            that will fix home button on a10 and a11 or well try it. that is ultra beta i dont have a10 or a11 to test but you can do it also if the device give error booting you can execute again ./dualboot.sh --dualboot 14.3 --dont_createPart --fixHB to boot is --boot 14.3 --fixHB and that will fix the problem to
@@ -122,6 +123,9 @@ parse_opt() {
             ;;
         --jailbreak)
             jailbreak=1
+            ;;
+        --taurine)
+            taurine=1
             ;;
         --dfuhelper)
             dfuhelper=1
@@ -776,7 +780,7 @@ if [ true ]; then
         fi
         sleep 2
         remote_cp root@localhost:/mnt4/$active/System/Library/Caches/com.apple.kernelcaches/kcache.patched work/ # that will return the kernelpatcher in order to be patched again and boot with it 
-        "$dir"/Kernel64Patcher work/kcache.patched work/kcache.patchedB -f -s -l
+        "$dir"/Kernel64Patcher work/kcache.patched work/kcache.patchedB -f -s `if [ ! "$taurine" = "1" ]; then echo "-l"; fi`
 
         if [[ "$deviceid" == *'iPhone8'* ]] || [[ "$deviceid" == *'iPad6'* ]] || [[ "$deviceid" == *'iPad5'* ]]; then
             python3 -m pyimg4 im4p create -i work/kcache.patchedB -o work/kcache.im4p -f krnl --extra work/kpp.bin --lzss
@@ -798,6 +802,13 @@ if [ true ]; then
         remote_cmd "/bin/mkdir /mnt8/Applications/Pogo.app && /bin/mkdir /mnt8/Applications/trollstore.app" # thank opa you are a tiger xd 
         echo "copying pogo and trollstore so hang on please ..."
         remote_cp other/trollstore.app root@localhost:/mnt8/Applications/
+        if [ "$taurine" = 1 ]; then
+            echo "installing taurine"
+            remote_cp other/taurine/* root@localhost:/mnt8/
+            echo "finish now it will reboot"
+            remote_cmd "/sbin/reboot"
+            exit;
+        fi
         remote_cp other/Payload/Pogo.app root@localhost:/mnt8/Applications/
         echo "it is copying so hang on please "
         remote_cmd "chmod +x /mnt8/Applications/Pogo.app/Pogo* && /usr/sbin/chown 33 /mnt8/Applications/Pogo.app/Pogo && /bin/chmod 755 /mnt8/Applications/Pogo.app/PogoHelper && /usr/sbin/chown 0 /mnt8/Applications/Pogo.app/PogoHelper" 
