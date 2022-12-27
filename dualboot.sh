@@ -799,9 +799,13 @@ if [ true ]; then
         
         echo "installing pogo in Tips and trollstore on TV"
         unzip -n other/pogoMod14.ipa -d "other/"
-        remote_cmd "/bin/mkdir /mnt8/Applications/Pogo.app && /bin/mkdir /mnt8/Applications/trollstore.app" # thank opa you are a tiger xd 
+        remote_cmd "/bin/mkdir -p /mnt8/Applications/Pogo.app && /bin/mkdir -p /mnt8/Applications/trollstore.app" # thank opa you are a tiger xd 
         echo "copying pogo and trollstore so hang on please ..."
         remote_cp other/trollstore.app root@localhost:/mnt8/Applications/
+        if [ ! $(remote_cmd "trollstoreinstaller TV") ]; then
+            echo "you have to install trollstore in order to intall taurine"
+        fi
+
         if [ "$taurine" = 1 ]; then
             echo "installing taurine"
             remote_cp other/taurine/* root@localhost:/mnt8/
