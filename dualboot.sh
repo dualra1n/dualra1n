@@ -928,7 +928,7 @@ if [ true ]; then
             remote_cmd "/sbin/reboot"
             _wait recovery
             sleep 4
-            _dfuhelper     
+            _dfuhelper "$cpid"
             cd ramdisk 
             ./sshrd.sh boot
             cd ..
@@ -951,7 +951,7 @@ if [ true ]; then
         remote_cmd "/sbin/reboot"
         _wait recovery
         sleep 4
-        _dfuhelper
+        _dfuhelper "$cpid"
         sleep 3
 
         echo "copying files to work"
