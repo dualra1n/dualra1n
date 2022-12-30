@@ -17,7 +17,7 @@ echo "[*] Command ran:`if [ $EUID = 0 ]; then echo " sudo"; fi` ./dualboot.sh $@
 # Variables
 # ========= 
 ipsw="ipsw/*.ipsw" # put your ipsw 
-version="1 beta"
+version="2.0"
 os=$(uname)
 dir="$(pwd)/binaries/$os"
 max_args=1
@@ -44,11 +44,14 @@ remote_cp() {
 }
 
 step() {
-    for i in $(seq "$1" -1 1); do
-        printf '\r\e[1;36m%s (%d) ' "$2" "$i"
+    for i in $(seq "$1" -1 0); do
+        if [ "$(get_device_mode)" = "dfu" ]; then
+            break
+        fi
+        printf '\r\e[K\e[1;36m%s (%d)' "$2" "$i"
         sleep 1
     done
-    printf '\r\e[0m%s (0)\n' "$2"
+    printf '\e[0m\n'
 }
 
 print_help() {
@@ -298,7 +301,7 @@ _dfuhelper() {
     step 4 "$step_one" &
     sleep 3
     "$dir"/irecovery -c "reset" &
-    wait
+    sleep 1
     if [[ "$1" = 0x801* && "$deviceid" != *"iPad"* ]]; then
         step 10 'Release side button, but keep holding volume down'
     else
@@ -573,11 +576,6 @@ fi
 
 ipswurl=$(curl -sL "https://api.ipsw.me/v4/device/$deviceid?type=ipsw" | "$dir"/jq '.firmwares | .[] | select(.version=="'$version'")' | "$dir"/jq -s '.[0] | .url' --raw-output)
 
-if [ "$dfuhelper" = "1" ]; then
-    echo "[*] Running DFU helper"
-    _dfuhelper "$cpid"
-    exit
-fi
 
 if [ "$restorerootfs" = "1" ]; then
     rm -rf "blobs/"$deviceid"-"$version".shsh2" "boot-$deviceid" .tweaksinstalled
