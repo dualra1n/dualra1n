@@ -85,7 +85,7 @@ you have to record a video which look like above. after you have take a photo or
 ![IMG_0774](https://user-images.githubusercontent.com/85508740/205313633-567ff020-1279-4fdc-88b1-bc0914bdda82.jpg)
 
 like this so note the name /private/preboot/*thisName*/usr/standalone/firmware
-now boot ./sshrd.sh or any ssh ramdisk after execute mount_filesystem, execute mount_apfs /dev/disk0s1s10 /mnt4/ after that execute mkdir "*thisName*" | mkdir "*thisName*"/usr | cp -av /mnt6/"theonlydirectorythatexist"/usr mnt4/"*thisName*"/
+now boot ./sshrd.sh or any ssh ramdisk after execute mount_filesystems , execute mount_apfs /dev/disk0s1s10 /mnt4/ after that execute mkdir "*thisName*" | mkdir "*thisName*"/usr | cp -av /mnt6/"theonlydirectorythatexist"/usr mnt4/"*thisName*"/
 reboot and your iphone should boot without error 
 ---
 # how to jailbreak 
