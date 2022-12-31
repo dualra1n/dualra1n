@@ -629,9 +629,9 @@ fi
 echo "extracting ipsw, hang on please ..." # this will extract the ipsw into ipsw/extracted
 unzip -n $ipsw -d "ipsw/extracted"
 if [ "$fixBoot" = "1" ]; then
-    cp -rv "$extractedIpsw/BuildManifest.plist" work/
+    "$dir"/pzb -g work/BuildManifest.plist "$ipswurl"
 else
-    "$dir"/pzb -g BuildManifest.plist "$ipswurl"
+    cp -rv "$extractedIpsw/BuildManifest.plist" work/
 fi
 
 if [ "$os" = 'Darwin' ]; then
