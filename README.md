@@ -1,108 +1,102 @@
-# what is ?
+# dualra1n
 
-this is a tool to dualboot your idevice, dualboot means having 2 version of ios on just one device. this is semi-untethered means that if you are for example on ios 14.3 with the dualboot when you reboot you come back on the normal ios that you had for me was 15.7 
+A script that lets you dualboot iOS 14-15 on checkm8 devices.
 
-# dualboot-ios-15-with-14-script palera1n's younger brother
-to do this on linux, your device would have to have 16 gb of space free because the proccess is different when the dualboot is alrady installed that would be 12gb however to do on macos you would have to have only 12 gb to do it correctly. i recommend doing on macos  
+# What issues you will have known so far
 
-this is a script to dualboot your iphone on ios 15 with 14 that work only for a8-a11 (checkm8 devices)
+- A9 : Everything works perfect expect camera. (Fixable with ldrestart)
 
-iphone 6s and 6s+ work very nice
-iphone 7 and 7+ work however home button does not work yet but there are tweak that you can use as a iphone x so you dont have to use button
-iphone 8 and 8+ does not tested yet but i supposed this work like iphone7
-iphone x work but touch does not work yet
-works on ipad too but i wont say all ipad so a8-a11 
+- A10 : Home button is not working at the moment. You can use tweaks that brings X gestures to move. Also camera is not working too.
 
-# now you can use MACOS and linux remember with sudo.
+- iPhone 8 , 8+ : Home button is not working at the moment. You can use tweaks that brings X gestures to move. Also camera is not working too.
 
-# tutorial
+- iPhone X : Touchscreen is not working.
 
-Options: example ./dualboot.sh --dualboot 14.3 
 
-    --dualboot          dualboot your device ios 15 with 14 
+# Usage
+
+Example: ./dualboot.sh --dualboot 14.3 
+
+    --dualboot          Dualboot your device with any SEP and Baseband compatible iOS 14 version.
     
+    --jail_palera1n     Use this only when you already jailbroken with palera1n to avoid disk errors. 
     
-    --jail_palera1n uses only if you have the palera1n jailbreak semi-untethered installed, it will create partition on disk + 1 because palera1n create a new partition. disk0s1s8 however if you jailbreakd with palera1n the disk would be disk0s1s9", for example ./dualboot.sh --dualboot 14.3 --jail_palera1n 
-    
-    
-    --jailbreak         jailbreak your second ios. you can use it when your device boot correctly the second ios. example ./dualboot.sh --jailbreak 14.3
+    --jailbreak         Jailbreak the dualbooted iOS with Pogo. Usage :  ./dualboot.sh --jailbreak 14.3
 
-    --taurine           this will install the jailbreak of taurine. ./dualboot.sh --jailbreak 14.3 --taurine 
+    --taurine           Jailbreak dualbooted iOS with Taurine. Usage: ./dualboot.sh --jailbreak 14.3 --taurine 
    
-    --help              Print this help
+    --help              Print this help.
   
-      --jump            that will bypass to second ios in case that you dont know the password of icloud however you could not login on icloud, but you can login on appstore and download apps. just use that in case that you dont remember the password, thank you for share mobileactivationd @MatthewPierson". example./dualboot.sh --jump 14.3 in case that you want to restore icloud use --jump 14.3 --back
+    --jump              Bypass setup.app on second iOS. If you want revert phone to original state use --back .
      
-     --getIpsw           using this will download a ipsw of your version which you want to dualboot. ./dualboot.sh --getIpsw 14.3
+    --getIpsw           Automaticly downloads IPSW that you want to dualboot. Dont forget specify iOS version.
 
-    --dfuhelper         A helper to help get A11 devices into DFU mode from recovery mode
+    --dfuhelper         A helper to enter DFU if you struggling in it.
     
-    --boot              put boot alone, to boot your second ios. /dualboot.sh --boot
+    --boot              Lets you boot into dualbooted iOS. Use it alone. Usage : ./dualboot.sh --boot
     
-    --dont_createPart   Don't create the partitions if you have already created. ./dualboot.sh --dualboot 14.3 --dont_createPart
+    --dont_createPart   Skips the creating a new disk partition if you have a one already.
     
-    --restorerootfs     Remove partitions of dualboot. ./dualboot.sh --restorerootfs
+    --restorerootfs     Deletes dualbooted OS.
     
     --fix_preboot       that restore preboot with the prebootBackup. --fix_preboot
     
     --debug             Debug the script
 
 Subcommands:
-    clean               Deletes the created boot files
 
-
-
-
-important if you have palera1n semi-tethered jailbreak always put --jail_palera1n always 
-
-1: download your ipsw and put it on ipsw/ directory (you can download of ipsw.me. please only ios 14.* also please download exactly your ipsw for your device) (your ios version that you want to dualboot with also is recommended ios 14.3 because you can jailbreak with taurine)
-
-2: execute ./dualboot --dualboot 14.3 (the version of your ipsw downloaded which is the version that you want to dualboot ) 
-
-3: ./dualboot --boot 
-
-
-# other options
-
-to download the ipsw you can use --getIpsw that will download the ipsw however you must have installed brew if not, you have to download manual
-after that boot and finished to dualboot you can jailbreak it using --jailbreak 
-screen blue and does not boot for example using --dualboot 14.3 --dont_createPart --fixBoot that will fix the boot files after that boot it and that will boot well
-
-
----
-# just in case kenelpanic
-in case that your iphone not boot on the second ios try to do this:
-you will have to record a video of iphone's screen because you have to note the name of the preboot directory when that is booting. 
-
-
-
-https://user-images.githubusercontent.com/85508740/205308846-edc2673f-4e8c-4265-a63b-14664e4301db.MOV
-
-
-so you will see that is booting however that will reboot because the preboot directory is not created so we have to create it. 
-you have to record a video which look like above. after you have take a photo or to note the name of the directory 
-
-![IMG_0774](https://user-images.githubusercontent.com/85508740/205313633-567ff020-1279-4fdc-88b1-bc0914bdda82.jpg)
-
-like this so note the name /private/preboot/*thisName*/usr/standalone/firmware
-now boot ./sshrd.sh or any ssh ramdisk after execute mount_filesystems , execute mount_apfs /dev/disk0s1s10 /mnt4/ after that execute mkdir "*thisName*" | mkdir "*thisName*"/usr | cp -av /mnt6/"theonlydirectorythatexist"/usr mnt4/"*thisName*"/
-reboot and your iphone should boot without error 
----
-# how to jailbreak 
----
-to jailbreak your device: ./dualboot.sh --jailbreak 14.3 (or your version) remember that if you have palera1n semitethered jailbreak you have to put --jail_palera1n
-that will jailbreak your dualboot on whatever version, installing pogo app just open it and press install after press do all and that will respring and you will have sileo and substrate 
-
-however if you want taurine just use this command ./dualboot.sh --jailbreak 14.3 --taurine (if you have palera1n jailbreak use --jail_palera1n)
-first install trollstore opening tv app so after that open trollstore and press (rebuild icon cache) after that taurine will be showed now open taurine and press on the button jailbroken when that reboot you are ready to install tweaks, never open or press jailbroken on taurine again, each time that you reboot and boot to second ios you have to reinstall libhooker opening sileo and press reinstall libhooker also open pogo app and press do all 
+    clean               Deletes the created boot files 
 
 ---
 
-for any error you could create issues 
+# Fix for booting issue/kernel panic on dualbooted iOS
 
-test it on iphone 6s on ios 15.7 using macos big sur and on kali linux
+Step 1: Clone [this](https://github.com/verygenericname/SSHRD_Script) repository and boot a SSH Ramdisk with it.
 
-# thanks
+Step 2: After booting SSH Ramdisk, connect with ssh on it.
 
-THANKS PALERA1N,nathan for beautiful ramdisk,https://dualbootfun.github.io/ for the knowdlege, MatthewPierson, Ralph0045, people who help me test on discord like @something, @samm and others and @fatih to help me give support on linux and all people who created the boot patcher tool, thank @darlinghq for the amazing emulator,thank @blacktop. thank https://github.com/dora2-iOS for fix button. thanks all.
+Step 3: After connected, run these commands on terminal one by one.
+
+```
+
+mount_apfs /dev/disk0s1s9 /mnt9
+
+mount_apfs /dev/disk0s1s8 /mnt8
+
+mount_apfs /dev/disk0s1s10 /mnt4
+
+cp -av /mnt8/private/var/* /mnt9/
+
+mount_filesystems
+
+cp -av /mnt6/* /mnt4/
+
+```
+
+-  After you succeed, get in DFU again and boot with ./dualboot.sh boot
+
+- If you set a password, the iPhone will ask you your password, enter it.
+
+# How to jailbreak 
+
+1) Jailbreak with Pogo : to jailbreak your device: ./dualboot.sh --jailbreak 14.3 (or your version) remember that if you have palera1n jailbreak you have to put --jail_palera1n. Then after boot, open Pogo tap install, after that tap Do All. Then have fun.
+
+2) Jailbreak with Taurine :  ./dualboot.sh --jailbreak 14.3 --taurine (if you have palera1n jailbreak use --jail_palera1n). After boot, open TV App and install Trollstore, then install ldid and rebuild icon cache. Taurine should appear on your homescreen, open it and tap jailbreak (If it shows Jailbroken, forget it and tap). If it reboots, boot with ./dualboot.sh boot . 
+
+- Tested on iPhone 6s on iOS 15.7-15.7.2 - macOS Big Sur, Kali Linux, Ubuntu 22.04
+
+
+# Credits
+
+- [palera1n](https://github.com/palera1n) for most of code
+
+- [verygenericname](https://github.com/verygenericname) for SSH Ramdisk
+
+- [Dualboot guide](https://dualbootfun.github.io/) for guide
+
+- [Darling](https://github.com/darlinghq) for macOS emulator
+
+- [blacktop](https://github.com/blacktop) for ipsw downloader
+
+- [dora2-iOS]( https://github.com/dora2-iOS) for home button fix
 
