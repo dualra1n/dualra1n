@@ -628,7 +628,12 @@ fi
 # extracting ipsw
 echo "extracting ipsw, hang on please ..." # this will extract the ipsw into ipsw/extracted
 unzip -n $ipsw -d "ipsw/extracted"
-cp -rv "$extractedIpsw/BuildManifest.plist" work/
+if [ "$fixBoot" = "1" ]; then
+    cp -rv "$extractedIpsw/BuildManifest.plist" work/
+else
+    "$dir"/pzb -g BuildManifest.plist "$ipswurl"
+fi
+
 if [ "$os" = 'Darwin' ]; then
     if [ ! -f "ipsw/out.dmg" ]; then # this would create a dmg file which can be mounted an restore a patition
         asr -source "$extractedIpsw$(/usr/bin/plutil -extract "BuildIdentities".0."Manifest"."OS"."Info"."Path" xml1 -o - work/BuildManifest.plist | grep '<string>' |cut -d\> -f2 |cut -d\< -f1 | head -1)" -target ipsw/out.dmg --embed -erase -noprompt --chunkchecksum --puppetstrings
@@ -968,7 +973,6 @@ if [ true ]; then
         if [ "$fixBoot" = "1" ]; then # i put it because my friend tested on his ipad and that does not boot so when we download all file from the internet so not extracting ipsw that boot fine idk why 
             cd work
             #that will download the files needed
-            #"$dir"/pzb -g BuildManifest.plist "$ipswurl"
             sleep 1
             "$dir"/pzb -g "$(awk "/""${model}""/{x=1}x&&/iBSS[.]/{print;exit}" BuildManifest.plist | grep '<string>' |cut -d\> -f2 |cut -d\< -f1)" "$ipswurl"
             "$dir"/pzb -g "$(awk "/""${model}""/{x=1}x&&/iBoot[.]/{print;exit}" BuildManifest.plist | grep '<string>' |cut -d\> -f2 |cut -d\< -f1)" "$ipswurl"
