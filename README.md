@@ -94,7 +94,7 @@ to jailbreak your device: ./dualboot.sh --jailbreak 14.3 (or your version) remem
 that will jailbreak your dualboot on whatever version, installing pogo app just open it and press install after press do all and that will respring and you will have sileo and substrate 
 
 however if you want taurine just use this command ./dualboot.sh --jailbreak 14.3 --taurine (if you have palera1n jailbreak use --jail_palera1n)
-first install trollstore opening tv app so after that open trollstore and press (rebuild icon cache) after that taurine will be showed now open taurine and press on the button jailbroken when that reboot you are ready to install tweaks, never open or press jailbroken on taurine again, each time that you reboot and boot to second ios you have to reinstall libhooker opening sileo and press reinstall libhooker
+first install trollstore opening tv app so after that open trollstore and press (rebuild icon cache) after that taurine will be showed now open taurine and press on the button jailbroken when that reboot you are ready to install tweaks, never open or press jailbroken on taurine again, each time that you reboot and boot to second ios you have to reinstall libhooker opening sileo and press reinstall libhooker also open pogo app and press do all 
 
 ---
 
