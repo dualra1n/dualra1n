@@ -370,7 +370,7 @@ _boot() {
     "$dir"/irecovery -c "devicetree"
     sleep 1
 
-   if [ -d "boot/${deviceid}/FUD" ]; then
+   if [ -d "boot/${deviceid}/FUD" ]; then # that will load the files which are located on fud directory of ios 15 preboot however that does not change anthing ? well idk
         for i in $(ls boot/$deviceid/FUD/*.img4)
         do
             irecovery -f $i
@@ -684,7 +684,7 @@ if [ true ]; then
 
     echo $disk
     echo "[*] Testing for baseband presence"
-    if [ "$(remote_cmd "/usr/bin/mgask HasBaseband | grep -E 'true|false'")" = "true" ] && [[ "${cpid}" == *"0x700"* ]]; then
+    if [ "$(remote_cmd "/usr/bin/mgask HasBaseband | grep -E 'true|false'")" = "true" ] && [[ "${cpid}" == *"0x700"* ]]; then # checking if your device has baseband 
         disk=7
     elif [ "$(remote_cmd "/usr/bin/mgask HasBaseband | grep -E 'true|false'")" = "false" ]; then
         if [[ "${cpid}" == *"0x700"* ]]; then
@@ -697,7 +697,6 @@ if [ true ]; then
     # that is in order to know the partitions needed
     if [ "$jail_palera1n" = "1" ]; then
         disk=$(($disk + 1)) # if you have the palera1n jailbreak that will create + 1 partition for example your jailbreak is installed on disk0s1s8 that will create a new partition on disk0s1s9 so only you have to use it if you have palera1n
-        echo $disk
     fi
     echo $disk
     dataB=$(($disk + 1))
@@ -870,12 +869,12 @@ if [ true ]; then
         remote_cmd "/sbin/mount_apfs /dev/disk0s1s${prebootB} /mnt4/"
         if [ "$back" = "1" ]; then
             remote_cmd "mv /mnt8/usr/libexec/mobileactivationdBackup /mnt8/usr/libexec/mobileactivationd "
-            echo "DONE. bring BACK icloud "
+            echo "DONE. bring BACK icloud " # that will bring back the normal icloud
             remote_cmd "/sbin/reboot"
             exit; 
         fi
         remote_cmd "cp -av /mnt2/root/Library/Lockdown/* /mnt9/root/Library/Lockdown/. "
-        remote_cmd "mv /mnt8/usr/libexec/mobileactivationd /mnt8/usr/libexec/mobileactivationdBackup  "
+        remote_cmd "mv /mnt8/usr/libexec/mobileactivationd /mnt8/usr/libexec/mobileactivationdBackup " # that will remplace mobileactivationd hacked
         remote_cp other/mobileactivationd root@localhost:/mnt8/usr/libexec/
         remote_cmd "ldid -e /mnt8/usr/libexec/mobileactivationdBackup > /mnt8/mob.plist"
         remote_cmd "ldid -S/mnt8/mob.plist /mnt8/usr/libexec/mobileactivationd"
@@ -1004,14 +1003,14 @@ if [ true ]; then
         "$dir"/iBoot64Patcher work/iBSS.dec work/iBSS.patched
         "$dir"/img4 -i work/iBSS.patched -o work/iBSS.img4 -M work/IM4M -A -T ibss
 
-        if [ "$fixBoot" = "1" ]; then
+        if [ "$fixBoot" = "1" ]; then # fixboot will download the boot files, sometimes that fix most of boot 
             "$dir"/gaster decrypt work/"$(awk "/""${model}""/{x=1}x&&/iBoot[.]/{print;exit}" work/BuildManifest.plist | grep '<string>' |cut -d\> -f2 |cut -d\< -f1 | sed 's/Firmware[/]all_flash[/]//')" work/iBEC.dec
         else
             "$dir"/gaster decrypt work/"$(awk "/""${model}""/{x=1}x&&/iBEC[.]/{print;exit}" work/BuildManifest.plist | grep '<string>' |cut -d\> -f2 |cut -d\< -f1 | sed 's/Firmware[/]dfu[/]//')" work/iBEC.dec
         fi
         "$dir"/iBoot64Patcher work/iBEC.dec work/iBEC.patched -b "rd=disk0s1s${disk} debug=0x2014e wdt=-1 -v `if [ "$cpid" = '0x8960' ] || [ "$cpid" = '0x7000' ] || [ "$cpid" = '0x7001' ]; then echo "-restore"; fi`" -n -f
         
-        if [ "$fixHB" = "1" ]; then
+        if [ "$fixHB" = "1" ]; then # that not work yet, we are waiting for the lady find a ibootpath2 working on ios 14 :)
            if [[ "$deviceid" == iPhone9,[1-4] ]] || [[ "$deviceid" == "iPhone10,"* ]]; then
                 "$dir"/iBootpatch2 --t8010 work/iBEC.patched work/iBEC.patched2
             else
@@ -1023,7 +1022,7 @@ if [ true ]; then
         fi
 
         "$dir"/img4 -i work/"$(awk "/""${model}""/{x=1}x&&/kernelcache.release/{print;exit}" work/BuildManifest.plist | grep '<string>' |cut -d\> -f2 |cut -d\< -f1)" -o work/kcache.raw
-        "$dir"/Kernel64Patcher work/kcache.raw work/kcache.patched -a -f `if [ "$fixBoot" = "1" ]; then echo "-s"; fi`
+        "$dir"/Kernel64Patcher work/kcache.raw work/kcache.patched -a -f `if [ "$fixBoot" = "1" ]; then echo "-s"; fi` # that sometimes fix some problem on the boot
         "$dir"/kerneldiff work/kcache.raw work/kcache.patched work/kc.bpatch
         "$dir"/img4 -i work/"$(awk "/""${model}""/{x=1}x&&/kernelcache.release/{print;exit}" work/BuildManifest.plist | grep '<string>' |cut -d\> -f2 |cut -d\< -f1)" -o work/kernelcache.img4 -M work/IM4M -T rkrn -P work/kc.bpatch `if [ "$os" = 'Linux' ]; then echo "-J"; fi`
 
