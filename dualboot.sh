@@ -295,6 +295,7 @@ _dfuhelper() {
     else
         step_one="Hold home + power button"
     fi
+    echo "[*] To get into DFU mode, you will be guided through 2 steps:"
     echo "[*] Press any key when ready for DFU mode"
     read -n 1 -s
     step 3 "Get ready"
