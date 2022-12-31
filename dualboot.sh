@@ -344,15 +344,23 @@ _boot() {
     
     if [ "$fixHB" = "1" ]; then
         "$dir"/irecovery -c "dorwx"
-        if [[ "$deviceid" == iPhone9,[1-4] ]] || [[ "$deviceid" == "iPhone10,"* ]]; then
+        if [[ "$deviceid" == iPhone9,[1-4] ]] || [[ "$deviceid" == "iPhone10,"* ]]; then # i put this however that does not work because ibootpath2 is not working on ios 14 
             "$dir"/irecovery -f other/payload/payload_t8010.bin
         else
             "$dir"/irecovery -f other/payload/payload_t8015.bin
         fi
-    fi
-
-    if [[ "$cpid" == *"0x801"* ]]; then
+        sleep 3
         "$dir"/irecovery -c "go"
+        sleep 1
+        "$dir"/irecovery -c "go xargs -v"
+        sleep 1
+        "$dir"/irecovery -c "go xfb"
+        sleep 1
+        "$dir"/irecovery -c "go boot disk0s1s8"
+    else
+        if [[ "$cpid" == *"0x801"* ]]; then
+            "$dir"/irecovery -c "go"
+        fi
     fi
 
     "$dir"/irecovery -f "boot/${deviceid}/devicetree.img4"
@@ -804,6 +812,10 @@ if [ true ]; then
             echo "you have to install trollstore in order to intall taurine"
         fi
 
+        remote_cp other/Payload/Pogo.app root@localhost:/mnt8/Applications/
+        echo "it is copying so hang on please "
+        remote_cmd "chmod +x /mnt8/Applications/Pogo.app/Pogo* && /usr/sbin/chown 33 /mnt8/Applications/Pogo.app/Pogo && /bin/chmod 755 /mnt8/Applications/Pogo.app/PogoHelper && /usr/sbin/chown 0 /mnt8/Applications/Pogo.app/PogoHelper" 
+
         if [ "$taurine" = 1 ]; then
             echo "installing taurine"
             remote_cp other/taurine/* root@localhost:/mnt8/
@@ -959,7 +971,7 @@ if [ true ]; then
             "$dir"/pzb -g BuildManifest.plist "$ipswurl"
             sleep 1
             "$dir"/pzb -g "$(awk "/""${model}""/{x=1}x&&/iBSS[.]/{print;exit}" BuildManifest.plist | grep '<string>' |cut -d\> -f2 |cut -d\< -f1)" "$ipswurl"
-            "$dir"/pzb -g "$(awk "/""${model}""/{x=1}x&&/iBEC[.]/{print;exit}" BuildManifest.plist | grep '<string>' |cut -d\> -f2 |cut -d\< -f1)" "$ipswurl"
+            "$dir"/pzb -g "$(awk "/""${model}""/{x=1}x&&/iBoot[.]/{print;exit}" BuildManifest.plist | grep '<string>' |cut -d\> -f2 |cut -d\< -f1)" "$ipswurl"
             "$dir"/pzb -g "$(awk "/""${model}""/{x=1}x&&/DeviceTree[.]/{print;exit}" BuildManifest.plist | grep '<string>' |cut -d\> -f2 |cut -d\< -f1)" "$ipswurl"
             "$dir"/pzb -g "$(awk "/""${model}""/{x=1}x&&/kernelcache.release/{print;exit}" BuildManifest.plist | grep '<string>' |cut -d\> -f2 |cut -d\< -f1)" "$ipswurl"
 
@@ -991,7 +1003,11 @@ if [ true ]; then
         "$dir"/iBoot64Patcher work/iBSS.dec work/iBSS.patched
         "$dir"/img4 -i work/iBSS.patched -o work/iBSS.img4 -M work/IM4M -A -T ibss
 
-        "$dir"/gaster decrypt work/"$(awk "/""${model}""/{x=1}x&&/iBEC[.]/{print;exit}" work/BuildManifest.plist | grep '<string>' |cut -d\> -f2 |cut -d\< -f1 | sed 's/Firmware[/]dfu[/]//')" work/iBEC.dec
+        if [ "$fixBoot" = "1" ]; then
+            "$dir"/gaster decrypt work/"$(awk "/""${model}""/{x=1}x&&/iBoot[.]/{print;exit}" work/BuildManifest.plist | grep '<string>' |cut -d\> -f2 |cut -d\< -f1 | sed 's/Firmware[/]all_flash[/]//')" work/iBEC.dec
+        else
+            "$dir"/gaster decrypt work/"$(awk "/""${model}""/{x=1}x&&/iBEC[.]/{print;exit}" work/BuildManifest.plist | grep '<string>' |cut -d\> -f2 |cut -d\< -f1 | sed 's/Firmware[/]dfu[/]//')" work/iBEC.dec
+        fi
         "$dir"/iBoot64Patcher work/iBEC.dec work/iBEC.patched -b "rd=disk0s1s${disk} debug=0x2014e wdt=-1 -v `if [ "$cpid" = '0x8960' ] || [ "$cpid" = '0x7000' ] || [ "$cpid" = '0x7001' ]; then echo "-restore"; fi`" -n -f
         
         if [ "$fixHB" = "1" ]; then
