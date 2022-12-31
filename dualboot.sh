@@ -629,7 +629,9 @@ fi
 echo "extracting ipsw, hang on please ..." # this will extract the ipsw into ipsw/extracted
 unzip -n $ipsw -d "ipsw/extracted"
 if [ "$fixBoot" = "1" ]; then
-    "$dir"/pzb -g work/BuildManifest.plist "$ipswurl"
+    cd work/
+    "$dir"/pzb -g BuildManifest.plist "$ipswurl"
+    cd ..
 else
     cp -rv "$extractedIpsw/BuildManifest.plist" work/
 fi
