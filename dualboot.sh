@@ -361,6 +361,7 @@ _boot() {
     else
         if [[ "$cpid" == *"0x801"* ]]; then
             "$dir"/irecovery -c "go"
+            sleep 2
         fi
     fi
 
