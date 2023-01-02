@@ -370,7 +370,7 @@ _boot() {
    if [ -d "boot/${deviceid}/FUD" ]; then # that will load the files which are located on fud directory of ios 15 preboot however that does not change anthing ? well idk
         for i in $(ls boot/$deviceid/FUD/*.img4)
         do
-            irecovery -f $i
+            "$dir"/irecovery -f $i
             sleep 1
             "$dir"/irecovery -c "firmware"
         done        
