@@ -26,9 +26,7 @@ Example: ./dualboot.sh --dualboot 14.3
     --taurine           Jailbreak dualbooted iOS with Taurine. Usage: ./dualboot.sh --jailbreak 14.3 --taurine 
    
     --help              Print this help.
-  
-    --jump              Bypass setup.app on second iOS. If you want revert phone to original state use --back .
-     
+       
     --getIpsw           Automaticly downloads IPSW that you want to dualboot. Dont forget specify iOS version.
 
     --dfuhelper         A helper to enter DFU if you struggling in it.

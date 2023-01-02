@@ -66,10 +66,9 @@ Options:
     --getIpsw           using this will download a ipsw of your version which you want to dualboot.
     --jailbreak         jailbreak your second ios. you can use it when your device boot correctly the second ios
     --taurine           this will install the jailbreak of taurine. ./dualboot.sh --jailbreak 14.3 --taurine 
-    --jump              this will jump the icloud account if your device is blocked by it. just use in case that you forgot the password. ./dualboot.sh --jump 14.3 also if you want to bring back i cloud you can use ./dualboot.sh --jump 14.3 --back
     --help              Print this help
-    --fix_HB            that will fix home button on a10 and a11 or well try it. that is ultra beta i dont have a10 or a11 to test but you can do it also if the device give error booting you can execute again ./dualboot.sh --dualboot 14.3 --dont_createPart --fixHB to boot is --boot 14.3 --fixHB and that will fix the problem to
-    --fixhardware       this should fix some problem like touch on ipad, i dont know if that work but you can do it to see if work. ./dualboot.sh --dualboot 14.3 --dont_createPart --fixhardware
+    --fix_HB            that will fix home button on a10 and a11 or well try it. that is ultra beta i dont have a10 or a11 to test but you can do it also if the device give error booting you can execute again ./dualboot.sh --dualboot 14.3 --dont_createPart --fixHB ,to boot is --boot 14.3 --fixHB and that will fix the problem to. that not work yet
+    --fixhardware       this should fix some problem like touch on ipad, i dont know if that work but you can do it to see if work. ./dualboot.sh --dualboot 14.3 --dont_createPart --fixhardware. that does not work :( but you can try it 
     --dfuhelper         A helper to help get A11 devices into DFU mode from recovery mode
     --boot              put boot alone, to boot your second ios  
     --dont_createPart   Don't create the partitions if you have already created 
@@ -102,9 +101,6 @@ parse_opt() {
             ;;
         --fixBoot)
             fixBoot=1
-            ;;
-        --jump)
-            jump=1
             ;;
         --fixHB)
             fixHB=1
@@ -869,28 +865,6 @@ if [ true ]; then
         remote_cmd "/sbin/reboot"
         exit;
 
-    fi
-    
-    if [ "$jump" = "1" ]; then
-        remote_cmd "/sbin/mount_apfs /dev/disk0s1s${disk} /mnt8/"
-        remote_cmd "/sbin/mount_apfs /dev/disk0s1s${dataB} /mnt9/"
-        remote_cmd "/sbin/mount_apfs /dev/disk0s1s${prebootB} /mnt4/"
-        if [ "$back" = "1" ]; then
-            remote_cmd "mv /mnt8/usr/libexec/mobileactivationdBackup /mnt8/usr/libexec/mobileactivationd "
-            echo "DONE. bring BACK icloud " # that will bring back the normal icloud
-            remote_cmd "/sbin/reboot"
-            exit; 
-        fi
-        remote_cmd "cp -av /mnt2/root/Library/Lockdown/* /mnt9/root/Library/Lockdown/. "
-        remote_cmd "mv /mnt8/usr/libexec/mobileactivationd /mnt8/usr/libexec/mobileactivationdBackup " # that will remplace mobileactivationd hacked
-        remote_cp other/mobileactivationd root@localhost:/mnt8/usr/libexec/
-        remote_cmd "ldid -e /mnt8/usr/libexec/mobileactivationdBackup > /mnt8/mob.plist"
-        remote_cmd "ldid -S/mnt8/mob.plist /mnt8/usr/libexec/mobileactivationd"
-        remote_cmd "rm -rv /mnt8/mob.plist"
-        echo "thank you for share mobileactivationd @MatthewPierson"
-        echo "[*] DONE ... now reboot and boot again"
-        remote_cmd "/sbin/reboot"
-        
     fi
 
     if [ "$dualboot" = "1" ]; then
