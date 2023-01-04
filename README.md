@@ -49,11 +49,11 @@ Subcommands:
 
 # how to dualboot
 
-Step 1: download your ipsw file which is wanted to dualboot. you can use --getIpsw that will do automatically however if that give error you must download manual and put the ipse into the ipsw/ directory 
+Step 1: download your ipsw file which is wanted to dualboot. you can use --getIpsw that will do automatically however if that give error you must download manual and put the ipsw file into the ipsw/ directory 
 
-Step 2: ./dualboot.sh --dualboot 14.3
+Step 2: ./dualboot.sh --dualboot 14.3 (other options)
 
-Step 3: when you want to dualboot you eill have to use ./dualboot.sh --
+Step 3: when that is already installed and you would want to dualboot your second ios, you will have to use ./dualboot.sh --boot
 
 
 
