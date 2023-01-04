@@ -604,16 +604,21 @@ fi
 
 if [ "$getIpsw" = "1" ]; then # download specific ipsw for your device however the problem is that you will have to install ipsw
     if  command -v ipsw &>/dev/null; then
+    	cd ipsw/
         echo "you have already installed ipsw"
         ipsw download ipsw --device $deviceid --version $version
         sleep 1
-        mv -v "*.ipsw" ipsw/
+	cd ..
         exit;
     else 
         if [ "$os" = "Darwin" ]; then
             brew install blacktop/tap/ipsw
+	    echo "run the script again to start the download"
+	    exit;
         else
             sudo apt-get install ipsw
+	    echo "run the script again to start the download"
+	    exit;
         fi
     fi
 fi
