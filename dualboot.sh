@@ -305,7 +305,11 @@ _dfuhelper() {
         step 10 'Release power button, but keep holding home button'
     fi
     sleep 1
-    
+
+    if [ "$(get_device_mode)" = "recovery" ]; then
+        _dfuhelper
+    fi
+
     if [ "$(get_device_mode)" = "dfu" ]; then
         echo "[*] Device entered DFU!"
     else
@@ -389,21 +393,16 @@ _boot() {
 }
 
 _exit_handler() {
-    if [ "$os" = 'Darwin' ]; then
-        defaults write -g ignore-devices -bool false
-        defaults write com.apple.AMPDevicesAgent dontAutomaticallySyncIPods -bool false
-        killall Finder
-    fi
     [ $? -eq 0 ] && exit
     echo "[-] An error occurred"
 
-    cd logs
-    for file in *.log; do
-        mv "$file" FAIL_${file}
-    done
-    cd ..
+    if [ -d "logs" ]; then
+        cd logs
+        mv "$log" FAIL_${log}
+        cd ..
+    fi
 
-    echo "[*] A failure log has been made. If you're going to make a GitHub issue, please attach the latest log."
+    echo "[*] A failure log has been made. If you're going ask for help, please attach the latest log."
 }
 trap _exit_handler EXIT
 
@@ -604,21 +603,17 @@ fi
 
 if [ "$getIpsw" = "1" ]; then # download specific ipsw for your device however the problem is that you will have to install ipsw
     if  command -v ipsw &>/dev/null; then
-    	cd ipsw/
+        cd ipsw/
         echo "you have already installed ipsw"
         ipsw download ipsw --device $deviceid --version $version
         sleep 1
-	cd ..
+        cd ..
         exit;
     else 
         if [ "$os" = "Darwin" ]; then
             brew install blacktop/tap/ipsw
-	    echo "run the script again to start the download"
-	    exit;
         else
             sudo apt-get install ipsw
-	    echo "run the script again to start the download"
-	    exit;
         fi
     fi
 fi
@@ -912,13 +907,16 @@ if [ true ]; then
                 # on linux this will be different because asr. this just mount the rootfs and copying all files to partition 
                 sleep 2
                 dmg_disk=$(remote_cmd "/usr/sbin/hdik /mnt8/${dmgfile} | head -3 | tail -1 | sed 's/ .*//'")
-                remote_cmd "/sbin/mount_apfs -o ro $dmg_disk /mnt5/"
+                if [ ! $(remote_cmd "/sbin/mount_apfs -o ro $dmg_disk /mnt5/") ]; then
+                    remote_cmd "/sbin/mount_apfs -o ro "$dmg_disk"s1 /mnt5/"
+                fi
                 echo "it is extracting the files so please hang on ......."
                 remote_cmd "cp -a /mnt5/* /mnt8/"
                 sleep 2
-                remote_cmd "/sbin/umount $dmg_disk"
+                if [ ! $(remote_cmd "/sbin/umount $dmg_disk") ]; then
+                    remote_cmd "/sbin/umount "$dmg_disk"s1 "
+                fi
                 remote_cmd "rm -rv /mnt8/${dmgfile}"
-                
             fi
             # that reboot is strange because i can continue however when i want to use apfs_invert that never work so i have to reboot on linux is ineccessary but i have to let it to avoid problems 
             remote_cmd "/usr/sbin/nvram auto-boot=false"
@@ -940,9 +938,9 @@ if [ true ]; then
             remote_cmd "/sbin/mount_apfs /dev/disk0s1s${disk} /mnt8/"
             remote_cmd "/sbin/mount_apfs /dev/disk0s1s${dataB} /mnt9/"
             remote_cmd "/sbin/mount_apfs /dev/disk0s1s${prebootB} /mnt4/"
-            remote_cmd "cp -av /mnt8/private/var/* /mnt9/" # this will copy all file which is needed by dataB
+            remote_cmd "cp -a /mnt8/private/var/. /mnt9/" # this will copy all file which is needed by dataB
             remote_cmd "mount_filesystems"
-            remote_cmd "cp -av /mnt6/* /mnt4/" # copy preboot to prebootB
+            remote_cmd "cp -a /mnt6/. /mnt4/" # copy preboot to prebootB
         fi
         remote_cmd "/usr/sbin/nvram auto-boot=false"
         remote_cmd "/sbin/reboot"
