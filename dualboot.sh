@@ -23,6 +23,8 @@ dir="$(pwd)/binaries/$os"
 max_args=1
 arg_count=0
 disk=8
+prebootRole=D
+systemRole=i
 extractedIpsw="ipsw/extracted/"
 
 if [ ! -d "ramdisk/" ]; then
@@ -500,7 +502,7 @@ chmod +x "$dir"/*
 # ============
 
 echo "dualboot | Version beta"
-echo "Written by edwin and most code of palera1n :) thanks Nebula and Mineek | Some code also the ramdisk from Nathan | thanks MatthewPierson, Ralph0045, and all people creator of path file boot"
+echo "Written by edwin and most code of palera1n :) thanks pelera1n team | Some code also the ramdisk from Nathan | thanks MatthewPierson, Ralph0045, and all people creator of path file boot"
 echo ""
 
 version="beta"
@@ -872,11 +874,16 @@ if [ true ]; then
     if [ "$dualboot" = "1" ]; then
         if [ -z "$dont_createPart" ]; then # if you have already your second ios you can omited with this
             echo "[*] Creating partitions"
-        	if [ ! $(remote_cmd "/sbin/newfs_apfs -o role=i -A -v SystemB /dev/disk0s1") ] && [ ! $(remote_cmd "/sbin/newfs_apfs -o role=0 -A -v DataB /dev/disk0s1") ] && [ ! $(remote_cmd "/sbin/newfs_apfs -o role=D -A -v PrebootB /dev/disk0s1") ]; then # i put this in case that resturn a error the script can continuing
+            if [[ "$version" = "13."* ]]; then 
+                systemRole=r
+                prebootRole=i
+            fi
+            
+        	if [ ! $(remote_cmd "/sbin/newfs_apfs -o role=${systemRole} -A -v SystemB /dev/disk0s1") ] && [ ! $(remote_cmd "/sbin/newfs_apfs -o role=0 -A -v DataB /dev/disk0s1") ] && [ ! $(remote_cmd "/sbin/newfs_apfs -o role=${prebootRole} -A -v PrebootB /dev/disk0s1") ]; then # i put this in case that resturn a error the script can continuing
                 echo "[*] partitions created, continuing..."
 	        fi
 		    
-            echo "is already created"
+            echo "partitions are already created"
             echo "mounting filesystems "
             remote_cmd "/sbin/mount_apfs /dev/disk0s1s${disk} /mnt8/"
             sleep 1
@@ -909,13 +916,17 @@ if [ true ]; then
                 # on linux this will be different because asr. this just mount the rootfs and copying all files to partition 
                 sleep 2
                 dmg_disk=$(remote_cmd "/usr/sbin/hdik /mnt8/${dmgfile} | head -3 | tail -1 | sed 's/ .*//'")
-                if [ ! $(remote_cmd "/sbin/mount_apfs -o ro $dmg_disk /mnt5/") ]; then
+                if [[ ! "$version" = "13."* ]]; then
+                    remote_cmd "/sbin/mount_apfs -o ro $dmg_disk /mnt5/"
+                else 
                     remote_cmd "/sbin/mount_apfs -o ro "$dmg_disk"s1 /mnt5/"
                 fi
                 echo "it is extracting the files so please hang on ......."
                 remote_cmd "cp -a /mnt5/* /mnt8/"
                 sleep 2
-                if [ ! $(remote_cmd "/sbin/umount $dmg_disk") ]; then
+                if [[ ! "$version" = "13."* ]]; then
+                    remote_cmd "/sbin/umount $dmg_disk"
+                else
                     remote_cmd "/sbin/umount "$dmg_disk"s1 "
                 fi
                 remote_cmd "rm -rv /mnt8/${dmgfile}"
@@ -996,7 +1007,7 @@ if [ true ]; then
         fi
         "$dir"/iBoot64Patcher work/iBEC.dec work/iBEC.patched -b "rd=disk0s1s${disk} debug=0x2014e wdt=-1 -v `if [ "$cpid" = '0x8960' ] || [ "$cpid" = '0x7000' ] || [ "$cpid" = '0x7001' ]; then echo "-restore"; fi`" -n 
         
-        if [ "$fixHB" = "1" ]; then # that not work yet, we are waiting for the lady find a ibootpath2 working on ios 14 :)
+        if [ "$fixHB" = "1" ]; then # that work fine on ios 14.5 up but the boot procces should be different if some one want to try it go ahead because i dont have a a10 or a11 :)
            if [[ "$deviceid" == iPhone9,[1-4] ]] || [[ "$deviceid" == "iPhone10,"* ]]; then
                 "$dir"/iBootpatch2 --t8010 work/iBEC.patched work/iBEC.patched2
             else
@@ -1016,10 +1027,10 @@ if [ true ]; then
         if [ "$os" = "Linux" ]; then
             echo "devicetree patcher is fall down, not work on linux, however you can use https://github.com/darlinghq/darling.git to execute binary dtree_patcher"
             # that will use darling because dtreepatcher have problem on linux and noone want to help me 
-            /usr/bin/darling shell binaries/Darwin/dtree_patcher work/dtree.raw work/dtree.patched -d -p
+            /usr/bin/darling shell binaries/Darwin/dtree_patcher work/dtree.raw work/dtree.patched -d  `if [[ ! "$version" = '13.'* ]]; then echo "-p"; fi`
             "$dir"/img4 -i work/dtree.patched -o work/devicetree.img4 -A -M work/IM4M -T rdtr
         else 
-            "$dir"/dtree_patcher work/dtree.raw work/dtree.patched -d -p 
+            "$dir"/dtree_patcher work/dtree.raw work/dtree.patched -d `if [[ ! "$version" = '13.'* ]]; then echo "-p"; fi`
             "$dir"/img4 -i work/dtree.patched -o work/devicetree.img4 -A -M work/IM4M -T rdtr
         fi
 
