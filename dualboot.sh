@@ -28,7 +28,7 @@ systemRole=i
 extractedIpsw="ipsw/extracted/"
 
 if [ ! -d "ramdisk/" ]; then
-    git clone https://github.com/edwin170/ramdisk.git
+    git clone https://github.com/dualra1n/ramdisk.git
 fi
 # =========
 # Functions
