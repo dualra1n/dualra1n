@@ -1035,7 +1035,7 @@ if [ true ]; then
         fi
 
         cp -rv work/*.img4 "boot/${deviceid}" # copying all file img4 to boot
-        echo "so we finish, now you can execute './dualboot boot' to boot to second ios after that we need that you record a video when your iphone is booting to see what is the uuid and note that name of the uuid"       
+      # echo "so we finish, now you can execute './dualboot boot' to boot to second ios after that we need that you record a video when your iphone is booting to see what is the uuid and note that name of the uuid"       
         _boot
     fi
 fi
