@@ -4,7 +4,8 @@ A script that lets you dualboot iOS 14-15 on checkm8 devices.
 
 # What issues you will have known so far
 
-- A9 : Everything works perfect expect camera. (Fixable with ldrestart) # when i jailbreak it the camera always work without using ldrestart
+- A9 : Everything works perfect expect camera. (Fixable with ldrestart) # when i jailbreak it the camera always work without using ldrestart (on my iphone6s i dualbooted with ios 14.2 and camera work fine and flash too, i dont know why on others version is different however that work fine on ios 14.2)
+
 
 - iPhone 7, 7+ : Home button is not working at the moment. You can use tweaks that brings X gestures to move. Also camera is not working too. 
 
