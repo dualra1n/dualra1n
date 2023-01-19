@@ -759,14 +759,16 @@ if [ true ]; then
         exit;
     fi
 
-    if [ ! -e blobs/"$deviceid"-"$version".shsh2 ]; then
-        remote_cmd "cat /dev/rdisk1" | dd of=dump.raw bs=256 count=$((0x4000)) 
-        "$dir"/img4tool --convert -s blobs/"$deviceid"-"$version".shsh2 dump.raw
-        echo "[*] Converting blob"
-        sleep 3
-    fi
-    "$dir"/img4tool -e -s $(pwd)/blobs/"$deviceid"-"$version".shsh2 -m work/IM4M
+    #if [ ! -e blobs/"$deviceid"-"$version".shsh2 ]; then
+    #    remote_cmd "cat /dev/rdisk1" | dd of=dump.raw bs=256 count=$((0x4000)) 
+    #    "$dir"/img4tool --convert -s blobs/"$deviceid"-"$version".shsh2 dump.raw
+    #    echo "[*] Converting blob"
+    #    sleep 3
+    #fi
+    #"$dir"/img4tool -e -s $(pwd)/blobs/"$deviceid"-"$version".shsh2 -m work/IM4M
     #rm dump.raw
+    remote_cp root@localhost:/mnt6/$active/System/Library/Caches/apticket.der blobs/"$deviceid"-"$version".der
+    cp -av blobs/"$deviceid"-"$version".der work/IM4M
 
     if [ "$jailbreak" = "1" ]; then
         echo "patching kernel" # this will send and patch the kernel
@@ -794,7 +796,7 @@ if [ true ]; then
         fi
         sleep 2
         remote_cp root@localhost:/mnt4/$active/System/Library/Caches/com.apple.kernelcaches/kcache.patched work/ # that will return the kernelpatcher in order to be patched again and boot with it 
-        "$dir"/Kernel64Patcher work/kcache.patched work/kcache.patchedB -f -s -e `if [ ! "$taurine" = "1" ]; then echo "-l"; fi`
+        "$dir"/Kernel64Patcher work/kcache.patched work/kcache.patchedB -f -s -o `if [ ! "$taurine" = "1" ]; then echo "-l"; fi`
 
         if [[ "$deviceid" == *'iPhone8'* ]] || [[ "$deviceid" == *'iPad6'* ]] || [[ "$deviceid" == *'iPad5'* ]]; then
             python3 -m pyimg4 im4p create -i work/kcache.patchedB -o work/kcache.im4p -f krnl --extra work/kpp.bin --lzss
