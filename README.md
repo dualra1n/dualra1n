@@ -48,6 +48,13 @@ Subcommands:
 
 ---
 
+# Warning
+- I am **NOT** responsible for any data loss. The user of this program accepts responsibility should something happen to their device.
+ **If your device is stuck in recovery, please run one of the following:**
+   - futurerestore --exit-recovery
+   - irecovery -n
+
+
 # how to dualboot
 
 Step 1: download your ipsw file which is wanted to dualboot. you can use --getIpsw that will do automatically however if that give error you must download manual and put the ipsw file into the ipsw/ directory 
