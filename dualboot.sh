@@ -23,8 +23,6 @@ dir="$(pwd)/binaries/$os"
 max_args=1
 arg_count=0
 disk=8
-prebootRole=D
-systemRole=i
 extractedIpsw="ipsw/extracted/"
 
 if [ ! -d "ramdisk/" ]; then
@@ -209,7 +207,7 @@ _reset() {
 
 get_device_mode() {
     if [ "$os" = "Darwin" ]; then
-        apples="$(system_profiler SPUSBDataType | grep -B1 'Vendor ID: 0x05ac' | grep 'Product ID:' | cut -dx -f2 | cut -d' ' -f1 | tail -r 2> /dev/null)"
+        apples="$(system_profiler SPUSBDataType 2> /dev/null | grep -B1 'Vendor ID: 0x05ac' | grep 'Product ID:' | cut -dx -f2 | cut -d' ' -f1 | tail -r)"
     elif [ "$os" = "Linux" ]; then
         apples="$(lsusb | cut -d' ' -f6 | grep '05ac:' | cut -d: -f2)"
     fi
@@ -217,11 +215,7 @@ get_device_mode() {
     local usbserials=""
     for apple in $apples; do
         case "$apple" in
-            12ab)
-            device_mode=normal
-            device_count=$((device_count+1))
-            ;;
-            12a8)
+            12a8|12aa|12ab)
             device_mode=normal
             device_count=$((device_count+1))
             ;;
@@ -257,9 +251,9 @@ get_device_mode() {
     if [ "$os" = "Linux" ]; then
         usbserials=$(cat /sys/bus/usb/devices/*/serial)
     elif [ "$os" = "Darwin" ]; then
-        usbserials=$(system_profiler SPUSBDataType | grep 'Serial Number' | cut -d: -f2- | sed 's/ //' 2> /dev/null)
+        usbserials=$(system_profiler SPUSBDataType 2> /dev/null | grep 'Serial Number' | cut -d: -f2- | sed 's/ //')
     fi
-    if grep -qE 'ramdisk tool (Jan|Feb|Mar|Apr|May|Jun|Jul|Aug|Sep|Oct|Nov|Dec) [0-9]{1,2} [0-9]{1,4} [0-9]{2}:[0-9]{2}:[0-9]{2}' <<< "$usbserials"; then
+    if grep -qE '(ramdisk tool|SSHRD_Script) (Jan|Feb|Mar|Apr|May|Jun|Jul|Aug|Sep|Oct|Nov|Dec) [0-9]{1,2} [0-9]{4} [0-9]{2}:[0-9]{2}:[0-9]{2}' <<< "$usbserials"; then
         device_mode=ramdisk
     fi
     echo "$device_mode"
@@ -317,10 +311,10 @@ _dfuhelper() {
 _kill_if_running() {
     if (pgrep -u root -x "$1" &> /dev/null > /dev/null); then
         # yes, it's running as root. kill it
-        sudo killall $1
+        sudo killall $1 &> /dev/null
     else
         if (pgrep -x "$1" &> /dev/null > /dev/null); then
-            killall $1
+            killall $1 &> /dev/null
         fi
     fi
 }
@@ -332,6 +326,9 @@ _boot() {
     sleep 1
     
     echo "[*] Booting device"
+
+    "$dir"/irecovery -f "blobs/"$deviceid"-"$version".der"
+    sleep 1
 
     "$dir"/irecovery -f "boot/${deviceid}/iBSS.img4"
     sleep 1
@@ -358,8 +355,13 @@ _boot() {
         if [[ "$cpid" == *"0x801"* ]]; then
             "$dir"/irecovery -c "go"
             sleep 2
+        else
+           "$dir"/irecovery -c "bootx"
+            sleep 2
+        
         fi
     fi
+
 
     "$dir"/irecovery -f "boot/${deviceid}/devicetree.img4"
     sleep 1 
@@ -427,28 +429,18 @@ if [ "$os" = "Linux"  ]; then
     fi
 fi
 
-if command -v curl &>/dev/null; then
-  echo "curl installed"
-else
-  read -p "curl is not installed. Do you want to install it now (y/n)? " answer
-  case $answer in
-        [Yy]* )
-            # install curl
-            if [ "$os" = "Darwin" ]; then
-                brew install curl
-            else 
-                sudo apt-get install curl wget rsync
-            fi
-            ;;
-        [Nn]*|[Nn][Oo] )
-          echo "curl was not installed and that is needed to dualboot"
-          exit
-          ;;
-        * )
-          echo "Invalid input"
-          exit
-          ;;
-    esac
+if [ "$os" = 'Linux' ]; then
+    linux_cmds='lsusb'
+fi
+
+for cmd in curl unzip python3 git ssh scp killall sudo grep pgrep ${linux_cmds}; do
+    if ! command -v "${cmd}" > /dev/null; then
+        echo "[-] Command '${cmd}' not installed, please install it!";
+        cmd_not_found=1
+    fi
+done
+if [ "$cmd_not_found" = "1" ]; then
+    exit 1
 fi
 
 
@@ -471,10 +463,6 @@ if ! python3 -c 'import pkgutil; exit(not pkgutil.find_loader("pyimg4"))'; then
     python3 -m pip install pyimg4
 fi
 
-# ============disk0s1s
-# Prep
-# ============
-
 # Update submodules
 git submodule update --init --recursive
 
@@ -487,15 +475,12 @@ else
 fi
 
 chmod +x "$dir"/*
-#if [ "$os" = 'Darwin' ]; then
-#    xattr -d com.apple.quarantine "$dir"/*
-#fi
 
 # ============
 # Start
 # ============
 
-echo "dualboot | Version beta"
+echo "dualboot | Version 2.0"
 echo "Written by edwin and most code of palera1n :) thanks pelera1n team | Some code also the ramdisk from Nathan | thanks MatthewPierson, Ralph0045, and all people creator of path file boot"
 echo ""
 
@@ -743,7 +728,7 @@ if [ true ]; then
             echo "error partition, maybe that partition is important so it could be deleted by apfs_deletefs, that is bad"
             exit; 
         fi
-        # that eliminate dualboot paritions 
+        # this eliminate dualboot paritions 
         remote_cmd "/sbin/apfs_deletefs disk0s1s${disk} > /dev/null || true"
         remote_cmd "/sbin/apfs_deletefs disk0s1s${dataB} > /dev/null || true"
         remote_cmd "/sbin/apfs_deletefs disk0s1s${prebootB} > /dev/null || true"
@@ -790,7 +775,7 @@ if [ true ]; then
         fi
         sleep 2
         remote_cp root@localhost:/mnt4/$active/System/Library/Caches/com.apple.kernelcaches/kcache.patched work/ # that will return the kernelpatcher in order to be patched again and boot with it 
-        "$dir"/Kernel64Patcher work/kcache.patched work/kcache.patchedB -f -s -o `if [ ! "$taurine" = "1" ]; then echo "-l"; fi`
+        "$dir"/Kernel64Patcher work/kcache.patched work/kcache.patchedB -f -s `if [[ ! "$version" = "15."* ]]; then echo "-e"; fi` `if [ ! "$taurine" = "1" ]; then echo "-l"; fi`
 
         if [[ "$deviceid" == *'iPhone8'* ]] || [[ "$deviceid" == *'iPad6'* ]] || [[ "$deviceid" == *'iPad5'* ]]; then
             python3 -m pyimg4 im4p create -i work/kcache.patchedB -o work/kcache.im4p -f krnl --extra work/kpp.bin --lzss
@@ -870,12 +855,8 @@ if [ true ]; then
     if [ "$dualboot" = "1" ]; then
         if [ -z "$dont_createPart" ]; then # if you have already your second ios you can omited with this
             echo "[*] Creating partitions"
-            if [[ "$version" = "13."* ]]; then 
-                systemRole=r
-                prebootRole=i
-            fi
             
-        	if [ ! $(remote_cmd "/sbin/newfs_apfs -o role=${systemRole} -A -v SystemB /dev/disk0s1") ] && [ ! $(remote_cmd "/sbin/newfs_apfs -o role=0 -A -v DataB /dev/disk0s1") ] && [ ! $(remote_cmd "/sbin/newfs_apfs -o role=${prebootRole} -A -v PrebootB /dev/disk0s1") ]; then # i put this in case that resturn a error the script can continuing
+        	if [ ! $(remote_cmd "/sbin/newfs_apfs -o role=i -A -v SystemB /dev/disk0s1") ] && [ ! $(remote_cmd "/sbin/newfs_apfs -o role=0 -A -v DataB /dev/disk0s1") ] && [ ! $(remote_cmd "/sbin/newfs_apfs -o role=D -A -v PrebootB /dev/disk0s1") ]; then # i put this in case that resturn a error the script can continuing
                 echo "[*] partitions created, continuing..."
 	        fi
 		    
@@ -912,17 +893,13 @@ if [ true ]; then
                 # on linux this will be different because asr. this just mount the rootfs and copying all files to partition 
                 sleep 2
                 dmg_disk=$(remote_cmd "/usr/sbin/hdik /mnt8/${dmgfile} | head -3 | tail -1 | sed 's/ .*//'")
-                if [[ ! "$version" = "13."* ]]; then
-                    remote_cmd "/sbin/mount_apfs -o ro $dmg_disk /mnt5/"
-                else 
+                if [ ! $(remote_cmd "/sbin/mount_apfs -o ro $dmg_disk /mnt5/") ]; then
                     remote_cmd "/sbin/mount_apfs -o ro "$dmg_disk"s1 /mnt5/"
                 fi
                 echo "it is extracting the files so please hang on ......."
                 remote_cmd "cp -a /mnt5/* /mnt8/"
                 sleep 2
-                if [[ ! "$version" = "13."* ]]; then
-                    remote_cmd "/sbin/umount $dmg_disk"
-                else
+                if [ ! $(remote_cmd "/sbin/umount $dmg_disk") ]; then
                     remote_cmd "/sbin/umount "$dmg_disk"s1 "
                 fi
                 remote_cmd "rm -rv /mnt8/${dmgfile}"
@@ -1001,7 +978,7 @@ if [ true ]; then
         else
             "$dir"/gaster decrypt work/"$(awk "/""${model}""/{x=1}x&&/iBEC[.]/{print;exit}" work/BuildManifest.plist | grep '<string>' |cut -d\> -f2 |cut -d\< -f1 | sed 's/Firmware[/]dfu[/]//')" work/iBEC.dec
         fi
-        "$dir"/iBoot64Patcher work/iBEC.dec work/iBEC.patched -b "rd=disk0s1s${disk} debug=0x2014e wdt=-1 -v `if [ "$cpid" = '0x8960' ] || [ "$cpid" = '0x7000' ] || [ "$cpid" = '0x7001' ]; then echo "-restore"; fi`" -n 
+        "$dir"/iBoot64Patcher work/iBEC.dec work/iBEC.patched -b "rd=disk0s1s${disk} wdt=-1 keepsyms=1 debug=0x2014e `if [ "$cpid" = '0x8960' ] || [ "$cpid" = '0x7000' ] || [ "$cpid" = '0x7001' ]; then echo "-restore"; fi`" -n 
         
         if [ "$fixHB" = "1" ]; then # that work fine on ios 14.5 up but the boot procces should be different if some one want to try it go ahead because i dont have a a10 or a11 :)
            if [[ "$deviceid" == iPhone9,[1-4] ]] || [[ "$deviceid" == "iPhone10,"* ]]; then
@@ -1023,10 +1000,10 @@ if [ true ]; then
         if [ "$os" = "Linux" ]; then
             echo "devicetree patcher is fall down, not work on linux, however you can use https://github.com/darlinghq/darling.git to execute binary dtree_patcher"
             # that will use darling because dtreepatcher have problem on linux and noone want to help me 
-            /usr/bin/darling shell binaries/Darwin/dtree_patcher work/dtree.raw work/dtree.patched -d  `if [[ ! "$version" = '13.'* ]]; then echo "-p"; fi`
+            /usr/bin/darling shell binaries/Darwin/dtree_patcher work/dtree.raw work/dtree.patched -d -p
             "$dir"/img4 -i work/dtree.patched -o work/devicetree.img4 -A -M work/IM4M -T rdtr
         else 
-            "$dir"/dtree_patcher work/dtree.raw work/dtree.patched -d `if [[ ! "$version" = '13.'* ]]; then echo "-p"; fi`
+            "$dir"/dtree_patcher work/dtree.raw work/dtree.patched -d -p
             "$dir"/img4 -i work/dtree.patched -o work/devicetree.img4 -A -M work/IM4M -T rdtr
         fi
 
