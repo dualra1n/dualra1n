@@ -1,6 +1,9 @@
 # dualra1n # THIS BRANCH IS FOR IOS 13 DUALBOOT NOT OTHER IOS PLEASE
 
-A script that lets you dualboot iOS 14-15 on checkm8 devices.
+A script that lets you dualboot iOS 13 on checkm8 devices. thank you so much to give me some information to get this mcg29 and pyboot for some code which fix the most of problems.
+
+remember not put passcode because that give some problems on dualboot ios 13.
+
 
 # What issues you will have known so far
 
