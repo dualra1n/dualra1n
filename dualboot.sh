@@ -775,7 +775,7 @@ if [ true ]; then
         fi
         sleep 2
         remote_cp root@localhost:/mnt4/$active/System/Library/Caches/com.apple.kernelcaches/kcache.patched work/ # that will return the kernelpatcher in order to be patched again and boot with it 
-        "$dir"/Kernel64Patcher work/kcache.patched work/kcache.patchedB -f -s `if [[ ! "$version" = "15."* ]]; then echo "-e"; fi` `if [ ! "$taurine" = "1" ]; then echo "-l"; fi`
+        "$dir"/Kernel64Patcher work/kcache.patched work/kcache.patchedB -f -s `if [[ "$version" = "15."* ]]; then echo "-e"; fi` `if [ ! "$taurine" = "1" ]; then echo "-l"; fi`
 
         if [[ "$deviceid" == *'iPhone8'* ]] || [[ "$deviceid" == *'iPad6'* ]] || [[ "$deviceid" == *'iPad5'* ]]; then
             python3 -m pyimg4 im4p create -i work/kcache.patchedB -o work/kcache.im4p -f krnl --extra work/kpp.bin --lzss
