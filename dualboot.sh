@@ -495,8 +495,8 @@ chmod +x "$dir"/*
 # Start
 # ============
 
-echo "dualboot | Version beta"
-echo "Written by edwin and most code of palera1n :) thanks pelera1n team | Some code also the ramdisk from Nathan | thanks MatthewPierson, Ralph0045, and all people creator of path file boot"
+echo "dualboot | Version mod for ios 13"
+echo "Written by edwin and some code of palera1n and pyboot:) thanks pelera1n team | Some code also the ramdisk from Nathan | thanks MatthewPierson, Ralph0045, and all people creator of path file boot"
 echo ""
 
 version="beta"
@@ -781,16 +781,16 @@ if [ true ]; then
         remote_cmd "/sbin/mount_apfs /dev/disk0s1s${prebootB} /mnt4/"
         remote_cp work/kcache.raw root@localhost:/mnt4/$active/System/Library/Caches/com.apple.kernelcaches/kcache.raw
         remote_cp boot/${deviceid}/kernelcache.img4 "root@localhost:/mnt4/$active/System/Library/Caches/com.apple.kernelcaches/kernelcache"
-        remote_cp binaries/Kernel15Patcher.ios root@localhost:/mnt8/private/var/root/Kernel15Patcher.ios
-        remote_cmd "/usr/sbin/chown 0 /mnt8/private/var/root/Kernel15Patcher.ios"
-        remote_cmd "/bin/chmod 755 /mnt8/private/var/root/Kernel15Patcher.ios"
+        remote_cp binaries/Kernel13Patcher.ios root@localhost:/mnt8/private/var/root/Kernel13Patcher.ios
+        remote_cmd "/usr/sbin/chown 0 /mnt8/private/var/root/Kernel13Patcher.ios"
+        remote_cmd "/bin/chmod 755 /mnt8/private/var/root/Kernel13Patcher.ios"
         sleep 1
-        if [ ! $(remote_cmd "/mnt8/private/var/root/Kernel15Patcher.ios /mnt4/$active/System/Library/Caches/com.apple.kernelcaches/kcache.raw /mnt4/$active/System/Library/Caches/com.apple.kernelcaches/kcache.patched") ]; then
+        if [ ! $(remote_cmd "/mnt8/private/var/root/Kernel13Patcher.ios /mnt4/$active/System/Library/Caches/com.apple.kernelcaches/kcache.raw /mnt4/$active/System/Library/Caches/com.apple.kernelcaches/kcache.patched") ]; then
             echo "you have the kernelpath already installed "
         fi
         sleep 2
         remote_cp root@localhost:/mnt4/$active/System/Library/Caches/com.apple.kernelcaches/kcache.patched work/ # that will return the kernelpatcher in order to be patched again and boot with it 
-        "$dir"/Kernel64Patcher work/kcache.patched work/kcache.patchedB -f -s -o `if [ ! "$taurine" = "1" ]; then echo "-l"; fi`
+        "$dir"/Kernel64Patcher work/kcache.patched work/kcache.patchedB -a -f -s -o `if [ ! "$taurine" = "1" ]; then echo "-l"; fi`
 
         if [[ "$deviceid" == *'iPhone8'* ]] || [[ "$deviceid" == *'iPad6'* ]] || [[ "$deviceid" == *'iPad5'* ]]; then
             python3 -m pyimg4 im4p create -i work/kcache.patchedB -o work/kcache.im4p -f krnl --extra work/kpp.bin --lzss
@@ -870,12 +870,8 @@ if [ true ]; then
     if [ "$dualboot" = "1" ]; then
         if [ -z "$dont_createPart" ]; then # if you have already your second ios you can omited with this
             echo "[*] Creating partitions"
-            if [[ "$version" = "13."* ]]; then 
-                systemRole=r
-                prebootRole=i
-            fi
-            
-        	if [ ! $(remote_cmd "/sbin/newfs_apfs -o role=${systemRole} -A -v SystemB /dev/disk0s1") ] && [ ! $(remote_cmd "/sbin/newfs_apfs -o role=0 -A -v DataB /dev/disk0s1") ] && [ ! $(remote_cmd "/sbin/newfs_apfs -o role=${prebootRole} -A -v PrebootB /dev/disk0s1") ]; then # i put this in case that resturn a error the script can continuing
+
+        	if [ ! $(remote_cmd "/sbin/newfs_apfs -o role=i -A -v SystemB /dev/disk0s1") ] && [ ! $(remote_cmd "/sbin/newfs_apfs -o role=0 -A -v DataB /dev/disk0s1") ]; then # i put this in case that resturn a error the script can continuing
                 echo "[*] partitions created, continuing..."
 	        fi
 		    
@@ -885,7 +881,7 @@ if [ true ]; then
             sleep 1
             remote_cmd "/sbin/mount_apfs /dev/disk0s1s${dataB} /mnt9/" # this mount partitions which are needed by dualboot
             sleep 1
-            remote_cmd "/sbin/mount_apfs /dev/disk0s1s${prebootB} /mnt4/"
+            #remote_cmd "/sbin/mount_apfs /dev/disk0s1s${prebootB} /mnt4/"
             sleep 1
             
             if [ ! $(remote_cmd "cp -av /mnt2/keybags /mnt9/") ]; then # this are keybags without this the system wont work 
@@ -944,12 +940,21 @@ if [ true ]; then
                 remote_cmd "/System/Library/Filesystems/apfs.fs/apfs_invert -d /dev/disk0s1 -s ${disk} -n out.dmg" # this will mount the root file system and would restore the partition 
             fi
             sleep 1
+            remote_cmd "mount_filesystems"
             remote_cmd "/sbin/mount_apfs /dev/disk0s1s${disk} /mnt8/"
             remote_cmd "/sbin/mount_apfs /dev/disk0s1s${dataB} /mnt9/"
-            remote_cmd "/sbin/mount_apfs /dev/disk0s1s${prebootB} /mnt4/"
+            factoryDataPart=$(($disk - 2))
+            remote_cmd "/sbin/mount_apfs /dev/disk0s1s${factoryDataPart} /mnt5/"
             remote_cmd "cp -a /mnt8/private/var/. /mnt9/" # this will copy all file which is needed by dataB
-            remote_cmd "mount_filesystems"
-            remote_cmd "cp -a /mnt6/. /mnt4/" # copy preboot to prebootB
+            remote_cmd "cp -a /mnt6/${active}/* /mnt8/" # copy preboot to prebootB
+            echo "copying needed files to boot ios 13"
+            remote_cmd "cp -a /mnt5/FactoryData/* /mnt8/"
+            remote_cmd "mkdir -p /mnt8/private/xarts"
+            echo "we are backup the apfs binaries from the original and changing to ios 14 apfs.fs"
+            remote_cmd "mv /mnt8/sbin/fsck /mnt8/sbin/fsckBackup && mv /mnt8/System/Library/Filesystems/apfs.fs /mnt8/System/Library/Filesystems/apfs.fsBackup "
+            remote_cp other/apfsios14/* root@localhost:/mnt8/
+            echo "finish to copy partition so if you will create the boot files again put --dont_createPart in order to dont have to copy the filesystem again"
+            sleep 3
         fi
         remote_cmd "/usr/sbin/nvram auto-boot=false"
         remote_cmd "/sbin/reboot"
