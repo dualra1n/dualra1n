@@ -2,17 +2,6 @@
 
 A script that lets you dualboot iOS 14-15 on checkm8 devices.
 
-# What issues you will have known so far
-
-- A9 : Everything works perfect expect camera. (Fixable with ldrestart) # when i jailbreak it the camera always work without using ldrestart (on my iphone6s i dualbooted with ios 14.2 and camera work fine and flash too, i dont know why on others version is different however that work fine on ios 14.2)
-
-
-- iPhone 7, 7+ : Home button is not working at the moment. You can use tweaks that brings X gestures to move. Also camera is not working too. 
-
-- iPhone 8 , 8+ : Home button is not working at the moment. You can use tweaks that brings X gestures to move. Also camera is not working too. https://www.youtube.com/watch?v=k8-2NhCcVMg&t=0s that is a video how to activate assesive touch in order to settting the setup so after you can install tweaks to dont have to use button one of that is gesture13 or minixs
-
-- iPhone X : Touchscreen is not working.
-
 
 # Usage
 
@@ -48,12 +37,29 @@ Subcommands:
 
 ---
 
+# What issues you will have known so far
+
+- A9 : Everything works perfect expect camera. (Fixable with ldrestart) # when i jailbreak it the camera always work without using ldrestart (on my iphone6s i dualbooted with ios 14.2 and camera work fine and flash too, i dont know why on others version is different however that work fine on ios 14.2)
+
+
+- iPhone 7, 7+ : Home button is not working at the moment. You can use tweaks that brings X gestures to move. Also camera is not working too. 
+
+- iPhone 8 , 8+ : Home button is not working at the moment. You can use tweaks that brings X gestures to move. Also camera is not working too. https://www.youtube.com/watch?v=k8-2NhCcVMg&t=0s that is a video how to activate assesive touch in order to settting the setup so after you can install tweaks to dont have to use button one of that is gesture13 or minixs
+
+- iPhone X : Touchscreen is not working.
+
+
+
 # Warning
 - I am **NOT** responsible for any data loss. The user of this program accepts responsibility should something happen to their device.
  **If your device is stuck in recovery, please run one of the following:**
    - futurerestore --exit-recovery
    - irecovery -n
 
+# about version to dualboot
+ios 14.2 is the best because on that work camera and flash, on other version ussualy not work.
+
+dualboot any version of ios 15, that will kernel panic so you will have to --jailbreak 15.* --taurine (if you need, use --jail_palera1n). that will fix that problem and after you boot and you have already done all you will be able to jailbreak it again however now with using --jailbreak 15.* (--jail_palera1n) 
 
 # how to dualboot
 
