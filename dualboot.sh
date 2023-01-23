@@ -333,6 +333,9 @@ _boot() {
     
     echo "[*] Booting device"
 
+    "$dir"/irecovery -f "blobs/"$deviceid"-"$version".der"
+    sleep 1
+
     "$dir"/irecovery -f "boot/${deviceid}/iBSS.img4"
     sleep 1
 
@@ -360,6 +363,9 @@ _boot() {
             sleep 2
         fi
     fi
+
+    "$dir"/irecovery -c "bootx"
+    sleep 1
 
     "$dir"/irecovery -f "boot/${deviceid}/devicetree.img4"
     sleep 1 
@@ -746,7 +752,7 @@ if [ true ]; then
         # that eliminate dualboot paritions 
         remote_cmd "/sbin/apfs_deletefs disk0s1s${disk} > /dev/null || true"
         remote_cmd "/sbin/apfs_deletefs disk0s1s${dataB} > /dev/null || true"
-        remote_cmd "/sbin/apfs_deletefs disk0s1s${prebootB} > /dev/null || true"
+        #remote_cmd "/sbin/apfs_deletefs disk0s1s${prebootB} > /dev/null || true"
         remote_cmd "/usr/sbin/nvram auto-boot=true"
         echo "[*] Done! Rebooting your device"
         remote_cmd "/sbin/reboot"
