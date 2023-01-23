@@ -74,6 +74,7 @@ Step 3: when that is already installed and you would want to dualboot your secon
 
 - Tested on iPhone 6s on iOS 15.7-15.7.2 - macOS Big Sur, Kali Linux, Ubuntu 22.04
 
+# Problems and issues contact me here https://discord.gg/NWV72KWG
 
 # Credits
 
