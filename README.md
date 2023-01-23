@@ -1,4 +1,4 @@
-# dualra1n
+# dualra1n # THIS BRANCH IS FOR IOS 13 DUALBOOT NOT OTHER IOS PLEASE
 
 A script that lets you dualboot iOS 14-15 on checkm8 devices.
 
