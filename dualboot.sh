@@ -657,7 +657,7 @@ if [ true ]; then
     chmod +x sshrd.sh
     echo "[*] Creating ramdisk"
     tweaks=1
-    ./sshrd.sh 15.6 
+    ./sshrd.sh 14.3
 
     echo "[*] Booting ramdisk"
     ./sshrd.sh boot
@@ -949,14 +949,16 @@ if [ true ]; then
             remote_cmd "mount_filesystems"
             remote_cmd "/sbin/mount_apfs /dev/disk0s1s${disk} /mnt8/"
             remote_cmd "/sbin/mount_apfs /dev/disk0s1s${dataB} /mnt9/"
-            factoryDataPart=$(($disk - 2))
+            factoryDataPart=$(($disk - 3))
             remote_cmd "/sbin/mount_apfs /dev/disk0s1s${factoryDataPart} /mnt5/"
             remote_cmd "cp -a /mnt8/private/var/. /mnt9/" # this will copy all file which is needed by dataB
-            remote_cmd "cp -a /mnt6/${active}/* /mnt8/" # copy preboot to prebootB
+            remote_cmd "cp -a /mnt6/${active}/* /mnt8/" # copy preboot to ios 13 partition
             echo "copying needed files to boot ios 13"
             remote_cmd "cp -a /mnt5/FactoryData/* /mnt8/"
-            remote_cmd "mkdir -p /mnt8/private/xarts"
-            echo "we are backup the apfs binaries from the original and changing to ios 14 apfs.fs"
+            remote_cmd "mkdir -p /mnt8/private/xarts && mkdir -p /mnt8/private/preboot/"
+            remote_cmd "rm -v /mnt8/usr/standalone/firmware/FUD/AOP.img4"
+            remote_cmd "cp -a /mnt6/* /mnt8/private/preboot/"
+            echo "we are backup the apfs binaries from the original and changing to ios 14 apfs.fs" # maybe must of ipad will not work becuase that apfs.fs is from my iphone ipsw ios14 so you can mount a dmg rootfs of ios 14 and extract the apfs.fs and sbin/fsck and remplace it or paste it to the second ios which is ios 13 
             remote_cmd "mv /mnt8/sbin/fsck /mnt8/sbin/fsckBackup && mv /mnt8/System/Library/Filesystems/apfs.fs /mnt8/System/Library/Filesystems/apfs.fsBackup "
             remote_cp other/apfsios14/* root@localhost:/mnt8/
             echo "finish to copy partition so if you will create the boot files again put --dont_createPart in order to dont have to copy the filesystem again"
