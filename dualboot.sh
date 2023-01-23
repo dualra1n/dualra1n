@@ -965,7 +965,9 @@ if [ true ]; then
             sleep 3
         fi
         remote_cmd "/usr/sbin/nvram auto-boot=false"
+        sleep 2
         remote_cmd "/sbin/reboot"
+        sleep 3
         _wait recovery
         sleep 4
         _dfuhelper "$cpid"
