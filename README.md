@@ -61,6 +61,8 @@ ios 14.2 is the best because on that work camera and flash, on other version uss
 
 dualboot any version of ios 15, that will kernel panic so you will have to --jailbreak 15.* --taurine (if you need, use --jail_palera1n). that will fix that problem and after you boot and you have already done all you will be able to jailbreak it again however now with using --jailbreak 15.* (--jail_palera1n) 
 
+ios 13 is working but only i tested with ios 13.7 adk in others, if you want to dualboot with that you can use the branch ios13. (maybe that doesnt work on ipad without baseband because i extracted the apfs.fs from ipsw iphone 6s ios 14.3 so it is not recomended).
+
 # how to dualboot
 
 Step 1: download your ipsw file which is wanted to dualboot. you can use --getIpsw that will do automatically however if that give error you must download manual and put the ipsw file into the ipsw/ directory 
