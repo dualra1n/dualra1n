@@ -894,15 +894,11 @@ if [ true ]; then
                 # on linux this will be different because asr. this just mount the rootfs and copying all files to partition 
                 sleep 2
                 dmg_disk=$(remote_cmd "/usr/sbin/hdik /mnt8/${dmgfile} | head -3 | tail -1 | sed 's/ .*//'")
-                if [ ! $(remote_cmd "/sbin/mount_apfs -o ro $dmg_disk /mnt5/") ]; then
-                    remote_cmd "/sbin/mount_apfs -o ro "$dmg_disk"s1 /mnt5/"
-                fi
+                remote_cmd "/sbin/mount_apfs -o ro $dmg_disk /mnt5/"
                 echo "it is extracting the files so please hang on ......."
                 remote_cmd "cp -a /mnt5/* /mnt8/"
                 sleep 2
-                if [ ! $(remote_cmd "/sbin/umount $dmg_disk") ]; then
-                    remote_cmd "/sbin/umount "$dmg_disk"s1 "
-                fi
+                remote_cmd "/sbin/umount $dmg_disk"
                 remote_cmd "rm -rv /mnt8/${dmgfile}"
             fi
             # that reboot is strange because i can continue however when i want to use apfs_invert that never work so i have to reboot on linux is ineccessary but i have to let it to avoid problems 
