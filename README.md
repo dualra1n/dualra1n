@@ -42,7 +42,7 @@ Subcommands:
 - A9 : Everything works perfect expect camera. (Fixable with ldrestart) # when i jailbreak it the camera always work without using ldrestart (on my iphone6s i dualbooted with ios 14.2 and camera work fine and flash too, i dont know why on others version is different however that work fine on ios 14.2)
 
 
-- iPhone 7, 7+ : Home button is not working at the moment. You can use tweaks that brings X gestures to move. Also camera is not working too. 
+- iPhone 7, 7+ : Home button is not working at the moment. You can use tweaks that brings X gestures to move. Also camera is not working too. (before you dualboot activate assesivetouch on your device and the second ios will have assesivetouch activated )
 
 - iPhone 8 , 8+ : Home button is not working at the moment. You can use tweaks that brings X gestures to move. Also camera is not working too. https://www.youtube.com/watch?v=k8-2NhCcVMg&t=0s that is a video how to activate assesive touch in order to settting the setup so after you can install tweaks to dont have to use button one of that is gesture13 or minixs
 
