@@ -39,7 +39,7 @@ remote_cmd() {
 
 remote_cp() {
     sleep 1
-    "$dir"/sshpass -p 'alpine' scp -r -o StrictHostKeyChecking=no -P2222 $@
+    "$dir"/sshpass -p 'alpine' scp -r -o StrictHostKeyChecking=no -P2222 "$@"
     sleep 1
 }
 
@@ -304,7 +304,7 @@ _dfuhelper() {
         echo "[*] Device entered DFU!"
     else
         echo "[-] Device did not enter DFU mode, rerun the script and try again"
-        return -1
+       exit;
     fi
 }
 
@@ -492,7 +492,7 @@ if [ "$debug" = "1" ]; then
 fi
 
 if [ "$clean" = "1" ]; then
-    rm -rf  work blobs/ boot/$deviceid/  ipsw/*
+    rm -rf  work blobs/ boot/"$deviceid"/  ipsw/*
     echo "[*] Removed the created boot files"
     exit
 fi
@@ -746,7 +746,7 @@ if [ true ]; then
     #fi
     #"$dir"/img4tool -e -s $(pwd)/blobs/"$deviceid"-"$version".shsh2 -m work/IM4M
     #rm dump.raw
-    remote_cp root@localhost:/mnt6/$active/System/Library/Caches/apticket.der blobs/"$deviceid"-"$version".der
+    remote_cp root@localhost:/mnt6/"$active"/System/Library/Caches/apticket.der blobs/"$deviceid"-"$version".der
     cp -av blobs/"$deviceid"-"$version".der work/IM4M
 
     if [ "$jailbreak" = "1" ]; then
@@ -765,7 +765,7 @@ if [ true ]; then
         remote_cmd "/sbin/mount_apfs /dev/disk0s1s${dataB} /mnt2/"
         remote_cmd "/sbin/mount_apfs /dev/disk0s1s${prebootB} /mnt4/"
         remote_cp work/kcache.raw root@localhost:/mnt4/$active/System/Library/Caches/com.apple.kernelcaches/kcache.raw
-        remote_cp boot/${deviceid}/kernelcache.img4 "root@localhost:/mnt4/$active/System/Library/Caches/com.apple.kernelcaches/kernelcache"
+        remote_cp boot/"${deviceid}"/kernelcache.img4 "root@localhost:/mnt4/$active/System/Library/Caches/com.apple.kernelcaches/kernelcache"
         remote_cp binaries/Kernel15Patcher.ios root@localhost:/mnt8/private/var/root/Kernel15Patcher.ios
         remote_cmd "/usr/sbin/chown 0 /mnt8/private/var/root/Kernel15Patcher.ios"
         remote_cmd "/bin/chmod 755 /mnt8/private/var/root/Kernel15Patcher.ios"
@@ -774,8 +774,8 @@ if [ true ]; then
             echo "you have the kernelpath already installed "
         fi
         sleep 2
-        remote_cp root@localhost:/mnt4/$active/System/Library/Caches/com.apple.kernelcaches/kcache.patched work/ # that will return the kernelpatcher in order to be patched again and boot with it 
-        "$dir"/Kernel64Patcher work/kcache.patched work/kcache.patchedB -f -s `if [[ "$version" = "15."* ]]; then echo "-e"; fi` `if [ ! "$taurine" = "1" ]; then echo "-l"; fi`
+        remote_cp root@localhost:/mnt4/"$active"/System/Library/Caches/com.apple.kernelcaches/kcache.patched work/ # that will return the kernelpatcher in order to be patched again and boot with it 
+        "$dir"/Kernel64Patcher work/kcache.patched work/kcache.patchedB -f -s $(if [[ "$version" = "15."* ]]; then echo "-e"; fi) $(if [ ! "$taurine" = "1" ]; then echo "-l"; fi)
 
         if [[ "$deviceid" == *'iPhone8'* ]] || [[ "$deviceid" == *'iPad6'* ]] || [[ "$deviceid" == *'iPad5'* ]]; then
             python3 -m pyimg4 im4p create -i work/kcache.patchedB -o work/kcache.im4p -f krnl --extra work/kpp.bin --lzss
@@ -783,7 +783,7 @@ if [ true ]; then
             python3 -m pyimg4 im4p create -i work/kcache.patchedB -o work/kcache.im4p -f krnl --lzss
         fi
 
-        remote_cp work/kcache.im4p root@localhost:/mnt4/$active/System/Library/Caches/com.apple.kernelcaches/
+        remote_cp work/kcache.im4p root@localhost:/mnt4/"$active"/System/Library/Caches/com.apple.kernelcaches/
         remote_cmd "img4 -i /mnt4/$active/System/Library/Caches/com.apple.kernelcaches/kcache.im4p -o /mnt4/$active/System/Library/Caches/com.apple.kernelcaches/kernelcache -M /mnt4/$active/System/Library/Caches/apticket.der"
         remote_cmd "rm -f /mnt4/$active/System/Library/Caches/com.apple.kernelcaches/kcache.raw /mnt4/$active/System/Library/Caches/com.apple.kernelcaches/kcache.patched /mnt4/$active/System/Library/Caches/com.apple.kernelcaches/kcache.im4p"
 
@@ -851,6 +851,7 @@ if [ true ]; then
         exit;
 
     fi
+    
 
     if [ "$dualboot" = "1" ]; then
         if [ -z "$dont_createPart" ]; then # if you have already your second ios you can omited with this
