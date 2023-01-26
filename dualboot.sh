@@ -481,7 +481,7 @@ chmod +x "$dir"/*
 # ============
 
 echo "dualboot | Version 2.0"
-echo "Written by edwin and most code of palera1n :) thanks pelera1n team | Some code also the ramdisk from Nathan | thanks MatthewPierson, Ralph0045, and all people creator of path file boot"
+echo "Written by edwin and some code of palera1n :) | Some code also the ramdisk from Nathan | thanks MatthewPierson, Ralph0045, and all people creator of path file boot"
 echo ""
 
 version="beta"
@@ -918,12 +918,18 @@ if [ true ]; then
                 remote_cmd "/System/Library/Filesystems/apfs.fs/apfs_invert -d /dev/disk0s1 -s ${disk} -n out.dmg" # this will mount the root file system and would restore the partition 
             fi
             sleep 1
+            echo "[*] doing some configuration"
             remote_cmd "/sbin/mount_apfs /dev/disk0s1s${disk} /mnt8/"
             remote_cmd "/sbin/mount_apfs /dev/disk0s1s${dataB} /mnt9/"
             remote_cmd "/sbin/mount_apfs /dev/disk0s1s${prebootB} /mnt4/"
             remote_cmd "cp -a /mnt8/private/var/. /mnt9/" # this will copy all file which is needed by dataB
             remote_cmd "mount_filesystems"
             remote_cmd "cp -a /mnt6/. /mnt4/" # copy preboot to prebootB
+            if [ ! $(remote_cmd "cp -a /mnt2/mobile/Library/Preferences/com.apple.Accessibility* /mnt9/mobile/Library/Preferences/") ]; then
+                echo "error activating assesivetouch"
+            fi
+            
+
         fi
         remote_cmd "/usr/sbin/nvram auto-boot=false"
         remote_cmd "/sbin/reboot"
@@ -975,7 +981,7 @@ if [ true ]; then
         else
             "$dir"/gaster decrypt work/"$(awk "/""${model}""/{x=1}x&&/iBEC[.]/{print;exit}" work/BuildManifest.plist | grep '<string>' |cut -d\> -f2 |cut -d\< -f1 | sed 's/Firmware[/]dfu[/]//')" work/iBEC.dec
         fi
-        "$dir"/iBoot64Patcher work/iBEC.dec work/iBEC.patched -b "rd=disk0s1s${disk} wdt=-1 keepsyms=1 debug=0x2014e `if [ "$cpid" = '0x8960' ] || [ "$cpid" = '0x7000' ] || [ "$cpid" = '0x7001' ]; then echo "-restore"; fi`" -n 
+        "$dir"/iBoot64Patcher work/iBEC.dec work/iBEC.patched -b "rd=disk0s1s${disk} wdt=-1 keepsyms=1 debug=0x2014e -v `if [ "$cpid" = '0x8960' ] || [ "$cpid" = '0x7000' ] || [ "$cpid" = '0x7001' ]; then echo "-restore"; fi`" -n 
         
         if [ "$fixHB" = "1" ]; then # that work fine on ios 14.5 up but the boot procces should be different if some one want to try it go ahead because i dont have a a10 or a11 :)
            if [[ "$deviceid" == iPhone9,[1-4] ]] || [[ "$deviceid" == "iPhone10,"* ]]; then
