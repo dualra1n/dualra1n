@@ -23,8 +23,6 @@ dir="$(pwd)/binaries/$os"
 max_args=1
 arg_count=0
 disk=8
-prebootRole=D
-systemRole=i
 extractedIpsw="ipsw/extracted/"
 
 if [ ! -d "ramdisk/" ]; then
@@ -877,11 +875,9 @@ if [ true ]; then
     if [ "$dualboot" = "1" ]; then
         if [ -z "$dont_createPart" ]; then # if you have already your second ios you can omited with this
             echo "[*] Creating partitions"
-
         	if [ ! $(remote_cmd "/sbin/newfs_apfs -o role=i -A -v SystemB /dev/disk0s1") ] && [ ! $(remote_cmd "/sbin/newfs_apfs -o role=0 -A -v DataB /dev/disk0s1") ]; then # i put this in case that resturn a error the script can continuing
                 echo "[*] partitions created, continuing..."
 	        fi
-		    
             echo "partitions are already created"
             echo "mounting filesystems "
             remote_cmd "/sbin/mount_apfs /dev/disk0s1s${disk} /mnt8/"
@@ -890,19 +886,15 @@ if [ true ]; then
             sleep 1
             #remote_cmd "/sbin/mount_apfs /dev/disk0s1s${prebootB} /mnt4/"
             sleep 1
-            
             if [ ! $(remote_cmd "cp -av /mnt2/keybags /mnt9/") ]; then # this are keybags without this the system wont work 
                 echo "copied keybags"
             fi
-             
-
             echo "copying filesystem so hang on that could take 20 minute because is trought ssh"
             if command -v rsync &>/dev/null; then
                 echo "rsync installed"
             else 
                 echo "you dont have rsync installed so the script will take much more time to copy the rootfs file, so install rsync in order to be faster, on mac brew install rsync on linux apt install rsync"
             fi
-            
             echo "it is copying rootfs so hang on like 20 minute ......"
             if [ "$os" = "Darwin" ]; then
                 if [ ! $("$dir"/sshpass -p 'alpine' rsync -rvz -e 'ssh -p 2222' --progress ipsw/out.dmg root@localhost:/mnt8) ]; then
@@ -950,12 +942,9 @@ if [ true ]; then
             remote_cmd "mount_filesystems"
             remote_cmd "/sbin/mount_apfs /dev/disk0s1s${disk} /mnt8/"
             remote_cmd "/sbin/mount_apfs /dev/disk0s1s${dataB} /mnt9/"
-            factoryDataPart=$(($disk - 3))
-            remote_cmd "/sbin/mount_apfs /dev/disk0s1s${factoryDataPart} /mnt5/"
             remote_cmd "cp -a /mnt8/private/var/. /mnt9/" # this will copy all file which is needed by dataB
             remote_cmd "cp -a /mnt6/${active}/* /mnt8/" # copy preboot to ios 13 partition
             echo "copying needed files to boot ios 13"
-            remote_cmd "cp -a /mnt5/FactoryData/* /mnt8/"
             remote_cmd "mkdir -p /mnt8/private/xarts && mkdir -p /mnt8/private/preboot/"
             remote_cmd "rm -v /mnt8/usr/standalone/firmware/FUD/AOP.img4"
             remote_cmd "cp -a /mnt6/* /mnt8/private/preboot/"
@@ -965,6 +954,15 @@ if [ true ]; then
             if [ ! $(remote_cmd "cp -a /mnt2/mobile/Library/Preferences/com.apple.Accessibility* /mnt9/mobile/Library/Preferences/") ]; then
                 echo "error activating assesivetouch"
             fi
+            for (( i = 1; i < 7; i++ )); do
+                if [ "$(remote_cmd "/System/Library/Filesystems/apfs.fs/apfs.util -p /dev/disk0s1s${i}")" == 'Hardware' ]; then
+                    factoryDataPart=$i
+                fi
+            done
+
+            remote_cmd "/sbin/mount_apfs /dev/disk0s1s${factoryDataPart} /mnt5/"
+            remote_cmd "cp -a /mnt5/FactoryData/* /mnt8/"
+
             echo "finish to copy partition so if you will create the boot files again put --dont_createPart in order to dont have to copy the filesystem again"
             sleep 3
         fi
