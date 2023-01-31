@@ -87,9 +87,7 @@ Step 3: when that is already installed and you would want to dualboot your secon
 
 # Credits
 
-- [palera1n](https://github.com/palera1n) for most of code
-
-- [verygenericname](https://github.com/verygenericname) for SSH Ramdisk
+- [palera1n](https://github.com/palera1n) for some of code
 
 - [Dualboot guide](https://dualbootfun.github.io/) for guide
 
@@ -97,5 +95,20 @@ Step 3: when that is already installed and you would want to dualboot your secon
 
 - [blacktop](https://github.com/blacktop) for ipsw downloader
 
-- [dora2-iOS]( https://github.com/dora2-iOS) for home button fix
+- [Nathan](https://github.com/verygenericname) for The ramdisk
+
+- [Mineek](https://github.com/mineek)
+	- For patchfinders for RELEASE kernels
+	- [Kernel15Patcher](https://github.com/mineek/PongoOS/tree/iOS15/checkra1n/Kernel15Patcher)
+	- [Kernel64Patcher](https://github.com/mineek/Kernel64Patcher)
+    
+- [Amy](https://github.com/elihwyma) for the [Pogo](https://github.com/elihwyma/Pogo) app
+- [checkra1n](https://github.com/checkra1n) for the base of the kpf
+- [m1sta](https://github.com/m1stadev) for [pyimg4](https://github.com/m1stadev/PyIMG4)
+- [tihmstar](https://github.com/tihmstar) for [pzb](https://github.com/tihmstar/partialZipBrowser)/original [iBoot64Patcher](https://github.com/tihmstar/iBoot64Patcher)/original [liboffsetfinder64](https://github.com/tihmstar/liboffsetfinder64)/[img4tool](https://github.com/tihmstar/img4tool)
+- [xerub](https://github.com/xerub) for [img4lib](https://github.com/xerub/img4lib) and [restored_external](https://github.com/xerub/sshrd) in the ramdisk
+- [libimobiledevice](https://github.com/libimobiledevice) for several tools used in this project (irecovery, ideviceenterrecovery etc), and [nikias](https://github.com/nikias) for keeping it up to date
+- [Dora](https://github.com/dora2-iOS) for iBoot payload and iBootpatcher2
+- [Sam Bingner](https://github.com/sbingner) for [Substitute](https://github.com/sbingner/substitute)
+
 
