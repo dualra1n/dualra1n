@@ -36,6 +36,10 @@ Subcommands:
     clean               Deletes the created boot files 
 
 ---
+# Requeriments
+- please desactivate passcode on A10-A11 (on A9 that boot normaly so you can have it)
+- install unzip, python3, (ipsw).
+- a idevice with ios 14-15.* and that device must have more than 15 gb storage free to work fine  
 
 # What issues you will have known so far
 
@@ -86,6 +90,8 @@ Step 3: when that is already installed and you would want to dualboot your secon
 
 
 # Credits
+
+- [Edward] thanks for my brother for gave me a hakinstosh to test this:).
 
 - [palera1n](https://github.com/palera1n) for some of code
 
