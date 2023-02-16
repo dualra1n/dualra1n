@@ -116,5 +116,6 @@ Step 3: when that is already installed and you would want to dualboot your secon
 - [libimobiledevice](https://github.com/libimobiledevice) for several tools used in this project (irecovery, ideviceenterrecovery etc), and [nikias](https://github.com/nikias) for keeping it up to date
 - [Dora](https://github.com/dora2-iOS) for iBoot payload and iBootpatcher2
 - [Sam Bingner](https://github.com/sbingner) for [Substitute](https://github.com/sbingner/substitute)
+- [CoolStart](https://github.com/coolstar) for [Libhooker]
 
 
