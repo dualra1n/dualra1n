@@ -55,16 +55,18 @@ dualboot any version of ios 15, that will give us error so you will have to use 
 ios 13 is working but only i tested with ios 13.7 and worked however in others that does'nt work, if you want to dualboot with that you can use the branch ios13. (maybe that doesnt work on ipad without baseband because i extracted the apfs.fs from ipsw iphone 6s ios 14.3 so it is not recomended).
 
 # how to dualboot
+
 [fullTutorial] (https://github.com/dualra1n/dualra1n/blob/main/tutorial.md)
 
 
-# Problems and issues contact me here https://discord.gg/NWV72KWG
+# Problems and issues contact me in Discord https://discord.gg/NWV72KWG :)
 
 
 # Credits
 
 <details><summary>dualra1n Contributors</summary>
 <p>
+
 - [Edwin] (https://github.com/edwin170) owner :)
 - [Fatih] (https://github.com/swayea) help with readme and linux support. and very good person
 
