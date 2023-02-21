@@ -56,7 +56,7 @@ ios 13 is working but only i tested with ios 13.7 and worked however in others t
 
 # how to dualboot
 
-[fullTutorial] (https://github.com/dualra1n/dualra1n/blob/main/tutorial.md)
+[fullTutorial](https://github.com/dualra1n/dualra1n/blob/main/tutorial.md)
 
 
 # Problems and issues contact me in Discord https://discord.gg/NWV72KWG :)
