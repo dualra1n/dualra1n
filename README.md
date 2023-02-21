@@ -38,21 +38,8 @@ Subcommands:
 ---
 # Requeriments
 - please desactivate passcode on A10-A11 (on A9 that boot normaly so you can have it)
-- install unzip, python3, (ipsw).
-- a idevice with ios 14-15.* and that device must have more than 15 gb storage free to work fine  
-
-# What issues you will have known so far
-
-- A9 : Everything works perfect expect camera. (Fixable with ldrestart) # when i jailbreak it the camera always work without using ldrestart (on my iphone6s i dualbooted with ios 14.2 and camera work fine and flash too, i dont know why on others version is different however that work fine on ios 14.2)
-
-
-- iPhone 7, 7+ : Home button is not working at the moment. You can use tweaks that brings X gestures to move. Also camera is not working too. (before you dualboot activate assesivetouch on your device and the second ios will have assesivetouch activated )
-
-- iPhone 8 , 8+ : Home button is not working at the moment. You can use tweaks that brings X gestures to move. Also camera is not working too. https://www.youtube.com/watch?v=k8-2NhCcVMg&t=0s that is a video how to activate assesive touch in order to settting the setup so after you can install tweaks to dont have to use button one of that is gesture13 or minixs
-
-- iPhone X : Touchscreen is not working.
-
-
+- install unzip, python3
+- a idevice with ios 14-15.* and that device must have more than 15 gb storage free to work fine
 
 # Warning
 - I am **NOT** responsible for any data loss. The user of this program accepts responsibility should something happen to their device.
@@ -63,37 +50,30 @@ Subcommands:
 # about version to dualboot
 ios 14.2 is the best because on that work camera and flash, on other version ussualy not work.
 
-dualboot any version of ios 15, that will kernel panic so you will have to --jailbreak 15.* --taurine (if you need, use --jail_palera1n). that will fix that problem and after you boot and you have already done all you will be able to jailbreak it again however now with using --jailbreak 15.* (--jail_palera1n) 
+dualboot any version of ios 15, that will give us error so you will have to use --jailbreak 15.* --taurine after the first boot that will fix that problem and after you boot and you have already done all, you will be able to jailbreak it again however now with using --jailbreak 15.* (--jail_palera1n) 
 
-ios 13 is working but only i tested with ios 13.7 adk in others, if you want to dualboot with that you can use the branch ios13. (maybe that doesnt work on ipad without baseband because i extracted the apfs.fs from ipsw iphone 6s ios 14.3 so it is not recomended).
+ios 13 is working but only i tested with ios 13.7 and worked however in others that does'nt work, if you want to dualboot with that you can use the branch ios13. (maybe that doesnt work on ipad without baseband because i extracted the apfs.fs from ipsw iphone 6s ios 14.3 so it is not recomended).
 
 # how to dualboot
+[fullTutorial] (https://github.com/dualra1n/dualra1n/blob/main/tutorial.md)
 
-Step 1: download your ipsw file which is wanted to dualboot. you can use --getIpsw that will do automatically however if that give error you must download manual and put the ipsw file into the ipsw/ directory 
-
-Step 2: ./dualboot.sh --dualboot 14.3 (other options)
-
-Step 3: when that is already installed and you would want to dualboot your second ios, you will have to use ./dualboot.sh --boot
-
-
-
-
-# How to jailbreak 
-
-1) Jailbreak with Pogo : to jailbreak your device: ./dualboot.sh --jailbreak 14.3 (or your version) remember that if you have palera1n jailbreak you have to put --jail_palera1n. Then after boot, open Pogo tap install, after that tap Do All. Then have fun.
-
-2) Jailbreak with Taurine :  ./dualboot.sh --jailbreak 14.3 --taurine (if you have palera1n jailbreak use --jail_palera1n). After boot, open TV App and install Trollstore, then install ldid and rebuild icon cache. Taurine should appear on your homescreen, open it and tap jailbreak (If it shows Jailbroken, forget it and tap). when that reboot you can not press jsilbroken again or install taurine because that can give erros, each time that you reboot you will have to open pogo app and press do all (never press install because that can create conflict).
-
-- Tested on iPhone 6s on iOS 15.7-15.7.2 - macOS Big Sur, Kali Linux, Ubuntu 22.04
 
 # Problems and issues contact me here https://discord.gg/NWV72KWG
 
 
 # Credits
 
+<details><summary>dualra1n Contributors</summary>
+<p>
+- [Edwin] (https://github.com/edwin170) owner :)
+- [Fatih] (https://github.com/swayea) help with readme and linux support. and very good person
+
+</details>
+<details><summary>Other credits for tools and codes used in dualra1n</summary>
+
 - [Edward] thanks for my brother for gave me a hakinstosh to test this:).
 
-- [palera1n](https://github.com/palera1n) for some of code
+- [palera1n](https://github.com/palera1n) for some of code 
 
 - [Dualboot guide](https://dualbootfun.github.io/) for guide
 
@@ -117,5 +97,7 @@ Step 3: when that is already installed and you would want to dualboot your secon
 - [Dora](https://github.com/dora2-iOS) for iBoot payload and iBootpatcher2
 - [Sam Bingner](https://github.com/sbingner) for [Substitute](https://github.com/sbingner/substitute)
 - [CoolStart](https://github.com/coolstar) for [Libhooker]
+- [Ralp0045] (https://github.com/Ralph0045/Kernel64Patcher) amazing dtree_patcher and kernel64patcher ;)
 
-
+</p>
+</details>
