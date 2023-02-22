@@ -36,4 +36,4 @@ Step 4: to boot the second ios using ./dualboot.sh --boot
 - iPhone X : Touchscreen is not working.
 
 
-# Problems and issues contact me here in discord there https://discord.gg/NWV72KWG
+# Problems and issues contact me here in discord there https://discord.gg/UtxhxHFE
