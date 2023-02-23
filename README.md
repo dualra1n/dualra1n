@@ -67,13 +67,13 @@ ios 13 is working but only i tested with ios 13.7 and worked however in others t
 <details><summary>dualra1n Contributors</summary>
 <p>
 
-- [Edwin] (https://github.com/edwin170) owner :)
-- [Fatih] (https://github.com/swayea) help with readme and linux support. and very good person
+- [Edwin](https://github.com/edwin170) owner :)
+- [Fatih](https://github.com/swayea) help with readme and linux support. and very good person
 
 </details>
 <details><summary>Other credits for tools and codes used in dualra1n</summary>
 
-- [Edward] thanks for my brother for gave me a hakinstosh to test this:).
+- Edward thanks for my brother for gave me a hakinstosh to test this:).
 
 - [palera1n](https://github.com/palera1n) for some of code 
 
