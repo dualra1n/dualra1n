@@ -35,5 +35,7 @@ Step 4: to boot the second ios using ./dualboot.sh --boot
 
 - iPhone X : Touchscreen is not working.
 
+- most ipads have deep sleep so installing [Fiona](https://www.ios-repo-updates.com/repository/julioverne-s-repo/package/com.julioverne.fiona/) may fix it 
+
 
 # Problems and issues contact me here in discord there https://discord.gg/UtxhxHFE
