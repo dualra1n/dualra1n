@@ -58,17 +58,15 @@ print_help() {
     cat << EOF
 Usage: $0 [Options] [ subcommand | iOS version which are you] remember you need to have 10 gb free, no sean brurros y vean primero. (put your ipsw in the directory ipsw)
 iOS 15 - 14 Dualboot tool ./dualboot --dualboot 15.7 (the ios of your device) 
-put ipsw file of ios 14 into the ipsw directory, you must make sure that this is the correct ipsw for the iphone. only ios 14 - 14.8.1
+put ipsw file of ios 13 into the ipsw directory, you must make sure that this is the correct ipsw for the iphone. only ios 13.7
 
 Options:
-    --dualboot          dualboot your device ios 15 with 14 
+    --dualboot          dualboot your device ios 13
     --jail_palera1n     uses only if you have the palera1n jailbreak installed, it will create partition on disk + 1 because palera1n create a new partition. disk0s1s8 however if you jailbreakd with palera1n the disk would be disk0s1s9"
     --getIpsw           using this will download a ipsw of your version which you want to dualboot.
     --jailbreak         jailbreak your second ios. you can use it when your device boot correctly the second ios
-    --taurine           this will install the jailbreak of taurine. ./dualboot.sh --jailbreak 14.3 --taurine 
+    --odyssey           this will install the jailbreak of odyssey. ./dualboot.sh --jailbreak 13.7 --odyssey 
     --help              Print this help
-    --fix_HB            that will fix home button on a10 and a11 or well try it. that is ultra beta i dont have a10 or a11 to test but you can do it also if the device give error booting you can execute again ./dualboot.sh --dualboot 14.3 --dont_createPart --fixHB ,to boot is --boot 14.3 --fixHB and that will fix the problem to. that not work yet
-    --fixhardware       this should fix some problem like touch on ipad, i dont know if that work but you can do it to see if work. ./dualboot.sh --dualboot 14.3 --dont_createPart --fixhardware. that does not work :( but you can try it 
     --dfuhelper         A helper to help get A11 devices into DFU mode from recovery mode
     --boot              put boot alone, to boot your second ios  
     --dont_createPart   Don't create the partitions if you have already created 
@@ -123,8 +121,8 @@ parse_opt() {
         --jailbreak)
             jailbreak=1
             ;;
-        --taurine)
-            taurine=1
+        --odyssey)
+            odyssey=1
             ;;
         --dfuhelper)
             dfuhelper=1
@@ -794,7 +792,7 @@ if [ true ]; then
         fi
         sleep 2
         remote_cp root@localhost:/mnt8/System/Library/Caches/com.apple.kernelcaches/kcache.patched work/ # that will return the kernelpatcher in order to be patched again and boot with it 
-        "$dir"/Kernel64Patcher work/kcache.patched work/kcache.patchedB -f -s -o `if [ ! "$taurine" = "1" ]; then echo "-l"; fi`
+        "$dir"/Kernel64Patcher work/kcache.patched work/kcache.patchedB -f -s -o `if [ ! "$odyssey" = "1" ]; then echo "-l"; fi`
 
         if [[ "$deviceid" == *'iPhone8'* ]] || [[ "$deviceid" == *'iPad6'* ]] || [[ "$deviceid" == *'iPad5'* ]]; then
             python3 -m pyimg4 im4p create -i work/kcache.patchedB -o work/kcache.im4p -f rkrn --extra work/kpp.bin --lzss
@@ -818,16 +816,16 @@ if [ true ]; then
         echo "copying pogo and trollstore so hang on please ..."
         remote_cp other/trollstore.app root@localhost:/mnt8/Applications/
         if [ ! $(remote_cmd "trollstoreinstaller TV") ]; then
-            echo "you have to install trollstore in order to intall taurine"
+            echo "you have to install trollstore in order to intall odyssey"
         fi
 
         remote_cp other/Payload/Pogo.app root@localhost:/mnt8/Applications/
         echo "it is copying so hang on please "
         remote_cmd "chmod +x /mnt8/Applications/Pogo.app/Pogo* && /usr/sbin/chown 33 /mnt8/Applications/Pogo.app/Pogo && /bin/chmod 755 /mnt8/Applications/Pogo.app/PogoHelper && /usr/sbin/chown 0 /mnt8/Applications/Pogo.app/PogoHelper" 
 
-        if [ "$taurine" = 1 ]; then
-            echo "installing taurine"
-            remote_cp other/taurine/* root@localhost:/mnt8/
+        if [ "$odyssey" = 1 ]; then
+            echo "installing odyssey"
+            remote_cp other/odyssey/* root@localhost:/mnt8/
             echo "finish now it will reboot"
             remote_cmd "/sbin/reboot"
             exit;
@@ -837,7 +835,7 @@ if [ true ]; then
         remote_cmd "chmod +x /mnt8/Applications/Pogo.app/Pogo* && /usr/sbin/chown 33 /mnt8/Applications/Pogo.app/Pogo && /bin/chmod 755 /mnt8/Applications/Pogo.app/PogoHelper && /usr/sbin/chown 0 /mnt8/Applications/Pogo.app/PogoHelper" 
 
         if [ ! $(remote_cmd "trollstoreinstaller TV") ]; then
-            echo "you have to install trollstore in order to intall taurine"
+            echo "you have to install trollstore in order to intall odyssey"
         fi
         echo "installing palera1n jailbreak, thanks palera1n team"
         echo "[*] Copying files to rootfs"
