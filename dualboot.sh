@@ -954,7 +954,7 @@ if [ true ]; then
             if [ ! $(remote_cmd "cp -a /mnt2/mobile/Library/Preferences/com.apple.Accessibility* /mnt9/mobile/Library/Preferences/") ]; then
                 echo "error activating assesivetouch"
             fi
-            for (( i = 1; i < 7; i++ )); do
+            for (( i = 1; i <= 7; i++ )); do
                 if [ "$(remote_cmd "/System/Library/Filesystems/apfs.fs/apfs.util -p /dev/disk0s1s${i}")" == 'Hardware' ]; then
                     factoryDataPart=$i
                 fi
