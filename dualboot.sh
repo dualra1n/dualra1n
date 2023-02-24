@@ -783,17 +783,17 @@ if [ true ]; then
         remote_cmd "/sbin/umount /dev/disk0s1s2"
         remote_cmd "/sbin/mount_apfs /dev/disk0s1s${dataB} /mnt2/"
         #remote_cmd "/sbin/mount_apfs /dev/disk0s1s${prebootB} /mnt4/"
-        remote_cp work/kcache.raw root@localhost:/mnt4/"$active"/System/Library/Caches/com.apple.kernelcaches/kcache.raw
-        remote_cp boot/"${deviceid}"/kernelcache.img4 "root@localhost:/mnt4/$active/System/Library/Caches/com.apple.kernelcaches/kernelcache"
+        remote_cp work/kcache.raw root@localhost:/mnt8/System/Library/Caches/com.apple.kernelcaches/kcache.raw
+        remote_cp boot/"${deviceid}"/kernelcache.img4 "root@localhost:/mnt8/System/Library/Caches/com.apple.kernelcaches/kernelcache"
         remote_cp binaries/Kernel13Patcher.ios root@localhost:/mnt8/private/var/root/Kernel13Patcher.ios
         remote_cmd "/usr/sbin/chown 0 /mnt8/private/var/root/Kernel13Patcher.ios"
         remote_cmd "/bin/chmod 755 /mnt8/private/var/root/Kernel13Patcher.ios"
         sleep 1
-        if [ ! $(remote_cmd "/mnt8/private/var/root/Kernel13Patcher.ios /mnt4/$active/System/Library/Caches/com.apple.kernelcaches/kcache.raw /mnt4/$active/System/Library/Caches/com.apple.kernelcaches/kcache.patched") ]; then
+        if [ ! $(remote_cmd "/mnt8/private/var/root/Kernel13Patcher.ios /mnt8/System/Library/Caches/com.apple.kernelcaches/kcache.raw /mnt8/System/Library/Caches/com.apple.kernelcaches/kcache.patched") ]; then
             echo "you have the kernelpath already installed "
         fi
         sleep 2
-        remote_cp root@localhost:/mnt4/$active/System/Library/Caches/com.apple.kernelcaches/kcache.patched work/ # that will return the kernelpatcher in order to be patched again and boot with it 
+        remote_cp root@localhost:/mnt8/System/Library/Caches/com.apple.kernelcaches/kcache.patched work/ # that will return the kernelpatcher in order to be patched again and boot with it 
         "$dir"/Kernel64Patcher work/kcache.patched work/kcache.patchedB -f -s -o `if [ ! "$taurine" = "1" ]; then echo "-l"; fi`
 
         if [[ "$deviceid" == *'iPhone8'* ]] || [[ "$deviceid" == *'iPad6'* ]] || [[ "$deviceid" == *'iPad5'* ]]; then
@@ -802,9 +802,9 @@ if [ true ]; then
             python3 -m pyimg4 im4p create -i work/kcache.patchedB -o work/kcache.im4p -f rkrn --lzss
         fi
 
-        remote_cp work/kcache.im4p root@localhost:/mnt4/$active/System/Library/Caches/com.apple.kernelcaches/
-        remote_cmd "img4 -i /mnt4/$active/System/Library/Caches/com.apple.kernelcaches/kcache.im4p -o /mnt4/$active/System/Library/Caches/com.apple.kernelcaches/kernelcache -M /mnt4/$active/System/Library/Caches/apticket.der"
-        remote_cmd "rm -f /mnt4/$active/System/Library/Caches/com.apple.kernelcaches/kcache.raw /mnt4/$active/System/Library/Caches/com.apple.kernelcaches/kcache.patched /mnt4/$active/System/Library/Caches/com.apple.kernelcaches/kcache.im4p"
+        remote_cp work/kcache.im4p root@localhost:/mnt8/System/Library/Caches/com.apple.kernelcaches/
+        remote_cmd "img4 -i /mnt8/System/Library/Caches/com.apple.kernelcaches/kcache.im4p -o /mnt8/System/Library/Caches/com.apple.kernelcaches/kernelcache -M /mnt8/System/Library/Caches/apticket.der"
+        remote_cmd "rm -f /mnt8/System/Library/Caches/com.apple.kernelcaches/kcache.raw /mnt8/System/Library/Caches/com.apple.kernelcaches/kcache.patched /mnt8/System/Library/Caches/com.apple.kernelcaches/kcache.im4p"
         python3 -m pyimg4 img4 create -p work/kcache.im4p -o work/kernelcache.img4 -m work/IM4M
 
         #"$dir"/kerneldiff work/kcache.raw work/kcache.patchedB work/kc.bpatch
