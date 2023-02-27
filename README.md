@@ -50,7 +50,7 @@ Subcommands:
 # about version to dualboot
 ios 14.2 is the best because on that work camera and flash, on other version ussualy not work.
 
-dualboot any version of ios 15, that will give us error so you will have to use --jailbreak 15.* --taurine after the first boot that will fix that problem and after you boot and you have already done all, you will be able to jailbreak it again however now with using --jailbreak 15.* (--jail_palera1n) 
+dualboot any version of ios 15, that will give us boot panic so you will have to use --jailbreak 15.* after the first boot, that will fix that problem and after you boot and you have already done all.
 
 ios 13 is working but only i tested with ios 13.7 and worked however in others that does'nt work, if you want to dualboot with that you can use the branch ios13. (maybe that doesnt work on ipad without baseband because i extracted the apfs.fs from ipsw iphone 6s ios 14.3 so it is not recomended).
 
