@@ -958,6 +958,9 @@ if [ true ]; then
                 fi
             done
 
+            if [ ! $(remote_cmd "rm -rv /mnt8/System/Library/Caches/com.apple.factorydata") ]; then 
+                echo "the com.apple.factorydata not exist so continuing"
+            fi
             remote_cmd "/sbin/mount_apfs /dev/disk0s1s${factoryDataPart} /mnt5/"
             remote_cmd "cp -a /mnt5/FactoryData/* /mnt8/"
 
