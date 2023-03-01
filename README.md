@@ -37,10 +37,10 @@ Subcommands:
 
 ---
 # Dependencies
-- A deactivated passcode on A10-A11 
+- A desactivated passcode on A10-A11 
 - unzip
 - python3
-- iOS 14-15 
+- A IPSW iOS 14-15 
 - 15GB+ free storage
 
 # Warnings
