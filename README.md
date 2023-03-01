@@ -102,7 +102,7 @@ iOS 13 is working but has only been tested with 13.7, but hasn't for others. If 
 - [Dora](https://github.com/dora2-iOS) for iBoot payload and iBootpatcher2
 - [Sam Bingner](https://github.com/sbingner) for [Substitute](https://github.com/sbingner/substitute)
 - [CoolStar](https://github.com/coolstar) for [Libhooker]
-- [Ralp0045] (https://github.com/Ralph0045/Kernel64Patcher) amazing dtree_patcher and kernel64patcher ;)
+- [Ralp0045](https://github.com/Ralph0045/Kernel64Patcher) amazing dtree_patcher and kernel64patcher ;)
 
 </p>
 </details>
