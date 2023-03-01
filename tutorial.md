@@ -23,15 +23,15 @@
 
 # Common Issues
 
-- A9 : Everything works perfect expect camera. (Fixable with ldrestart)
+- A9 : Everything works perfect expect camera. (Fixable with ldrestart) or using ios 14.2
 
 
-- A10/11: Home button is not working currently. You can use tweaks like GesturesXV to simulate iPhone X gestures. Camera also doesn't work as of this moment.
+- A10/11: Home button is not working currently. You can use tweaks like GesturesXV to simulate iPhone X gestures. and sounds.
 
 
 - iPhone X: Touchscreen does not work.
 
-- iPads may have issues with "Deep Sleep". Sometimes, [Fiona](https://www.ios-repo-updates.com/repository/julioverne-s-repo/package/com.julioverne.fiona/) may fix it.
+- iPads may have issues with "Deep Sleep". Sometimes, installing this [Fiona](https://www.ios-repo-updates.com/repository/julioverne-s-repo/package/com.julioverne.fiona/) may fix it.
 
 
 # Problems and issues contact me here in discord there https://discord.gg/UtxhxHFE
