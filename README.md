@@ -36,30 +36,32 @@ Subcommands:
     clean               Deletes the created boot files 
 
 ---
-# Requeriments
-- please desactivate passcode on A10-A11 (on A9 that boot normaly so you can have it)
-- install unzip, python3
-- a idevice with ios 14-15.* and that device must have more than 15 gb storage free to work fine
+# Dependencies
+- A deactivated passcode on A10-A11 
+- unzip
+- python3
+- iOS 14-15 
+- 15GB+ free storage
 
-# Warning
+# Warnings
 - I am **NOT** responsible for any data loss. The user of this program accepts responsibility should something happen to their device.
  **If your device is stuck in recovery, please run one of the following:**
    - futurerestore --exit-recovery
    - irecovery -n
 
-# about version to dualboot
-ios 14.2 is the best because on that work camera and flash, on other version ussualy not work.
+# Ideal Dualboot Versions
+iOS 14.2 is the ideal version as on that version the Camera and flash works, while on other version usually they don't.
 
-dualboot any version of ios 15, that will give us boot panic so you will have to use --jailbreak 15.* after the first boot, that will fix that problem and after you boot and you have already done all.
+Dualbooting any version of iOS 15 will give you kernel panics, so you will have to use --jailbreak 15.* after the first boot. That should be a one time fix.
 
-ios 13 is working but only i tested with ios 13.7 and worked however in others that does'nt work, if you want to dualboot with that you can use the branch ios13. (maybe that doesnt work on ipad without baseband because i extracted the apfs.fs from ipsw iphone 6s ios 14.3 so it is not recomended).
+iOS 13 is working but has only been tested with 13.7, but hasn't for others. If you want to dualboot with iOS 13.x, use the iOS 13 branch. This will not work on iPads without a baseband (WiFi Only).
 
-# how to dualboot
+# How would I dualboot?
 
-[fullTutorial](https://github.com/dualra1n/dualra1n/blob/main/tutorial.md)
+[A full tutorial](https://github.com/dualra1n/dualra1n/blob/main/tutorial.md)
 
 
-# Problems and issues contact me in Discord https://discord.gg/UtxhxHFE:)
+# Problems and issues contact me on the official [Discord](https://discord.gg/UtxhxHFE)
 
 
 # Credits
@@ -68,22 +70,23 @@ ios 13 is working but only i tested with ios 13.7 and worked however in others t
 <p>
 
 - [Edwin](https://github.com/edwin170) owner :)
-- [Fatih](https://github.com/swayea) help with readme and linux support. and very good person
+- [Fatih](https://github.com/swayea) help with readme and linux support and is a very good person.
+- [azaz0322](https://github.com/m00nl1ghts) helped with readme a bit more.
 
 </details>
 <details><summary>Other credits for tools and codes used in dualra1n</summary>
 
-- Edward thanks for my brother for gave me a hakinstosh to test this:).
+- Edward thanks for my brother for gave me a hackintosh to test this:).
 
-- [palera1n](https://github.com/palera1n) for some of code 
+- [palera1n](https://github.com/palera1n) for some code 
 
-- [Dualboot guide](https://dualbootfun.github.io/) for guide
+- [Dualboot guide](https://dualbootfun.github.io/) for the guide
 
-- [Darling](https://github.com/darlinghq) for macOS emulator
+- [Darling](https://github.com/darlinghq) for a macOS emulator
 
-- [blacktop](https://github.com/blacktop) for ipsw downloader
+- [blacktop](https://github.com/blacktop) for the ipsw downloader
 
-- [Nathan](https://github.com/verygenericname) for The ramdisk
+- [Nathan](https://github.com/verygenericname) for the ramdisk
 
 - [Mineek](https://github.com/mineek)
 	- For patchfinders for RELEASE kernels
@@ -98,7 +101,7 @@ ios 13 is working but only i tested with ios 13.7 and worked however in others t
 - [libimobiledevice](https://github.com/libimobiledevice) for several tools used in this project (irecovery, ideviceenterrecovery etc), and [nikias](https://github.com/nikias) for keeping it up to date
 - [Dora](https://github.com/dora2-iOS) for iBoot payload and iBootpatcher2
 - [Sam Bingner](https://github.com/sbingner) for [Substitute](https://github.com/sbingner/substitute)
-- [CoolStart](https://github.com/coolstar) for [Libhooker]
+- [CoolStar](https://github.com/coolstar) for [Libhooker]
 - [Ralp0045] (https://github.com/Ralph0045/Kernel64Patcher) amazing dtree_patcher and kernel64patcher ;)
 
 </p>
