@@ -15,7 +15,7 @@
 
 1) Run <code>./dualboot.sh --jailbreak <version></code> (If you want to use palera1n, you have to put --jail_palera1n. Then after boot, open Pogo and tap install, then tap Do All.
 
-2) Jailbreak with Taurine: <code>./dualboot.sh --jailbreak 14.3 --taurine</code>
+2) Jailbreak with Taurine: <code>./dualboot.sh --jailbreak 14.3 --taurine</code> (Then install TrollStore from AppleTV and install Taurine by TrollStore).
 
 # Delete the second iOS install from your device
 1) <code>./dualboot.sh --restorerootfs 14.2</code>
