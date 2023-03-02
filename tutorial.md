@@ -3,7 +3,7 @@
 
 1. <code>git clone --recursive https://github.com/dualra1n/dualra1n</code>
 
-2. Download the ipsw file which you want to dualboot with and paste it into ipsw/ directory. You can use this website to download: https://ipsw.me (Remember, iOS 14.0 to iOS 14.8.1. iOS 13.7 is supported using the iOS 13 branch. Other versions are not supported.)
+2. Download the ipsw file which you want to dualboot with and paste it into ipsw/ directory. You can use this website to download: https://ipsw.me (Remember, only iOS 14.0 to iOS 14.8.1. are supported. iOS 13.7 is supported too, but requires the iOS 13 branch. All other versions are unsupported.)
 
 
 3. Run <code>./dualboot.sh --dualboot <version you want to dualboot with></code>
@@ -18,12 +18,12 @@
 2. Jailbreak with Taurine: <code>./dualboot.sh --jailbreak 14.3 --taurine</code>
 
 # Delete the second iOS install from your device
-<code>./dualboot.sh --restorerootfs 14.2</code>
+Run <code>./dualboot.sh --restorerootfs 14.2</code>
 
 
 # Common Issues
 
-- A9 : Everything except the camera works perfectly. (Can be fixed with ldrestart or using iOS 14.2
+- A9 : Everything except the camera works perfectly. (Can be fixed with ldrestart or by using iOS 14.2)
 
 
 - A10/11: Home button is not working currently. You can use tweaks like GesturesXV to simulate iPhone X gestures. and sounds.
