@@ -25,9 +25,6 @@ arg_count=0
 disk=8
 extractedIpsw="ipsw/extracted/"
 
-if [ ! -d "ramdisk/" ]; then
-    git clone https://github.com/dualra1n/ramdisk.git
-fi
 # =========
 # Functions
 # =========
