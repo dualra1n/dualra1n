@@ -13,9 +13,9 @@
 
 # How to Jailbreak the second iOS version  
 
-1. Run <code>./dualboot.sh --jailbreak <version></code> (If you want to use palera1n, you have to put --jail_palera1n) Then after boot, open Pogo and tap install. If you reboot your device, you will only need to tap Do all in Pogo.
+1. Run <code>./dualboot.sh --jailbreak <version></code> (this is very recomendable(better use this jailbreak) , when this finish,open Pogo and tap install, then tap Do All. If you reboot your device, you will only need to tap Do all in Pogo.
 
-2. Jailbreak with Taurine: <code>./dualboot.sh --jailbreak 14.3 --taurine</code>
+2. Jailbreak with Taurine: <code>./dualboot.sh --jailbreak 14.3 --taurine</code>  (not recomndable dont use it if you are not pro on this, when that finsh install TrollStore from AppleTV and refresh icon using TrollStore, open taurine and click jailbreak, if you reboot just open pogo and click remount and launchdaemons).
 
 # Delete the second iOS install from your device
 Run <code>./dualboot.sh --restorerootfs 14.2</code>
