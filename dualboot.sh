@@ -59,24 +59,24 @@ put ipsw file of ios 14 into the ipsw directory, you must make sure that this is
 
 Options:
     --dualboot          dualboot your device ios 15 with 14 
-    --jail_palera1n     uses only if you have the palera1n jailbreak installed, it will create partition on disk + 1 because palera1n create a new partition. disk0s1s8 however if you jailbreakd with palera1n the disk would be disk0s1s9"
-    --getIpsw           using this will download a ipsw of your version which you want to dualboot.
+    --jail-palera1n     uses only if you have the palera1n jailbreak installed, it will create partition on disk + 1 because palera1n create a new partition. disk0s1s8 however if you jailbreakd with palera1n the disk would be disk0s1s9"
+    --get-ipsw           using this will download a ipsw of your version which you want to dualboot.
     --jailbreak         jailbreak your second ios. you can use it when your device boot correctly the second ios
     --taurine           this will install the jailbreak of taurine. ./dualboot.sh --jailbreak 14.3 --taurine 
     --help              Print this help
-    --fix_HB            that will fix home button on a10 and a11 or well try it. that is ultra beta i dont have a10 or a11 to test but you can do it also if the device give error booting you can execute again ./dualboot.sh --dualboot 14.3 --dont_createPart --fixHB ,to boot is --boot 14.3 --fixHB and that will fix the problem to. that not work yet
-    --fixhardware       this should fix some problem like touch on ipad, i dont know if that work but you can do it to see if work. ./dualboot.sh --dualboot 14.3 --dont_createPart --fixhardware. that does not work :( but you can try it 
+    --fix-hb            that will fix home button on a10 and a11 or well try it. that is ultra beta i dont have a10 or a11 to test but you can do it also if the device give error booting you can execute again ./dualboot.sh --dualboot 14.3 --dont-create-part --fix-hb ,to boot is --boot 14.3 --fix-hb and that will fix the problem to. that not work yet
+    --fixhardware       this should fix some problem like touch on iPad, i dont know if that work but you can do it to see if work. ./dualboot.sh --dualboot 14.3 --dont-create-part --fixhardware. that does not work :( but you can try it 
     --dfuhelper         A helper to help get A11 devices into DFU mode from recovery mode
     --boot              put boot alone, to boot your second ios  
-    --dont_createPart   Don't create the partitions if you have already created 
+    --dont-create-part   Don't create the partitions if you have already created 
     --restorerootfs     Remove partitions of dualboot 
-    --fix_preboot       that restore preboot with the prebootBackup
+    --fix-preboot       that restore preboot with the prebootBackup
     --debug             Debug the script
 
 Subcommands:
     clean               Deletes the created boot files
 help:
-    in case that the device does not boot use: ./dualboot.sh --dualboot 14.3 --debug --dont_createPart --fixBoot 
+    in case that the device does not boot use: ./dualboot.sh --dualboot 14.3 --debug --dont-create-part --fix-boot 
 
 
 
@@ -96,25 +96,25 @@ parse_opt() {
         --boot)
             boot=1
             ;;
-        --fixBoot)
+        --fix-boot)
             fixBoot=1
             ;;
-        --fixHB)
+        --fix-hb)
             fixHB=1
             ;;
         --fixhardware)
             fixhardware=1
             ;;
-        --getIpsw)
+        --get-ipsw)
             getIpsw=1
             ;;
         --back)
             back=1
             ;;
-        --fix_preboot)
+        --fix-preboot)
             fix_preboot=1
             ;;
-        --jail_palera1n)
+        --jail-palera1n)
             jail_palera1n=1
             ;;
         --jailbreak)
@@ -126,7 +126,7 @@ parse_opt() {
         --dfuhelper)
             dfuhelper=1
             ;;
-        --dont_createPart)
+        --dont-create-part)
             dont_createPart=1
             ;;
         --restorerootfs)

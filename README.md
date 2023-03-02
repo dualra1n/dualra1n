@@ -9,7 +9,7 @@ Example: ./dualboot.sh --dualboot 14.3
 
     --dualboot          Dualboot your device with any SEP and Baseband compatible iOS 14 version.
     
-    --jail_palera1n     Use this only when you already jailbroken with semitethered palera1n to avoid disk errors. 
+    --jail-palera1n     Use this only when you already jailbroken with semitethered palera1n to avoid disk errors. 
     
     --jailbreak         Jailbreak the dualbooted iOS with Pogo. Usage :  ./dualboot.sh --jailbreak 14.3
 
@@ -17,17 +17,17 @@ Example: ./dualboot.sh --dualboot 14.3
    
     --help              Print this help.
        
-    --getIpsw           Automaticly downloads IPSW that you want to dualboot. Dont forget specify iOS version.
+    --get-ipsw           Automaticly downloads IPSW that you want to dualboot. Dont forget specify iOS version.
 
     --dfuhelper         A helper to enter DFU if you struggling in it.
     
     --boot              Lets you boot into dualbooted iOS. Use it alone. Usage : ./dualboot.sh --boot
     
-    --dont_createPart   Skips the creating a new disk partition if you have them already.
+    --dont-create-part   Skips the creating a new disk partition if you have them already.
     
-    --restorerootfs     Deletes dualbooted OS. and remember put --jail_palera1n if you have palera1n semitethered jailbreak 
+    --restorerootfs     Deletes dualbooted OS. and remember put --jail-palera1n if you have palera1n semitethered jailbreak 
     
-    --fix_preboot       that restore preboot with the prebootBackup. --fix_preboot
+    --fix-preboot       that restore preboot with the prebootBackup. --fix-preboot
     
     --debug             Debug the script
 

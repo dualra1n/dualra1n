@@ -18,7 +18,7 @@
 
 # Delete the second iOS install from your device
 
-1. <code>./dualboot.sh --restorerootfs 14.2</code> (if you have palera1n semitethered you have to put <code>--jail_palera1n</code>)
+1. <code>./dualboot.sh --restorerootfs 14.2</code> (if you have palera1n semitethered you have to put <code>--jail-palera1n</code>)
 
 
 # Common Issues
