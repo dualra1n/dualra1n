@@ -61,7 +61,7 @@ iOS 13 is working but has only been tested with 13.7, but hasn't for others. If 
 [A full tutorial](https://github.com/dualra1n/dualra1n/blob/main/tutorial.md)
 
 
-# Problems and issues contact me on the official [Discord](https://discord.gg/UtxhxHFE)
+# Problems and issues contact me on the official [Discord](https://discord.gg/E6jj48hzd5)
 
 
 # Credits
