@@ -60,12 +60,11 @@ put ipsw file of ios 14 into the ipsw directory, you must make sure that this is
 Options:
     --dualboot          dualboot your device ios 15 with 14 
     --jail-palera1n     uses only if you have the palera1n jailbreak installed, it will create partition on disk + 1 because palera1n create a new partition. disk0s1s8 however if you jailbreakd with palera1n the disk would be disk0s1s9"
-    --get-ipsw           using this will download a ipsw of your version which you want to dualboot.
+    --get-ipsw          sometimes this does'nt work well ,using this will download a ipsw of your version which you want to dualboot. its better that you download the ipsw manually. if you will use this ,use it alone and the version --get-ipsw 14.2.
     --jailbreak         jailbreak your second ios. you can use it when your device boot correctly the second ios
     --taurine           this will install the jailbreak of taurine. ./dualboot.sh --jailbreak 14.3 --taurine 
     --help              Print this help
-    --fix-hb            that will fix home button on a10 and a11 or well try it. that is ultra beta i dont have a10 or a11 to test but you can do it also if the device give error booting you can execute again ./dualboot.sh --dualboot 14.3 --dont-create-part --fix-hb ,to boot is --boot 14.3 --fix-hb and that will fix the problem to. that not work yet
-    --fixhardware       this should fix some problem like touch on iPad, i dont know if that work but you can do it to see if work. ./dualboot.sh --dualboot 14.3 --dont-create-part --fixhardware. that does not work :( but you can try it 
+    --fix-hb            that will fix home button on a10 and a11 or well try it. please dont use this.
     --dfuhelper         A helper to help get A11 devices into DFU mode from recovery mode
     --boot              put boot alone, to boot your second ios  
     --dont-create-part   Don't create the partitions if you have already created 
