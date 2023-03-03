@@ -11,14 +11,14 @@
 
 # How to Jailbreak the second iOS version  
 
-1. Run <code>./dualboot.sh --jailbreak <version></code> ( this is very recomendable,its better use this jailbreak) , when this finish, open Pogo and tap install, then tap Do All. If you reboot your device, you will only need to tap Do all in Pogo.
+1. Run <code>./dualboot.sh --jailbreak 14.2 (the version to dualboot) </code> ( this is very recomendable,its better use this jailbreak) , when this finish, open Pogo and tap install, then tap Do All. If you reboot your device, you will only need to tap Do all in Pogo.
 
-2. Jailbreak with Taurine: <code>./dualboot.sh --jailbreak 14.3 --taurine</code> (not recomndable dont use it if you are not pro on this,)( when that finsh install TrollStore from AppleTV and refresh icon using TrollStore, open taurine and click jailbreak. If you reboot your device, you will only need to tap Do all in Pogo).
+2. Jailbreak with Taurine: <code>./dualboot.sh --jailbreak 14.3 --taurine </code> (not recomndable dont use it if you are not pro on this,)( when that finsh install TrollStore from AppleTV and refresh icon using TrollStore, open taurine and click jailbreak. If you reboot your device, you will only need to tap Do all in Pogo).
 
 
 # Delete the second iOS install from your device
 
-1. <code>./dualboot.sh --restorerootfs 14.2</code> (if you have palera1n semitethered you have to put <code>--jail-palera1n</code>)
+1. <code>./dualboot.sh --restorerootfs 14.2 </code> (if you have palera1n semitethered you have to put <code>--jail-palera1n</code>)
 
 
 # Common Issues
@@ -27,7 +27,7 @@
 - A9 : Everything works except camera, microphone and gyroscope. (Can be fixed with ldrestart or by using iOS 14.2)
 
 
-- A10/11: Home button is not working currently and camera, micro, girosc. You can use tweaks like GesturesXV to simulate iPhone X gestures.  also activating assesive touch on the first ios before you dualboot, and dualboot you will have activate the assesive touch on the second ios.
+- A10/11: Home button is not working currently and camera, micro, girosc. You can use tweaks like GesturesXV to simulate iPhone X gestures.  also activating assesive touch on the first ios before you dualboot, and when you boot into the second ios you will have activated the assesive touch on the second ios.
 
 - iPhone X: Touchscreen does not work.
 
