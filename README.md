@@ -71,7 +71,7 @@ iOS 13 is working but has only been tested with 13.7, but hasn't for others. If 
 
 - [Edwin](https://github.com/edwin170) owner :)
 - [Fatih](https://github.com/swayea) help with readme and linux support and is a very good person.
-- [azaz0322](https://github.com/m00nl1ghts) helped with readme a bit more.
+- [azaz0322](https://github.com/m00nl1ghts), [Huy Nguyen](https://github.com/34306), [Uckermark](https://github.com/Uckermark) helped with readme.
 
 </details>
 <details><summary>Other credits for tools and codes used in dualra1n</summary>
