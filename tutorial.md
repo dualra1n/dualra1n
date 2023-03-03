@@ -4,7 +4,7 @@
 
 2. Download the ipsw file which you want to dualboot with and paste it into ipsw/ directory. You can use this website to download: https://ipsw.me (Remember, only iOS 14.0 to iOS 14.8.1. are supported. iOS 13.7 is supported too, but requires the iOS 13 branch. All other versions are unsupported.)
 
-3. Run <code>./dualboot.sh --dualboot <version you want to dualboot with></code>
+3. Run <code>./dualboot.sh --dualboot 14.2 or (the version to dualboot) </code>
 
 4. To boot the second iOS, run <code>./dualboot.sh --boot</code>
 
