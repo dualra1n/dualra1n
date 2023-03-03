@@ -107,9 +107,6 @@ parse_opt() {
         --get-ipsw)
             getIpsw=1
             ;;
-        --back)
-            back=1
-            ;;
         --fix-preboot)
             fix_preboot=1
             ;;
