@@ -56,6 +56,18 @@ Dualbooting any version of iOS 15 will give you kernel panics, so you will have 
 
 iOS 13 is working but has only been tested with 13.7, but hasn't for others. If you want to dualboot with iOS 13.x, use the iOS 13 branch. This will not work on iPads without a baseband (WiFi Only).
 
+# Common Issues
+
+ ramdisk-submodule
+- A9 : Everything works except camera, microphone and gyroscope. (Can be fixed with ldrestart or by using iOS 14.2)
+
+
+- A10/11: Home button is not working currently and camera, micro, girosc. You can use tweaks like GesturesXV to simulate iPhone X gestures.  also activating assesive touch on the first ios before you dualboot, and when you boot into the second ios you will have activated the assesive touch on the second ios.
+
+- iPhone X: Touchscreen does not work.
+
+- iPads may have issues with "Deep Sleep". Sometimes, installing this tweak [Fiona](https://www.ios-repo-updates.com/repository/julioverne-s-repo/package/com.julioverne.fiona/) may fix it.
+
 # How would I dualboot?
 
 [A full tutorial](https://github.com/dualra1n/dualra1n/blob/main/tutorial.md)
@@ -70,7 +82,9 @@ iOS 13 is working but has only been tested with 13.7, but hasn't for others. If 
 <p>
 
 - [Edwin](https://github.com/edwin170) owner :)
+
 - [Fatih](https://github.com/swayea) help with readme and linux support and is a very good person.
+
 - [azaz0322](https://github.com/m00nl1ghts), [Huy Nguyen](https://github.com/34306), [Uckermark](https://github.com/Uckermark) helped with readme.
 
 </details>

@@ -21,16 +21,11 @@
 1. <code>./dualboot.sh --restorerootfs 14.2 </code> (if you have palera1n semitethered you have to put <code>--jail-palera1n</code>)
 
 
-# Common Issues
+# issues 
 
- ramdisk-submodule
-- A9 : Everything works except camera, microphone and gyroscope. (Can be fixed with ldrestart or by using iOS 14.2)
+1. problem installing something in sileo using taurine jailbreak, so you can solve that problem removing substrate from sileo.
 
 
-- A10/11: Home button is not working currently and camera, micro, girosc. You can use tweaks like GesturesXV to simulate iPhone X gestures.  also activating assesive touch on the first ios before you dualboot, and when you boot into the second ios you will have activated the assesive touch on the second ios.
+2. deep sleep = the idevice poweroff automatically when I let use it. installing Fiona tweaks can fix that problem.
 
-- iPhone X: Touchscreen does not work.
 
-- iPads may have issues with "Deep Sleep". Sometimes, installing this tweak [Fiona](https://www.ios-repo-updates.com/repository/julioverne-s-repo/package/com.julioverne.fiona/) may fix it.
-
-# Problems and issues contact me here in discord there https://discord.gg/E6jj48hzd5
