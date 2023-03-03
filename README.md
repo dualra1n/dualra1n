@@ -19,7 +19,7 @@ remember not put passcode because that give some problems on dualboot ios 13.
 
 # Usage
 
-Example: ./dualboot.sh --dualboot 14.3 
+Example: ./dualboot.sh --dualboot 13.7 or the version that you want to dualboot 
 
     --dualboot          Dualboot your device with any SEP and Baseband compatible iOS 14 version.
     
