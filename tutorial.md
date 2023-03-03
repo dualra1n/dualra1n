@@ -23,7 +23,9 @@
 
 # Common Issues
 
+ ramdisk-submodule
 - A9 : Everything works except camera, microphone and gyroscope. (Can be fixed with ldrestart or by using iOS 14.2)
+
 
 - A10/11: Home button is not working currently and camera, micro, girosc. You can use tweaks like GesturesXV to simulate iPhone X gestures.  also activating assesive touch on the first ios before you dualboot, and dualboot you will have activate the assesive touch on the second ios.
 
