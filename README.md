@@ -42,6 +42,7 @@ Subcommands:
 - python3
 - A IPSW iOS 14-15 
 - 15GB+ free storage
+- a MACOS or LINUX, it's better that you use a mac it's more estable and faster
 
 # Warnings
 - I am **NOT** responsible for any data loss. The user of this program accepts responsibility should something happen to their device.
@@ -71,7 +72,7 @@ iOS 13 is working but has only been tested with 13.7, but hasn't for others. If 
 # How would I dualboot?
 
 [A full tutorial](https://github.com/dualra1n/dualra1n/blob/main/tutorial.md)
-
+[video tutorial from burhanrana](https://www.youtube.com/watch?v=4iCZv7Ox5AA)
 
 # Problems and issues contact me on the official [Discord](https://discord.gg/E6jj48hzd5)
 
