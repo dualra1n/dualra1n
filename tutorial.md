@@ -3,7 +3,7 @@
 
 1. <code>git clone https://github.com/dualra1n/dualra1n.git</code>
 
-2: Download the ipsw file which you want to dualboot with and paste it into ipsw/ directory. You can use this website to download: https://ipsw.me (Remember, iOS 15 to iOS 14.0.) (iOS 13.7 is supported using the iOS 13 branch.) (Other versions are not supported.)
+2: Download the ipsw file which you want to dualboot with and paste it into ipsw/ directory. You can use this website to download: https://ipsw.me (Remember, iOS 15.7.3 to iOS 14.0.) (iOS 13.7 is supported using the iOS 13 branch.) (Other versions are not supported.)
 
 
 3: Run <code>./dualboot.sh --dualboot 14.2(version you want to dualboot with)</code>
@@ -26,7 +26,7 @@
 - A9 : Everything works perfect expect camera, micro, girosc. camera isFixable (with ldrestart) or dualbooting ios 14.2.
 
 
-- A10/11: Home button is not working currently and camera, micro, girosc. You can use tweaks like GesturesXV to simulate iPhone X gestures.
+- A10/11: Home button is not working currently and camera, micro, girosc. You can use tweaks like GesturesXV to simulate iPhone X gestures. also activating assesive touch on the first ios before you dualboot, and dualboot you will have activate the assesive touch on the second ios 
 
 
 - iPhone X: Touchscreen does not work.
