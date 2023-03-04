@@ -890,7 +890,7 @@ if [ true ]; then
                 dmg_disk=$(remote_cmd "/usr/sbin/hdik /mnt8/${dmgfile} | head -3 | tail -1 | sed 's/ .*//'")
                 remote_cmd "/sbin/mount_apfs -o ro $dmg_disk /mnt5/"
                 echo "it is extracting the files so please hang on ......."
-                remote_cmd "cp -a /mnt5/* /mnt8/"
+                remote_cmd "cp -na /mnt5/* /mnt8/"
                 sleep 2
                 remote_cmd "/sbin/umount $dmg_disk"
                 remote_cmd "rm -rv /mnt8/${dmgfile}"
@@ -916,9 +916,9 @@ if [ true ]; then
             remote_cmd "/sbin/mount_apfs /dev/disk0s1s${disk} /mnt8/"
             remote_cmd "/sbin/mount_apfs /dev/disk0s1s${dataB} /mnt9/"
             remote_cmd "/sbin/mount_apfs /dev/disk0s1s${prebootB} /mnt4/"
-            remote_cmd "cp -a /mnt8/private/var/. /mnt9/" # this will copy all file which is needed by dataB
+            remote_cmd "cp -na /mnt8/private/var/. /mnt9/" # this will copy all file which is needed by dataB
             remote_cmd "mount_filesystems"
-            remote_cmd "cp -a /mnt6/. /mnt4/" # copy preboot to prebootB
+            remote_cmd "cp -na /mnt6/. /mnt4/" # copy preboot to prebootB
             if [ ! $(remote_cmd "cp -a /mnt2/mobile/Library/Preferences/com.apple.Accessibility* /mnt9/mobile/Library/Preferences/") ]; then
                 echo "error activating assesivetouch"
             fi
