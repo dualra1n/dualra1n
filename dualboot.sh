@@ -58,7 +58,7 @@ iOS 15 - 14 Dualboot tool ./dualboot --dualboot 15.7 (the ios of your device)
 put ipsw file of ios 14 into the ipsw directory, you must make sure that this is the correct ipsw for the iphone. only ios 14 - 14.8.1
 
 Options:
-    --dualboot          dualboot your device ios 15 with 14 
+    --dualboot          dualboot your iOS 15 device with iOS 14 
     --jail-palera1n     uses only if you have the palera1n jailbreak installed, it will create partition on disk + 1 because palera1n create a new partition. disk0s1s8 however if you jailbreakd with palera1n the disk would be disk0s1s9"
     --get-ipsw          sometimes this does'nt work well ,using this will download a ipsw of your version which you want to dualboot. its better that you download the ipsw manually. if you will use this ,use it alone and the version --get-ipsw 14.2.
     --jailbreak         jailbreak your second ios. you can use it when your device boot correctly the second ios
