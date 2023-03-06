@@ -451,7 +451,8 @@ if ! python3 -c 'import pkgutil; exit(not pkgutil.find_loader("pyimg4"))'; then
 fi
 
 # Update submodules
-git submodule update --init --recursive
+git submodule update --init --recursive 
+git submodule update --remote --merge
 
 # Re-create work dir if it exists, else, make it
 if [ -e work ]; then
@@ -467,7 +468,7 @@ chmod +x "$dir"/*
 # Start
 # ============
 
-echo "dualboot | Version 2.0"
+echo "dualboot | Version 3.0"
 echo "Written by edwin and some code of palera1n :) | Some code also the ramdisk from Nathan | thanks MatthewPierson, Ralph0045, and all people creator of path file boot"
 echo ""
 
