@@ -60,10 +60,10 @@ iOS 13 is working but has only been tested with 13.7, but hasn't for others. If 
 # Common Issues
 
  ramdisk-submodule
-- A9 : Everything works except camera, microphone and gyroscope. (Can be fixed with ldrestart or by using iOS 14.2)
+- A9 : Everything works except Camera, Microphone and Gyroscope. (Can be fixed with ldrestart or by using iOS 14.2)
 
 
-- A10/11: Home button is not working currently and camera, micro, girosc. You can use tweaks like GesturesXV to simulate iPhone X gestures.  also activating assesive touch on the first ios before you dualboot, and when you boot into the second ios you will have activated the assesive touch on the second ios.
+- A10/11: Home button is not working currently and Camera, Audio, Microphone, Vibration does NOT work at the moment. You can use tweaks like GesturesXV to simulate iPhone X gestures.  also activating assesive touch on the first ios before you dualboot, and when you boot into the second ios you will have activated the assesive touch on the second ios.
 
 - iPhone X: Touchscreen does not work.
 
@@ -71,8 +71,9 @@ iOS 13 is working but has only been tested with 13.7, but hasn't for others. If 
 
 # How would I dualboot?
 
-[A full tutorial](https://github.com/dualra1n/dualra1n/blob/main/tutorial.md)
-[video tutorial from burhanrana](https://www.youtube.com/watch?v=4iCZv7Ox5AA)
+- [A full tutorial](https://github.com/dualra1n/dualra1n/blob/main/tutorial.md)
+
+- [video tutorial from burhanrana](https://www.youtube.com/watch?v=4iCZv7Ox5AA)
 
 # Problems and issues contact me on the official [Discord](https://discord.gg/E6jj48hzd5)
 
