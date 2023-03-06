@@ -940,7 +940,11 @@ if [ true ]; then
             remote_cmd "mount_filesystems"
             remote_cmd "/sbin/mount_apfs /dev/disk0s1s${disk} /mnt8/"
             remote_cmd "/sbin/mount_apfs /dev/disk0s1s${dataB} /mnt9/"
-            remote_cmd "cp -a /mnt8/private/var/. /mnt9/" # this will copy all file which is needed by dataB
+
+            if [ ! $(remote_cmd "cp -a /mnt8/private/var/* /mnt9/") ]; then # this will copy all file which is needed by dataB
+                echo "var was copied"
+            fi
+
             remote_cmd "cp -a /mnt6/${active}/* /mnt8/" # copy preboot to ios 13 partition
             echo "copying needed files to boot ios 13"
             remote_cmd "mkdir -p /mnt8/private/xarts && mkdir -p /mnt8/private/preboot/"
@@ -1041,10 +1045,10 @@ if [ true ]; then
         if [ "$os" = "Linux" ]; then
             echo "devicetree patcher is fall down, not work on linux, however you can use https://github.com/darlinghq/darling.git to execute binary dtree_patcher"
             # that will use darling because dtreepatcher have problem on linux and noone want to help me 
-            /usr/bin/darling shell binaries/Darwin/dtree_patcher work/dtree.raw work/dtree.patched -d `if [[ ! "$version" = '13.'* ]]; then echo "-p"; fi`
+            "$dir"/dtree_patcher work/dtree.raw work/dtree.patched -d 
             "$dir"/img4 -i work/dtree.patched -o work/devicetree.img4 -A -M work/IM4M -T rdtr
         else 
-            "$dir"/dtree_patcher work/dtree.raw work/dtree.patched -d `if [[ ! "$version" = '13.'* ]]; then echo "-p"; fi`
+            "$dir"/dtree_patcher work/dtree.raw work/dtree.patched -d 
             "$dir"/img4 -i work/dtree.patched -o work/devicetree.img4 -A -M work/IM4M -T rdtr
         fi
 
