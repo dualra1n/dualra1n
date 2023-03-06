@@ -867,7 +867,7 @@ if [ true ]; then
             if command -v rsync &>/dev/null; then
                 echo "rsync installed"
             else 
-                echo "you dont have rsync installed so the script will take much more time to copy the rootfs file, so install rsync in order to be faster, on mac brew install rsync on linux apt install rsync"
+                echo "you dont have rsync installed so the script will take much more time to copy the rootfs file, so install rsync in order to be faster."
             fi
             
             echo "it is copying rootfs so hang on like 20 minute ......"
@@ -899,20 +899,27 @@ if [ true ]; then
             ./sshrd.sh boot
             cd ..
             sleep 10
+
             while ! (remote_cmd "echo connected" &> /dev/null); do
                 sleep 1
             done
+            
             if [ "$os" = "Darwin" ]; then
                 remote_cmd "/System/Library/Filesystems/apfs.fs/apfs_invert -d /dev/disk0s1 -s ${disk} -n out.dmg" # this will mount the root file system and would restore the partition 
             fi
+
             sleep 1
             echo "[*] doing some configuration"
             remote_cmd "/sbin/mount_apfs /dev/disk0s1s${disk} /mnt8/"
             remote_cmd "/sbin/mount_apfs /dev/disk0s1s${dataB} /mnt9/"
             remote_cmd "/sbin/mount_apfs /dev/disk0s1s${prebootB} /mnt4/"
-            remote_cmd "cp -na /mnt8/private/var/. /mnt9/" # this will copy all file which is needed by dataB
+            if [ ! $(remote_cmd "cp -a /mnt8/private/var/* /mnt9/") ]; then # this will copy all file which is needed by dataB
+                echo "var was copied"
+            fi
+            sleep 2
+            
             remote_cmd "mount_filesystems"
-            remote_cmd "cp -na /mnt6/. /mnt4/" # copy preboot to prebootB
+            remote_cmd "cp -na /mnt6/* /mnt4/" # copy preboot to prebootB
             if [ ! $(remote_cmd "cp -a /mnt2/mobile/Library/Preferences/com.apple.Accessibility* /mnt9/mobile/Library/Preferences/") ]; then
                 echo "error activating assesivetouch"
             fi
