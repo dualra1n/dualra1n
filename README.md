@@ -38,8 +38,8 @@ Subcommands:
 ---
 # Dependencies
 - A desactivated passcode on A10-A11 
-- unzip
-- python3
+- unzip, python3
+- Update or Install libimobiledevice-utils, libusbmuxd-tools
 - A IPSW iOS 14-15 
 - 15GB+ free storage
 - a MACOS or LINUX, it's better that you use a mac it's more estable and faster
