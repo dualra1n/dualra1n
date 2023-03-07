@@ -75,6 +75,14 @@ Step 3: when that is already installed and you would want to dualboot your secon
 
 2) Jailbreak with Taurine :  ./dualboot.sh --jailbreak 14.3 --taurine (if you have palera1n jailbreak use --jail_palera1n). After boot, open TV App and install Trollstore, then install ldid and rebuild icon cache. Taurine should appear on your homescreen, open it and tap jailbreak (If it shows Jailbroken, forget it and tap). when that reboot you can not press jsilbroken again or install taurine because that can give erros, each time that you reboot you will have to open pogo app and press do all (never press install because that can create conflict).
 
+4)To jailbreak ios 13 dualbooted Download the ipa-
+
+https://github.com/dualra1n/Odyssey/releases/tag/v1.4.2
+
+This ipa is specially made for dualbooted ios
+13. You can install it through sideloady application.
+
+
 - Tested on iPhone 6s on iOS 15.7-15.7.2 - macOS Big Sur, Kali Linux, Ubuntu 22.04
 
 # Problems and issues contact me here https://discord.gg/NWV72KWG
