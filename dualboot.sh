@@ -44,15 +44,10 @@ remote_cp() {
 }
 
 step() {
-    rm -f .entered_dfu
     for i in $(seq "$1" -1 0); do
-        if [[ -e .entered_dfu ]]; then
-            rm -f .entered_dfu
+        if [ "$(get_device_mode)" = "dfu" ]; then
             break
         fi
-        if [[ $(get_device_mode) == "dfu" || ($1 == "10" && $(get_device_mode) != "none") ]]; then
-            touch .entered_dfu
-        fi &
         printf '\r\e[K\e[1;36m%s (%d)' "$2" "$i"
         sleep 1
     done
@@ -280,13 +275,7 @@ _wait() {
     fi
 }
 
-dfuhelper_first_try=true
 _dfuhelper() {
-    if [ "$(get_device_mode)" = "dfu" ]; then
-        echo "[*] Device is already in DFU"
-        return
-    fi
-
     local step_one;
     deviceid=$( [ -z "$deviceid" ] && _info normal ProductType || echo $deviceid )
     if [[ "$1" = 0x801* && "$deviceid" != *"iPad"* ]]; then
@@ -294,28 +283,29 @@ _dfuhelper() {
     else
         step_one="Hold home + power button"
     fi
-    if $dfuhelper_first_try; then
-        echo "[*] Press any key when ready for DFU mode"
-        read -n 1 -s
-        dfuhelper_first_try=false
-    fi
+    echo "[*] To get into DFU mode, you will be guided through 2 steps:"
+    echo "[*] Press any key when ready for DFU mode"
+    read -n 1 -s
     step 3 "Get ready"
     step 4 "$step_one" &
-    sleep 2
+    sleep 3
     "$dir"/irecovery -c "reset" &
-    wait
+    sleep 1
     if [[ "$1" = 0x801* && "$deviceid" != *"iPad"* ]]; then
         step 10 'Release side button, but keep holding volume down'
     else
         step 10 'Release power button, but keep holding home button'
     fi
     sleep 1
-    
+
+    if [ "$(get_device_mode)" = "recovery" ]; then
+        _dfuhelper
+    fi
+
     if [ "$(get_device_mode)" = "dfu" ]; then
         echo "[*] Device entered DFU!"
-        dfuhelper_first_try=true
     else
-        echo "[-] Device did not enter DFU mode"
+        echo "[-] Device did not enter DFU mode, rerun the script and try again"
         return -1
     fi
 }
@@ -526,63 +516,50 @@ fi
 
 
 # Get device's iOS version from ideviceinfo if in normal mode
-function _wait_for_device() {
-    echo "[*] Waiting for devices"
-    while [ "$(get_device_mode)" = "none" ]; do
-        sleep 1;
-    done
-    echo $(echo "[*] Detected $(get_device_mode) mode device" | sed 's/dfu/DFU/')
+echo "[*] Waiting for devices"
+while [ "$(get_device_mode)" = "none" ]; do
+    sleep 1;
+done
+echo $(echo "[*] Detected $(get_device_mode) mode device" | sed 's/dfu/DFU/')
 
-    if grep -E 'pongo|checkra1n_stage2|diag' <<< "$(get_device_mode)"; then
-        echo "[-] Detected device in unsupported mode '$(get_device_mode)'"
-        exit 1;
+if grep -E 'pongo|checkra1n_stage2|diag' <<< "$(get_device_mode)"; then
+    echo "[-] Detected device in unsupported mode '$(get_device_mode)'"
+    exit 1;
+fi
+
+if [ "$(get_device_mode)" != "normal" ] && [ -z "$version" ] && [ "$dfuhelper" != "1" ]; then
+    echo "[-] You must pass the version your device is on when not starting from normal mode"
+    exit
+fi
+
+if [ "$(get_device_mode)" = "ramdisk" ]; then
+    # If a device is in ramdisk mode, perhaps iproxy is still running?
+    _kill_if_running iproxy
+    echo "[*] Rebooting device in SSH Ramdisk"
+    if [ "$os" = 'Linux' ]; then
+        sudo "$dir"/iproxy 2222 22 &
+    else
+        "$dir"/iproxy 2222 22 &
     fi
+    sleep 1
+    remote_cmd "/sbin/reboot"
+    _kill_if_running iproxy
+    _wait recovery
+fi
 
-    if [ "$(get_device_mode)" != "normal" ] && [ -z "$version" ] && [ "$dfuhelper" != "1" ]; then
-        echo "[-] You must pass the version your device is on when not starting from normal mode"
+if [ "$(get_device_mode)" = "normal" ]; then
+    version=${version:-$(_info normal ProductVersion)}
+    arch=$(_info normal CPUArchitecture)
+    if [ "$arch" = "arm64e" ]; then
+        echo "[-] dualboot doesn't, and never will, work on non-checkm8 devices"
         exit
     fi
+    echo "Hello, $(_info normal ProductType) on $version!"
 
-    if [ "$(get_device_mode)" = "ramdisk" ]; then
-        # If a device is in ramdisk mode, perhaps iproxy is still running?
-        _kill_if_running iproxy
-        echo "[*] Rebooting device in SSH Ramdisk"
-        if [ "$os" = 'Linux' ]; then
-            sudo "$dir"/iproxy 2222 22 &
-        else
-            "$dir"/iproxy 2222 22 &
-        fi
-        sleep 1
-        remote_cmd "/sbin/reboot"
-        _kill_if_running iproxy
-        _wait recovery
-    fi
-
-    if [ "$(get_device_mode)" = "normal" ]; then
-        version=${version:-$(_info normal ProductVersion)}
-        arch=$(_info normal CPUArchitecture)
-        if [ "$arch" = "arm64e" ]; then
-            echo "[-] dualboot doesn't, and never will, work on non-checkm8 devices"
-            exit
-        fi
-        echo "Hello, $(_info normal ProductType) on $version!"
-
-        echo "[*] Switching device into recovery mode..."
-        "$dir"/ideviceenterrecovery $(_info normal UniqueDeviceID)
-        _wait recovery
-    fi
-
-    # Have the user put the device into DFU
-    if [ "$(get_device_mode)" != "dfu" ]; then
-        recovery_fix_auto_boot;
-        _dfuhelper "$cpid" || {
-            echo "[-] failed to enter DFU mode, run dualboot.sh again"
-            sleep 3
-            _wait_for_device
-        }
-    fi
-}
-_wait_for_device
+    echo "[*] Switching device into recovery mode..."
+    "$dir"/ideviceenterrecovery $(_info normal UniqueDeviceID)
+    _wait recovery
+fi
 
 # Grab more info
 echo "[*] Getting device info..."
@@ -596,11 +573,7 @@ echo "$deviceid"
 
 if [ "$dfuhelper" = "1" ]; then
     echo "[*] Running DFU helper"
-    _dfuhelper "$cpid" || {
-        echo "[-] Failed to enter DFU mode, trying again"
-        sleep 3
-        _wait_for_device
-    }
+    _dfuhelper "$cpid"
     exit
 fi
 
@@ -610,6 +583,16 @@ ipswurl=$(curl -sL "https://api.ipsw.me/v4/device/$deviceid?type=ipsw" | "$dir"/
 if [ "$restorerootfs" = "1" ]; then
     rm -rf "blobs/"$deviceid"-"$version".shsh2" "boot-$deviceid" .tweaksinstalled
 fi
+
+# Have the user put the device into DFU
+if [ "$(get_device_mode)" != "dfu" ]; then
+    recovery_fix_auto_boot;
+    _dfuhelper "$cpid" || {
+        echo "[-] failed to enter DFU mode, run dualboot.sh again"
+        exit -1
+    }
+fi
+sleep 2
 
 
 if [ "$boot" = "1" ]; then # call boot in order to boot it 
@@ -942,12 +925,7 @@ if [ true ]; then
             remote_cmd "/sbin/reboot"
             _wait recovery
             sleep 4
-            _dfuhelper "$cpid" || {
-                echo "[-] Failed to enter DFU mode, trying again"
-                sleep 3
-                _wait_for_device
-            }
-            sleep 2
+            _dfuhelper "$cpid"
             cd ramdisk 
             ./sshrd.sh boot
             cd ..
@@ -999,11 +977,8 @@ if [ true ]; then
         sleep 3
         _wait recovery
         sleep 4
-        _dfuhelper "$cpid" || {
-            echo "[-] Failed to enter DFU mode, trying again"
-            sleep 3
-            _wait_for_device
-        }
+        _dfuhelper "$cpid"
+        sleep 3
 
         echo "copying files to work"
         if [ "$fixBoot" = "1" ]; then # i put it because my friend tested on his ipad and that does not boot so when we download all file from the internet so not extracting ipsw that boot fine idk why 
