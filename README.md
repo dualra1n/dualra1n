@@ -26,6 +26,8 @@ Example: ./dualboot.sh --dualboot 13.7 or the version that you want to dualboot
     --jail_palera1n     Use this only when you already jailbroken with semitethered palera1n to avoid disk errors. 
     
     --jailbreak         Jailbreak the dualbooted iOS with Pogo. Usage :  ./dualboot.sh --jailbreak 14.3
+    
+    --odyssey           this will install the jailbreak of odyssey. ./dualboot.sh --jailbreak 13.7 --odyssey 
 
     --taurine           Jailbreak dualbooted iOS with Taurine. Usage: ./dualboot.sh --jailbreak 14.3 --taurine 
    
