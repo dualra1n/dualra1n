@@ -77,6 +77,11 @@ iOS 13 is working but only 13.6, 13.7. If you want to dualboot with iOS 13.x, us
 
 - [video tutorial from burhanrana](https://www.youtube.com/watch?v=4iCZv7Ox5AA)
 
+# if you want, you can support me in https://www.paypal.me/EdwinNunez2004 
+
+<details><summary>why donate me ?</summary>
+    you can support me with whatever you have, that its important for me because rn I am not working cause this tool and i would be glad to receive something for it. if you cant no problem, just enjoy this. 
+</details>
 # Problems and issues contact me on the official [Discord](https://discord.gg/E6jj48hzd5)
 
 
