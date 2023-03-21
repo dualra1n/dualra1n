@@ -7,27 +7,29 @@ A script that lets you dualboot iOS 14-15 on checkm8 devices.
 
 Example: ./dualboot.sh --dualboot 14.3 
 
-    --dualboot          Dualboot your device with any SEP and Baseband compatible iOS 14 version.
+    --dualboot          dualboot your idevice with ios 14,15.
     
     --jail-palera1n     Use this only when you already jailbroken with semitethered palera1n to avoid disk errors. 
     
-    --jailbreak         Jailbreak the dualbooted iOS with Pogo. Usage :  ./dualboot.sh --jailbreak 14.3
+    --jailbreak         jailbreak your second ios with pogo. Usage :  ./dualboot.sh --jailbreak 14.3
 
-    --taurine           Jailbreak dualbooted iOS with Taurine. Usage: ./dualboot.sh --jailbreak 14.3 --taurine 
+    --taurine           Jailbreak dualbooted iOS with Taurine. Usage: ./dualboot.sh --jailbreak 14.3 --taurine NOT RECOMMENDED
    
+    --fixHard           this will fix microphone, girocopes, camera, audio, etc. at the moment home button its not fixed yet. 
+
     --help              Print this help.
        
-    --get-ipsw           Automaticly downloads IPSW that you want to dualboot. Dont forget specify iOS version.
+    --get-ipsw           Automaticly downloads IPSW that you want to dualboot. Dont forget specify iOS version. THIS DOES'NT WORK.
 
     --dfuhelper         A helper to enter DFU if you struggling in it.
     
-    --boot              Lets you boot into dualbooted iOS. Use it alone. Usage : ./dualboot.sh --boot
+    --boot              Lets you boot into dualbooted iOS. use this when you are already dualbooted . Usage : ./dualboot.sh --boot
     
     --dont-create-part   Skips the creating a new disk partition if you have them already.
     
     --restorerootfs     Deletes dualbooted OS. and remember put --jail-palera1n if you have palera1n semitethered jailbreak 
     
-    --fix-preboot       that restore preboot with the prebootBackup. --fix-preboot
+    --recoveryModeAlways    this fixed the first ios when the first ios or the main ios always are entering in recovery mode 
     
     --debug             Debug the script
 
@@ -51,13 +53,13 @@ Subcommands:
    - irecovery -n
 
 # Ideal Dualboot Versions
-iOS 14.2 is the ideal version as on that version the Camera and flash works, while on other version usually they don't.
+iOS 14.2 is the ideal version as on that version the Camera and flash works, while on other version usually they don't. on a11 like iphone 8 and x the ios 14.2 does not boot so use 14.3 above
 
 Dualbooting any version of iOS 15 will give you kernel panics, so you will have to use --jailbreak 15.* after the first boot. That should be a one time fix.
 
-iOS 13 is working but has only been tested with 13.7, but hasn't for others. If you want to dualboot with iOS 13.x, use the iOS 13 branch. This will not work on iPads without a baseband (WiFi Only).
+iOS 13 is working but only 13.6, 13.7. If you want to dualboot with iOS 13.x, use the iOS 13 branch. This probably will not work on iPads without baseband (WiFi Only).
 
-# Common Issues
+# Common Issues. now there arent problems. just use --fixHard to fix the next errors however homebutton not working yet
 
  ramdisk-submodule
 - A9 : Everything works except Camera, Microphone and Gyroscope. (Can be fixed with ldrestart or by using iOS 14.2)
@@ -86,9 +88,10 @@ iOS 13 is working but has only been tested with 13.7, but hasn't for others. If 
 - [Edwin](https://github.com/edwin170) owner :)
 
 - [Fatih](https://github.com/swayea) help with readme and linux support and is a very good person.
-
-- [azaz0322](https://github.com/m00nl1ghts), [Huy Nguyen](https://github.com/34306), [Uckermark](https://github.com/Uckermark) helped with readme.
-
+    <details><summary>readme constributors</summary>
+    <p>
+    - [azaz0322](https://github.com/m00nl1ghts), [Huy Nguyen](https://github.com/34306), [Uckermark](https://github.com/Uckermark) aditya11110 helped with readme.
+    </details>
 </details>
 <details><summary>Other credits for tools and codes used in dualra1n</summary>
 

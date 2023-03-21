@@ -17,7 +17,7 @@ echo "[*] Command ran:`if [ $EUID = 0 ]; then echo " sudo"; fi` ./dualboot.sh $@
 # Variables
 # ========= 
 ipsw="ipsw/*.ipsw" # put your ipsw 
-version="2.0"
+version="4.0"
 os=$(uname)
 dir="$(pwd)/binaries/$os"
 max_args=1
@@ -54,28 +54,29 @@ step() {
 print_help() {
     cat << EOF
 Usage: $0 [Options] [ subcommand | iOS version which are you] remember you need to have 10 gb free, no sean brurros y vean primero. (put your ipsw in the directory ipsw)
-iOS 15 - 14 Dualboot tool ./dualboot --dualboot 15.7 (the ios of your device) 
-put ipsw file of ios 14 into the ipsw directory, you must make sure that this is the correct ipsw for the iphone. only ios 14 - 14.8.1
+iOS 15 - 14 Dualboot tool ./dualboot --dualboot 14.2 (the ios of your device) 
+put ipsw file of ios 14 into the ipsw directory, you must make sure that this is the correct ipsw for the iphone. only ios 15 - 14.0.
 
 Options:
-    --dualboot          dualboot your device ios 15 with 14 
-    --jail-palera1n     uses only if you have the palera1n jailbreak installed, it will create partition on disk + 1 because palera1n create a new partition. disk0s1s8 however if you jailbreakd with palera1n the disk would be disk0s1s9"
+    --dualboot          dualboot your idevice with ios 14,15. 
+    --jail-palera1n     uses only if you have the palera1n semitethered jailbreak installed, it will create partition on disk + 1 because palera1n create a new partition. disk0s1s8 however if you jailbreakd with palera1n the disk would be disk0s1s9"
     --get-ipsw          sometimes this does'nt work well ,using this will download a ipsw of your version which you want to dualboot. its better that you download the ipsw manually. if you will use this ,use it alone and the version --get-ipsw 14.2.
-    --jailbreak         jailbreak your second ios. you can use it when your device boot correctly the second ios
-    --taurine           this will install the jailbreak of taurine. ./dualboot.sh --jailbreak 14.3 --taurine 
+    --jailbreak         jailbreak your second ios. you can use it when your device boot correctly the second ios. alone for example --jailbreak 14.2
+    --fixHard       this will fix microphone, girocopes, camera, audio, etc. at the moment home button its not fixed yet. 
+    --taurine           this will install the jailbreak of taurine. ./dualboot.sh --jailbreak 14.3 --taurine. not recommended
+    --fixBoot           this just will download the boot files instead of using the ipsw ones
     --help              Print this help
-    --fix-hb            that will fix home button on a10 and a11 or well try it. please dont use this.
     --dfuhelper         A helper to help get A11 devices into DFU mode from recovery mode
     --boot              put boot alone, to boot your second ios  
-    --dont-create-part   Don't create the partitions if you have already created 
+    --dont-create-part   Don't create the partitions if you have already created. when you use this that only will create the boot files again. for example --dualboot 14.2 --dont-create-part
     --restorerootfs     Remove partitions of dualboot 
-    --fix-preboot       that restore preboot with the prebootBackup
+    --recoveryModeAlways    this fixed the first ios when the first ios or the main ios always are entering in recovery mode 
     --debug             Debug the script
 
 Subcommands:
     clean               Deletes the created boot files
 help:
-    in case that the device does not boot use: ./dualboot.sh --dualboot 14.3 --debug --dont-create-part --fix-boot 
+    in case that the device show black screen you can try : ./dualboot.sh --dualboot 14.3 --debug --dont-create-part --fixBoot 
 
 
 
@@ -98,17 +99,14 @@ parse_opt() {
         --fix-boot)
             fixBoot=1
             ;;
-        --fix-hb)
-            fixHB=1
+        --fixHard)
+            fixHard=1
             ;;
-        --fixhardware)
-            fixhardware=1
+        --recoveryModeAlways)
+            recoveryModeAlways=1
             ;;
         --get-ipsw)
             getIpsw=1
-            ;;
-        --fix-preboot)
-            fix_preboot=1
             ;;
         --jail-palera1n)
             jail_palera1n=1
@@ -327,32 +325,15 @@ _boot() {
     sleep 1
 
     "$dir"/irecovery -f "boot/${deviceid}/iBEC.img4"
-    sleep 3
+    sleep 2
     
-    if [ "$fixHB" = "1" ]; then
-        "$dir"/irecovery -c "dorwx"
-        if [[ "$deviceid" == iPhone9,[1-4] ]] || [[ "$deviceid" == "iPhone10,"* ]]; then # i put this however that does not work because ibootpath2 is not working on ios 14 
-            "$dir"/irecovery -f other/payload/payload_t8010.bin
-        else
-            "$dir"/irecovery -f other/payload/payload_t8015.bin
-        fi
-        sleep 3
+    if [[ "$cpid" == *"0x801"* ]]; then
         "$dir"/irecovery -c "go"
-        sleep 1
-        "$dir"/irecovery -c "go xargs -v"
-        sleep 1
-        "$dir"/irecovery -c "go xfb"
-        sleep 1
-        "$dir"/irecovery -c "go boot disk0s1s8"
+        sleep 3
     else
-        if [[ "$cpid" == *"0x801"* ]]; then
-            "$dir"/irecovery -c "go"
-            sleep 2
-        else
-           "$dir"/irecovery -c "bootx"
-            sleep 2
-        
-        fi
+       "$dir"/irecovery -c "bootx"
+        sleep 1
+    
     fi
 
 
@@ -362,15 +343,6 @@ _boot() {
     "$dir"/irecovery -c "devicetree"
     sleep 1
 
-   if [ -d "boot/${deviceid}/FUD" ]; then # that will load the files which are located on fud directory of ios 15 preboot however that does not change anthing ? well idk
-        for i in $(ls boot/$deviceid/FUD/*.img4)
-        do
-            "$dir"/irecovery -f $i
-            sleep 1
-            "$dir"/irecovery -c "firmware"
-        done        
-    fi
-    
     "$dir"/irecovery -v -f "boot/${deviceid}/trustcache.img4"    
 
     "$dir"/irecovery -c "firmware"
@@ -384,6 +356,10 @@ _boot() {
 }
 
 _exit_handler() {
+    if [ "$os" = "Darwin" ]; then
+        killall -CONT AMPDevicesAgent AMPDeviceDiscoveryAgent MobileDeviceUpdater || true
+    fi
+
     [ $? -eq 0 ] && exit
     echo "[-] An error occurred"
 
@@ -396,17 +372,6 @@ _exit_handler() {
     echo "[*] A failure log has been made. If you're going ask for help, please attach the latest log."
 }
 trap _exit_handler EXIT
-
-# ===========
-# Fixes
-# ===========
-
-# Prevent Finder from complaning
-if [ "$os" = 'Darwin' ]; then
-    defaults write -g ignore-devices -bool true
-    defaults write com.apple.AMPDevicesAgent dontAutomaticallySyncIPods -bool true
-    killall Finder
-fi
 
 # ============
 # Dependencies
@@ -428,19 +393,6 @@ for cmd in curl unzip python3 git ssh scp killall sudo grep pgrep ${linux_cmds};
 done
 if [ "$cmd_not_found" = "1" ]; then
     exit 1
-fi
-
-
-# Download gaster
-if [ -e "$dir"/gaster ]; then
-    "$dir"/gaster &> /dev/null > /dev/null | grep -q 'usb_timeout: 5' && rm "$dir"/gaster
-fi
-
-if [ ! -e "$dir"/gaster ]; then
-    curl -sLO https://static.palera.in/deps/gaster-"$os".zip
-    unzip gaster-"$os".zip
-    mv gaster "$dir"/
-    rm -rf gaster gaster-"$os".zip
 fi
 
 # Check for pyimg4
@@ -468,11 +420,10 @@ chmod +x "$dir"/*
 # Start
 # ============
 
-echo "dualboot | Version 3.0"
-echo "Written by edwin and some code of palera1n :) | Some code also the ramdisk from Nathan | thanks MatthewPierson, Ralph0045, and all people creator of path file boot"
+echo "dualboot | Version: your mother is cute"
+echo "Created by edwin :) | Some code of palera1n, thanks Nathan because the ramdisks | thanks MatthewPierson, Ralph0045, and all people creator of path file boot"
 echo ""
 
-version="beta"
 parse_cmdline "$@"
 
 if [ "$debug" = "1" ]; then
@@ -550,6 +501,11 @@ fi
 
 ipswurl=$(curl -sL "https://api.ipsw.me/v4/device/$deviceid?type=ipsw" | "$dir"/jq '.firmwares | .[] | select(.version=="'$version'")' | "$dir"/jq -s '.[0] | .url' --raw-output)
 
+if [ "$recoveryModeAlways" = "1" ]; then
+    "$dir"/irecovery -n 
+    echo "DONE"
+    exit;
+fi
 
 if [ "$restorerootfs" = "1" ]; then
     rm -rf "blobs/"$deviceid"-"$version".shsh2" "boot-$deviceid" .tweaksinstalled
@@ -590,27 +546,36 @@ fi
     # =========
     # extract ipsw 
     # =========
-
-# extracting ipsw
-echo "extracting ipsw, hang on please ..." # this will extract the ipsw into ipsw/extracted
-unzip -n $ipsw -d "ipsw/extracted"
-if [ "$fixBoot" = "1" ]; then
-    cd work/
-    "$dir"/pzb -g BuildManifest.plist "$ipswurl"
+cd ipsw/
+ipsw_files=(*.ipsw)
+if [[ ${#ipsw_files[@]} -gt 1 ]]; then
+    echo "in ipsw/ directory there is more than one ipsw so delete one and try again please"
     cd ..
-else
-    cp -rv "$extractedIpsw/BuildManifest.plist" work/
+    exit;
 fi
+cd ..
 
-if [ "$os" = 'Darwin' ]; then
-    if [ ! -f "ipsw/out.dmg" ]; then # this would create a dmg file which can be mounted an restore a patition
-        asr -source "$extractedIpsw$(/usr/bin/plutil -extract "BuildIdentities".0."Manifest"."OS"."Info"."Path" xml1 -o - work/BuildManifest.plist | grep '<string>' |cut -d\> -f2 |cut -d\< -f1 | head -1)" -target ipsw/out.dmg --embed -erase -noprompt --chunkchecksum --puppetstrings
+if [ "$dualboot" = "1" ] || [ "$jailbreak" = "1" ]; then
+    # extracting ipsw
+    echo "extracting ipsw, hang on please ..." # this will extract the ipsw into ipsw/extracted
+    unzip -n $ipsw -d "ipsw/extracted"
+    if [ "$fixBoot" = "1" ]; then
+        cd work/
+        "$dir"/pzb -g BuildManifest.plist "$ipswurl"
+        cd ..
+    else
+        cp -rv "$extractedIpsw/BuildManifest.plist" work/
     fi
-else 
-    dmgfile="$(binaries/Linux/PlistBuddy work/BuildManifest.plist -c "Print BuildIdentities:0:Manifest:OS:Info:Path" | sed 's/"//g')" # that is to know what is the name of rootfs
-    echo "$dmgfile"
-fi
 
+    if [ "$os" = 'Darwin' ]; then
+        if [ ! -f "ipsw/out.dmg" ]; then # this would create a dmg file which can be mounted an restore a patition
+            asr -source "$extractedIpsw$(/usr/bin/plutil -extract "BuildIdentities".0."Manifest"."OS"."Info"."Path" xml1 -o - work/BuildManifest.plist | grep '<string>' |cut -d\> -f2 |cut -d\< -f1 | head -1)" -target ipsw/out.dmg --embed -erase -noprompt --chunkchecksum --puppetstrings
+        fi
+    else 
+        dmgfile="$(binaries/Linux/PlistBuddy work/BuildManifest.plist -c "Print BuildIdentities:0:Manifest:OS:Info:Path" | sed 's/"//g')" # that is to know what is the name of rootfs
+        echo "$dmgfile"
+    fi
+fi
 
 # ============
 # Ramdisk
@@ -623,8 +588,7 @@ if [ true ]; then
     cd ramdisk
     chmod +x sshrd.sh
     echo "[*] Creating ramdisk"
-    tweaks=1
-    ./sshrd.sh 15.6 
+    ./sshrd.sh 14.8
 
     echo "[*] Booting ramdisk"
     ./sshrd.sh boot
@@ -699,9 +663,6 @@ if [ true ]; then
     
     mkdir -p "boot/${deviceid}"
     mkdir -p "boot/${deviceid}"
-    if [ "$fixhardware" = "1" ]; then
-        cp -rv "prebootBackup/${deviceid}/mnt6/${active}/usr/standalone/firmware/FUD" "boot/${deviceid}/" # load the fud in order to load file like touch or homebutton, idk know if that work because i just have iphone6s but you can do it 
-    fi
 
     if [ "$fix_preboot" = "1" ]; then
         remote_cp "prebootBackup/${deviceid}/mnt6" root@localhost:/
@@ -763,11 +724,11 @@ if [ true ]; then
         fi
         sleep 2
         remote_cp root@localhost:/mnt4/"$active"/System/Library/Caches/com.apple.kernelcaches/kcache.patched work/ # that will return the kernelpatcher in order to be patched again and boot with it 
-        "$dir"/Kernel64Patcher work/kcache.patched work/kcache.patchedB -f -s $(if [[ "$version" = "15."* ]]; then echo "-e"; fi) $(if [ ! "$taurine" = "1" ]; then echo "-l"; fi)
+        "$dir"/Kernel64Patcher work/kcache.patched work/kcache.patchedB -s -e -b $(if [ ! "$taurine" = "1" ]; then echo "-l"; fi) $(if [ ! "$fixHard" = "1" ]; then echo "-f"; fi)
 
         if [[ "$deviceid" == *'iPhone8'* ]] || [[ "$deviceid" == *'iPad6'* ]] || [[ "$deviceid" == *'iPad5'* ]]; then
             python3 -m pyimg4 im4p create -i work/kcache.patchedB -o work/kcache.im4p -f rkrn --extra work/kpp.bin --lzss
-        elif [ "$tweaks" = "1" ]; then
+        else
             python3 -m pyimg4 im4p create -i work/kcache.patchedB -o work/kcache.im4p -f rkrn --lzss
         fi
 
@@ -815,18 +776,8 @@ if [ true ]; then
         remote_cmd "mkdir -p /mnt8/jbin/binpack /mnt8/jbin/loader.app"
         sleep 1
 
-        # download jbinit files
-        cd other/rootfs/jbin
-        rm -f jb.dylib jbinit jbloader launchd
-        curl -L https://static.palera.in/deps/rootfs.zip -o rfs.zip
-        unzip rfs.zip -d .
-        unzip rootfs.zip -d .
-        rm rfs.zip rootfs.zip
-        cd ../../..
-
-        sleep 1
         # this is the jailbreak of palera1n being installing 
-        curl -L https://static.palera.in/binpack.tar -o other/rootfs/jbin/binpack/binpack.tar        
+        
         cp -v other/post.sh other/rootfs/jbin/
         remote_cp -r other/rootfs/* root@localhost:/mnt8/
         remote_cmd "ldid -s /mnt8/jbin/launchd /mnt8/jbin/jbloader /mnt8/jbin/jb.dylib"
@@ -922,11 +873,67 @@ if [ true ]; then
             remote_cmd "mount_filesystems"
             remote_cmd "cp -na /mnt6/* /mnt4/" # copy preboot to prebootB
             if [ ! $(remote_cmd "cp -a /mnt2/mobile/Library/Preferences/com.apple.Accessibility* /mnt9/mobile/Library/Preferences/") ]; then
-                echo "error activating assesivetouch"
+                echo "activating assesivetouch"
             fi
-            
+            echo "Finished crating the dualboot partitions and configurated some stuff. you can use --dont-create-part in order to dont have to copy and create all again."
 
         fi
+
+        if [ "$fixHard" = "1" ]; then
+            if [ "$dont_createPart" = "1" ]; then
+                remote_cmd "/sbin/mount_apfs /dev/disk0s1s${prebootB} /mnt4/"
+            fi
+
+            if [ -e "prebootBackup/$deviceid/mnt6/$active/usr/standalone/firmware/FUD/AOP.img4" ]; then
+                echo "AOP FOUND"
+                cp "$extractedIpsw$(awk "/""${model}""/{x=1}x&&/aop[.]/{print;exit}" work/BuildManifest.plist | grep '<string>' |cut -d\> -f2 |cut -d\< -f1)" "work/"
+                "$dir"/img4 -i work/"$(awk "/""${model}""/{x=1}x&&/aop[.]/{print;exit}" work/BuildManifest.plist | grep '<string>' |cut -d\> -f2 |cut -d\< -f1 | sed 's/Firmware[/]AOP[/]//')" -o work/AOP.img4 -M work/IM4M
+            fi
+            
+            if [ -e "prebootBackup/$deviceid/mnt6/$active/usr/standalone/firmware/FUD/StaticTrustCache.img4" ]; then
+                echo "StaticTrustCache FOUND"
+
+                if [ "$os" = 'Darwin' ]; then
+                    "$dir"/img4 -i "$extractedIpsw"/Firmware/"$(/usr/bin/plutil -extract "BuildIdentities".0."Manifest"."OS"."Info"."Path" xml1 -o - work/BuildManifest.plist | grep '<string>' |cut -d\> -f2 |cut -d\< -f1 | head -1)".trustcache -o work/StaticTrustCache.img4 -M work/IM4M
+                else
+                    "$dir"/img4 -i "$extractedIpsw"/Firmware/"$(binaries/Linux/PlistBuddy work/BuildManifest.plist -c "Print BuildIdentities:0:Manifest:OS:Info:Path" | sed 's/"//g')".trustcache -o work/StaticTrustCache.img4 -M work/IM4M
+                fi
+            fi
+
+            if [ -e "prebootBackup/$deviceid/mnt6/$active/usr/standalone/firmware/FUD/Homer.img4" ]; then
+                echo "Homer FOUND"
+                cp "$extractedIpsw$(awk "/""${model}""/{x=1}x&&/homer[.]/{print;exit}" work/BuildManifest.plist | grep '<string>' |cut -d\> -f2 |cut -d\< -f1)" "work/"
+                "$dir"/img4 -i work/"$(awk "/""${model}""/{x=1}x&&/homer[.]/{print;exit}" work/BuildManifest.plist | grep '<string>' |cut -d\> -f2 |cut -d\< -f1 | sed 's/Firmware[/]//')" -o work/Homer.img4 -M work/IM4M
+            fi
+            
+            if [ -e "prebootBackup/$deviceid/mnt6/$active/usr/standalone/firmware/FUD/Multitouch.img4" ]; then
+                echo "Multitouch FOUND"
+                cp "$extractedIpsw$(awk "/""${model}""/{x=1}x&&/_Multitouch[.]/{print;exit}" work/BuildManifest.plist | grep '<string>' |cut -d\> -f2 |cut -d\< -f1)" "work/"
+                "$dir"/img4 -i work/"$(awk "/""${model}""/{x=1}x&&/_Multitouch[.]/{print;exit}" work/BuildManifest.plist | grep '<string>' |cut -d\> -f2 |cut -d\< -f1 | sed 's/Firmware[/]//')" -o work/Multitouch.img4 -M work/IM4M
+            fi
+
+            if [ -e "prebootBackup/$deviceid/mnt6/$active/usr/standalone/firmware/FUD/AVE.img4" ]; then
+                echo "AVE FOUND"
+                cp -v "prebootBackup/$deviceid/mnt6/$active/usr/standalone/firmware/FUD/AVE.img4" "work/"
+            fi
+            
+            if [ -e "prebootBackup/$deviceid/mnt6/$active/usr/standalone/firmware/FUD/AudioCodecFirmware.img4" ]; then
+                echo "AudioCodecFirmware FOUND"
+                cp "$extractedIpsw$(awk "/""${model}""/{x=1}x&&/_CallanFirmware[.]/{print;exit}" work/BuildManifest.plist | grep '<string>' |cut -d\> -f2 |cut -d\< -f1)" "work/"
+                "$dir"/img4 -i work/"$(awk "/""${model}""/{x=1}x&&/_CallanFirmware[.]/{print;exit}" work/BuildManifest.plist | grep '<string>' |cut -d\> -f2 |cut -d\< -f1 | sed 's/Firmware[/]//')" -o work/AudioCodecFirmware.img4 -M work/IM4M
+            fi
+
+            if [ -e "prebootBackup/$deviceid/mnt6/$active/usr/standalone/firmware/FUD/ISP.img4" ]; then
+                echo "ISP FOUND"
+                cp "$extractedIpsw$(awk "/""${model}""/{x=1}x&&/adc[.]/{print;exit}" work/BuildManifest.plist | grep '<string>' |cut -d\> -f2 |cut -d\< -f1)" "work/"
+                "$dir"/img4 -i work/"$(awk "/""${model}""/{x=1}x&&/adc[.]/{print;exit}" work/BuildManifest.plist | grep '<string>' |cut -d\> -f2 |cut -d\< -f1 | sed 's/Firmware[/]isp_bni[/]//')" -o work/ISP.img4 -M work/IM4M
+            fi
+            remote_cp work/*.img4 root@localhost:/mnt4/"$active"/usr/standalone/firmware/FUD/
+
+            echo "Finished Fixing firmwares"
+            rm work/*.img4
+        fi
+        
         remote_cmd "/usr/sbin/nvram auto-boot=false"
         remote_cmd "/sbin/reboot"
         _wait recovery
@@ -964,9 +971,8 @@ if [ true ]; then
             fi
         fi
         echo "patching file boots ..."
-        if [ ! "$fixhardware" = "1" ]; then
-            "$dir"/img4 -i work/*.trustcache -o work/trustcache.img4 -M work/IM4M -T rtsc
-        fi
+        
+        "$dir"/img4 -i work/*.trustcache -o work/trustcache.img4 -M work/IM4M -T rtsc
 
         "$dir"/gaster decrypt work/"$(awk "/""${model}""/{x=1}x&&/iBSS[.]/{print;exit}" work/BuildManifest.plist | grep '<string>' |cut -d\> -f2 |cut -d\< -f1 | sed 's/Firmware[/]dfu[/]//')" work/iBSS.dec
         "$dir"/iBoot64Patcher work/iBSS.dec work/iBSS.patched
@@ -977,24 +983,34 @@ if [ true ]; then
         else
             "$dir"/gaster decrypt work/"$(awk "/""${model}""/{x=1}x&&/iBEC[.]/{print;exit}" work/BuildManifest.plist | grep '<string>' |cut -d\> -f2 |cut -d\< -f1 | sed 's/Firmware[/]dfu[/]//')" work/iBEC.dec
         fi
-        "$dir"/iBoot64Patcher work/iBEC.dec work/iBEC.patched -b "rd=disk0s1s${disk} wdt=-1 keepsyms=1 debug=0x2014e -v `if [ "$cpid" = '0x8960' ] || [ "$cpid" = '0x7000' ] || [ "$cpid" = '0x7001' ]; then echo "-restore"; fi`" -n 
+
+        "$dir"/iBoot64Patcher work/iBEC.dec work/iBEC.patched -b "rd=disk0s1s${disk} -v wdt=-1 keepsyms=1 debug=0x2014e `if [ "$cpid" = '0x8960' ] || [ "$cpid" = '0x7000' ] || [ "$cpid" = '0x7001' ]; then echo "-restore"; fi`" -n 
+        "$dir"/img4 -i work/iBEC.patched -o work/iBEC.img4 -M work/IM4M -A -T ibec
         
-        if [ "$fixHB" = "1" ]; then # that work fine on ios 14.5 up but the boot procces should be different if some one want to try it go ahead because i dont have a a10 or a11 :)
-           if [[ "$deviceid" == iPhone9,[1-4] ]] || [[ "$deviceid" == "iPhone10,"* ]]; then
-                "$dir"/iBootpatch2 --t8010 work/iBEC.patched work/iBEC.patched2
+
+        if [ "$fixHard" = "1" ] || [ "$fixBoot" = "1" ]; then
+            if [[ "$deviceid" == "iPhone8"* ]] || [[ "$deviceid" == "iPad6"* ]] || [[ "$deviceid" == *'iPad5'* ]]; then
+                python3 -m pyimg4 im4p extract -i work/"$(awk "/""${model}""/{x=1}x&&/kernelcache.release/{print;exit}" work/BuildManifest.plist | grep '<string>' |cut -d\> -f2 |cut -d\< -f1)" -o work/kcache.raw --extra work/kpp.bin
             else
-                "$dir"/iBootpatch2 --t8015 work/iBEC.patched work/iBEC.patched2
+                python3 -m pyimg4 im4p extract -i work/"$(awk "/""${model}""/{x=1}x&&/kernelcache.release/{print;exit}" work/BuildManifest.plist | grep '<string>' |cut -d\> -f2 |cut -d\< -f1)" -o work/kcache.raw
             fi
-            "$dir"/img4 -i work/iBEC.patched2 -o work/iBEC.img4 -M work/IM4M -A -T ibec
-        else 
-            "$dir"/img4 -i work/iBEC.patched -o work/iBEC.img4 -M work/IM4M -A -T ibec
+
+            "$dir"/Kernel64Patcher work/kcache.raw work/kcache.patched -a -b -e `if [ "$fixBoot" = "1" ]; then echo "-s"; fi` # that sometimes fix some problem on the boot also i put kernel64patcherA because that fix the problem on the kerneldiff on kernel of iphone 7
+
+            if [[ "$deviceid" == *'iPhone8'* ]] || [[ "$deviceid" == *'iPad6'* ]] || [[ "$deviceid" == *'iPad5'* ]]; then
+                python3 -m pyimg4 im4p create -i work/kcache.patched -o work/kcache.im4p -f rkrn --extra work/kpp.bin --lzss
+            else
+                python3 -m pyimg4 im4p create -i work/kcache.patched -o work/kcache.im4p -f rkrn --lzss
+            fi
+            python3 -m pyimg4 img4 create -p work/kcache.im4p -o work/kernelcache.img4 -m work/IM4M
+
+        else
+            "$dir"/img4 -i work/"$(awk "/""${model}""/{x=1}x&&/kernelcache.release/{print;exit}" work/BuildManifest.plist | grep '<string>' |cut -d\> -f2 |cut -d\< -f1)" -o work/kcache.raw
+            "$dir"/Kernel64PatcherA work/kcache.raw work/kcache.patched -a -f -e `if [ "$fixBoot" = "1" ]; then echo "-s"; fi` # that sometimes fix some problem on the boot also i put kernel64patcherA because that fix the problem on the kerneldiff on kernel of iphone 7
+            "$dir"/kerneldiff work/kcache.raw work/kcache.patched work/kc.bpatch
+            "$dir"/img4 -i work/"$(awk "/""${model}""/{x=1}x&&/kernelcache.release/{print;exit}" work/BuildManifest.plist | grep '<string>' |cut -d\> -f2 |cut -d\< -f1)" -o work/kernelcache.img4 -M work/IM4M -T rkrn -P work/kc.bpatch `if [ "$os" = 'Linux' ]; then echo "-J"; fi`
+        
         fi
-
-        "$dir"/img4 -i work/"$(awk "/""${model}""/{x=1}x&&/kernelcache.release/{print;exit}" work/BuildManifest.plist | grep '<string>' |cut -d\> -f2 |cut -d\< -f1)" -o work/kcache.raw
-        "$dir"/Kernel64PatcherA work/kcache.raw work/kcache.patched -a -f `if [ "$fixBoot" = "1" ]; then echo "-s"; fi` # that sometimes fix some problem on the boot also i put kernel64patcherA because that fix the problem on the kerneldiff on kernel of iphone 7
-        "$dir"/kerneldiff work/kcache.raw work/kcache.patched work/kc.bpatch
-        "$dir"/img4 -i work/"$(awk "/""${model}""/{x=1}x&&/kernelcache.release/{print;exit}" work/BuildManifest.plist | grep '<string>' |cut -d\> -f2 |cut -d\< -f1)" -o work/kernelcache.img4 -M work/IM4M -T rkrn -P work/kc.bpatch `if [ "$os" = 'Linux' ]; then echo "-J"; fi`
-
         "$dir"/img4 -i work/"$(awk "/""${model}""/{x=1}x&&/DeviceTree[.]/{print;exit}" work/BuildManifest.plist | grep '<string>' |cut -d\> -f2 |cut -d\< -f1 | sed 's/Firmware[/]all_flash[/]//')" -o work/dtree.raw
         if [ "$os" = "Linux" ]; then
             "$dir"/dtree_patcher work/dtree.raw work/dtree.patched -d -p
