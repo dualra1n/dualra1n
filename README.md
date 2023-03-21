@@ -92,7 +92,7 @@ iOS 13 is working but only 13.6, 13.7. If you want to dualboot with iOS 13.x, us
 
 - [Edwin](https://github.com/edwin170) owner :)
 
-- [Fatih](https://github.com/swayea) help with readme and linux support and is a very good person.
+- [Fatih](https://github.com/swayea) help with readme and tester of linux support and is a very good person.
     <details><summary>readme constributors</summary>
     <p>
     - [azaz0322](https://github.com/m00nl1ghts), [Huy Nguyen](https://github.com/34306), [Uckermark](https://github.com/Uckermark) aditya11110 helped with readme.
@@ -102,20 +102,13 @@ iOS 13 is working but only 13.6, 13.7. If you want to dualboot with iOS 13.x, us
 
 - Edward thanks for my brother for gave me a hackintosh to test this:).
 
-- [palera1n](https://github.com/palera1n) for some code 
+- [palera1n](https://github.com/palera1n) some code from it
 
 - [Dualboot guide](https://dualbootfun.github.io/) for the guide
-
-- [Darling](https://github.com/darlinghq) for a macOS emulator
 
 - [blacktop](https://github.com/blacktop) for the ipsw downloader
 
 - [Nathan](https://github.com/verygenericname) for the ramdisk
-
-- [Mineek](https://github.com/mineek)
-	- For patchfinders for RELEASE kernels
-	- [Kernel15Patcher](https://github.com/mineek/PongoOS/tree/iOS15/checkra1n/Kernel15Patcher)
-	- [Kernel64Patcher](https://github.com/mineek/Kernel64Patcher)
     
 - [Amy](https://github.com/elihwyma) for the [Pogo](https://github.com/elihwyma/Pogo) app
 - [checkra1n](https://github.com/checkra1n) for the base of the kpf
@@ -123,7 +116,7 @@ iOS 13 is working but only 13.6, 13.7. If you want to dualboot with iOS 13.x, us
 - [tihmstar](https://github.com/tihmstar) for [pzb](https://github.com/tihmstar/partialZipBrowser)/original [iBoot64Patcher](https://github.com/tihmstar/iBoot64Patcher)/original [liboffsetfinder64](https://github.com/tihmstar/liboffsetfinder64)/[img4tool](https://github.com/tihmstar/img4tool)
 - [xerub](https://github.com/xerub) for [img4lib](https://github.com/xerub/img4lib) and [restored_external](https://github.com/xerub/sshrd) in the ramdisk
 - [libimobiledevice](https://github.com/libimobiledevice) for several tools used in this project (irecovery, ideviceenterrecovery etc), and [nikias](https://github.com/nikias) for keeping it up to date
-- [Dora](https://github.com/dora2-iOS) for iBoot payload and iBootpatcher2
+- [Dora](https://github.com/dora2-iOS) for kpf
 - [Sam Bingner](https://github.com/sbingner) for [Substitute](https://github.com/sbingner/substitute)
 - [CoolStar](https://github.com/coolstar) for [Libhooker]
 - [Ralp0045](https://github.com/Ralph0045/Kernel64Patcher) amazing dtree_patcher and kernel64patcher ;)
