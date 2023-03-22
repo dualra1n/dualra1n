@@ -1,6 +1,6 @@
 # dualra1n
 
-A script that lets you dualboot iOS 14-15 on checkm8 devices. this is not downgrade however you can use sunst0rm or [mytoo](https://github.com/edwin170/downr1n) which work fine with linux
+A script that lets you dualboot iOS 14-15 on checkm8 devices. this is not downgrade however you can use sunst0rm or [mytool](https://github.com/edwin170/downr1n) which work fine with linux
 
 
 # Usage
