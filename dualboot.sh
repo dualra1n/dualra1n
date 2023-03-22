@@ -588,7 +588,7 @@ if [ true ]; then
     cd ramdisk
     chmod +x sshrd.sh
     echo "[*] Creating ramdisk"
-    ./sshrd.sh 14.8
+    ./sshrd.sh 15.6
 
     echo "[*] Booting ramdisk"
     ./sshrd.sh boot
