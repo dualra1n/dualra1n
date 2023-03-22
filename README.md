@@ -82,15 +82,17 @@ iOS 13 is working but only 13.6, 13.7. If you want to dualboot with iOS 13.x, us
 
 # if you want, you can support me 
 
-in https://www.paypal.me/EdwinNunez2004 
-<details><summary>why donate me ?</summary>
-    you can support me with whatever you have, that its important for me because rn I am not working cause this tool and i would be glad to receive something for it. if you cant no problem, just enjoy this. 
+in [Paypal](https://www.paypal.me/EdwinNunez2004)
+<details><summary>why I decided to put a donate me ?</summary>
+    dualran its not a team, this is just a name for this tool, this means that i created this script, therefore you can support me with whatever you have, that its important for me because rn I am not working cause this tool and i would be glad to receive something for it. if you cant no problem, just enjoy this.
 </details>
 
 
 # Credits
 
-<details><summary>dualra1n Contributors</summary>
+# with love Edwin :)
+
+<details><summary>thanks to</summary>
 <p>
 
 - [Edwin](https://github.com/edwin170) owner :)
@@ -98,7 +100,8 @@ in https://www.paypal.me/EdwinNunez2004
 - [Fatih](https://github.com/swayea) help with readme and tester of linux support and is a very good person.
     <details><summary>readme constributors</summary>
     <p>
-    - [azaz0322](https://github.com/m00nl1ghts), [Huy Nguyen](https://github.com/34306), [Uckermark](https://github.com/Uckermark) aditya11110 helped with readme.
+        
+    - [azaz0322](https://github.com/m00nl1ghts), [Huy Nguyen](https://github.com/34306), [Uckermark](https://github.com/Uckermark) aditya11110 helped          with readme.
     </details>
 </details>
 <details><summary>Other credits for tools and codes used in dualra1n</summary>
