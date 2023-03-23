@@ -61,15 +61,12 @@ iOS 13 is working but only 13.6, 13.7. If you want to dualboot with iOS 13.x, us
 
 # Common Issues. now there arent problems. just use --fixHard to fix the next errors however homebutton not working yet
 
- ramdisk-submodule
 - A9 : Everything works except Camera, Microphone and Gyroscope. (Can be fixed with ldrestart or by using iOS 14.2)
 
-
-- A10/11: Home button is not working currently and Camera, Audio, Microphone, Vibration does NOT work at the moment. You can use tweaks like GesturesXV to simulate iPhone X gestures.  also activating assesive touch on the first ios before you dualboot, and when you boot into the second ios you will have activated the assesive touch on the second ios.
-
-- iPhone X: Touchscreen does not work.
+- A10/11/X: Home button is not working currentl. You can use tweaks like GesturesXV to simulate iPhone X gestures.  also activating assesive touch on the first ios before you dualboot, and when you boot into the second ios you will have activated the assesive touch on the second ios.
 
 - iPads may have issues with "Deep Sleep". Sometimes, installing this tweak [Fiona](https://www.ios-repo-updates.com/repository/julioverne-s-repo/package/com.julioverne.fiona/) may fix it.
+
 
 # How would I dualboot?
 

@@ -17,9 +17,9 @@
 
 # how to fix hardware 
 
-if you have the dualboot already done, just do --dualboot 14.3 --dont-create-part --fixHard
+if you had the dualboot already done, just do --dualboot 14.3 --dont-create-part --fixHard
 
-if you didnt dualboot yet, just do --dualboot 14.3 --fixHard
+if you have not dualbooted yet, just do --dualboot 14.3 --fixHard
 
 # Delete the second iOS install from your device
 
