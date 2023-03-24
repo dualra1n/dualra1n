@@ -4,7 +4,7 @@
 
 2. Download the .iPSW file for the iOS version which you want to dualboot with and put it in the [ipsw/](https://github.com/dualra1n/dualra1n/tree/main/ipsw) directory. You can download those from [ipsw.me](https://ipsw.me). (Remember, only iOS 14.0 to iOS 14.8.1. are supported. iOS 13.7 is supported too, but requires the [ios13](https://github.com/dualra1n/dualra1n/tree/ios13) branch)
 
-3. Run <code>./dualboot.sh --dualboot <iOSver></code>, replacing "<iOSver>" with the iOS version you wish to dualboot.
+3. Run `./dualboot.sh --dualboot (iOSver)`, replacing "(iOSver)" with the iOS version you wish to dualboot.
 
 4. To boot the other iOS, run <code>./dualboot.sh --boot</code>.
 
