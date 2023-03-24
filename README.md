@@ -1,6 +1,6 @@
 # dualra1n
 
-A script that lets you dualboot iOS 14-15 (semi-tethered) on [checkm8](https://www.theiphonewiki.com/wiki/Checkm8_Exploit)-vulnerable devices. This is not a downgrade, however you can use [sunst0rm](https://github.com/mineek/sunst0rm] or [my tool "downra1n"](https://github.com/edwin170/downr1n) which works fine on Linux.
+A script that lets you dualboot iOS 14-15 (semi-tethered) on [checkm8](https://www.theiphonewiki.com/wiki/Checkm8_Exploit)-vulnerable devices. This is not a downgrade, however you can use [sunst0rm](https://github.com/mineek/sunst0rm) or [my tool "downra1n"](https://github.com/edwin170/downr1n) which works fine on Linux.
 
 
 # Usage
