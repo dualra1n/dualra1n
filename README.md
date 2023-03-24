@@ -52,7 +52,7 @@ iOS 14.2 is the ideal version as on that version the camera and flash works, whi
 
 Dualbooting any version of iOS 15 will cause the device to kernel panic, so you will have to use --jailbreak 15.* after the first boot. This should be a one time fix.
 
-iOS 13 is working but only 13.6, 13.7. If you want to dualboot iOS 13, use the [ios13](https://github.com/dualra1n/dualra1n/tree/ios13) branch. This may not work on Wi-Fi only iPads.
+iOS 13 is working but only 13.6, 13.7. If you want to dualboot iOS 13, use the [ios13](https://github.com/dualra1n/dualra1n/tree/ios13) branch.
 
 # Common Issues
 
