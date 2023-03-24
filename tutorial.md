@@ -11,7 +11,7 @@
 
 # How to Jailbreak the second iOS version  
 
-1. Run <code>./dualboot.sh --jailbreak 14.2` (add `--fixHard` if you fixed the firmwares before)(the version to dualboot) ( this is very recomendable,its better use this jailbreak) , when this finish, open Pogo and tap install, then tap Do All. If you reboot your device, you will only need to tap Do all in Pogo.
+1. Run `./dualboot.sh --jailbreak 14.2` (add `--fixHard` if you fixed the firmwares before)(the version to dualboot) ( this is very recomendable,its better use this jailbreak) , when this finish, open Pogo and tap install, then tap Do All. If you reboot your device, you will only need to tap Do all in Pogo.
 
 2. Jailbreak with Taurine: <code>./dualboot.sh --jailbreak 14.3 --taurine </code> (not recomndable dont use it if you are not pro on this,)( when that finsh install TrollStore from AppleTV and refresh icon using TrollStore, open taurine and click jailbroken. If you reboot your device, you will only need to tap Do all in Pogo).
 
