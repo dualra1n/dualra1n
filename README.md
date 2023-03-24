@@ -35,7 +35,6 @@ Example: `./dualboot.sh --dualboot 14.3`
 
 `clean`               Deletes the created boot files.
 
----
 # Dependencies
 - A deactivated passcode on A10-A11 
 - unzip, python3, libimobiledevice-utils, libusbmuxd-tools
