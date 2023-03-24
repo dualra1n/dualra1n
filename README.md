@@ -7,35 +7,33 @@ A script that lets you dualboot iOS 14-15 (semi-tethered) on [checkm8](https://w
 
 Example: `./dualboot.sh --dualboot 14.3`
 
---dualboot          Dualboot your iDevice.
+`--dualboot`          Dualboot your iDevice.
 
---jail-palera1n     Use this when you are already jailbroken with semi-tethered palera1n to avoid disk errors. 
+`--jail-palera1n`     Use this when you are already jailbroken with semi-tethered palera1n to avoid disk errors. 
 
---jailbreak         Jailbreak dualbooted iOS with [Pogo](https://github.com/elihwyma/Pogo). Usage :  `./dualboot.sh --jailbreak 14.3`
+`--jailbreak`         Jailbreak dualbooted iOS with [Pogo](https://github.com/elihwyma/Pogo). Usage :  `./dualboot.sh --jailbreak 14.3`
 
---taurine           Jailbreak dualbooted iOS with [Taurine](https://taurine.app). Usage: `./dualboot.sh --jailbreak 14.3 --taurine` (currently ***NOT RECOMMENDED***)
+`--taurine`           Jailbreak dualbooted iOS with [Taurine](https://taurine.app). Usage: `./dualboot.sh --jailbreak 14.3 --taurine` (currently ***NOT RECOMMENDED***)
    
---fixHard           Fixes microphone, girocopes, camera, audio, etc. (the Home button is not fixed yet)
+`--fixHard`           Fixes microphone, girocopes, camera, audio, etc. (the Home button is not fixed yet)
 
---help              Print this help.
+`--help`              Print this help.
        
---get-ipsw          Automatically downloads .iPSW of the iOS version that you want to dualboot. Don't forget to specify iOS version. (currently ***DOES NOT WORK***)
+`--get-ipsw`          Automatically downloads .iPSW of the iOS version that you want to dualboot. Don't forget to specify iOS version. (currently ***DOES NOT WORK***)
 
---dfuhelper         A helper to help you enter DFU if you are struggling to do it manually.
+`--dfuhelper`         A helper to help you enter DFU if you are struggling to do it manually.
 
---boot              Lets you boot into dualbooted iOS. use this when you are already dualbooted . Usage : ./dualboot.sh --boot
+`--boot`              Lets you boot into dualbooted iOS. use this when you are already dualbooted . Usage : ./dualboot.sh --boot
 
---dont-create-part   Skips creating a new disk partition if you have one already.
+`--dont-create-part`   Skips creating a new disk partition if you have one already.
 
---restorerootfs     Deletes the dualbooted iOS. (also add --jail-palera1n if you are jailbroken semi-tethered with palera1n)
+`--restorerootfs`     Deletes the dualbooted iOS. (also add --jail-palera1n if you are jailbroken semi-tethered with palera1n)
     
---recoveryModeAlways    Fixes the main iOS when it is recovery looping.
+`--recoveryModeAlways`    Fixes the main iOS when it is recovery looping.
 
---debug             Makes the script significantly more verbose. (meaning it will output exactly what command it is running)
+`--debug`             Makes the script significantly more verbose. (meaning it will output exactly what command it is running)
 
-Subcommands:
-
-clean               Deletes the created boot files.
+`clean`               Deletes the created boot files.
 
 ---
 # Dependencies
