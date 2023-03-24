@@ -62,7 +62,7 @@ Options:
     --jail-palera1n     uses only if you have the palera1n semitethered jailbreak installed, it will create partition on disk + 1 because palera1n create a new partition. disk0s1s8 however if you jailbreakd with palera1n the disk would be disk0s1s9"
     --get-ipsw          sometimes this does'nt work well ,using this will download a ipsw of your version which you want to dualboot. its better that you download the ipsw manually. if you will use this ,use it alone and the version --get-ipsw 14.2.
     --jailbreak         jailbreak your second ios. you can use it when your device boot correctly the second ios. alone for example --jailbreak 14.2
-    --fixHard       this will fix microphone, girocopes, camera, audio, etc. at the moment home button its not fixed yet. 
+    --fixHard           this will fix microphone, girocopes, camera, audio, etc. at the moment home button its not fixed yet. 
     --taurine           this will install the jailbreak of taurine. ./dualboot.sh --jailbreak 14.3 --taurine. not recommended
     --fixBoot           this just will download the boot files instead of using the ipsw ones
     --help              Print this help
@@ -662,14 +662,6 @@ if [ true ]; then
     fi
     
     mkdir -p "boot/${deviceid}"
-    mkdir -p "boot/${deviceid}"
-
-    if [ "$fix_preboot" = "1" ]; then
-        remote_cp "prebootBackup/${deviceid}/mnt6" root@localhost:/
-        echo "finish to bring back preboot:)" # that will restore preboot
-        exit;
-    fi
-
 
     if [ "$restorerootfs" = "1" ]; then
         echo "[*] Removing dualboot"
@@ -877,13 +869,10 @@ if [ true ]; then
             fi
             echo "Finished crating the dualboot partitions and configurated some stuff. you can use --dont-create-part in order to dont have to copy and create all again."
 
-        fi
+            sleep 4
 
-        if [ "$fixHard" = "1" ]; then
-            if [ "$dont_createPart" = "1" ]; then
-                remote_cmd "/sbin/mount_apfs /dev/disk0s1s${prebootB} /mnt4/"
-            fi
-
+            echo "now it is fixing firmwares"
+            
             if [ -e "prebootBackup/$deviceid/mnt6/$active/usr/standalone/firmware/FUD/AOP.img4" ]; then
                 echo "AOP FOUND"
                 cp "$extractedIpsw$(awk "/""${model}""/{x=1}x&&/aop/{print;exit}" work/BuildManifest.plist | grep '<string>' |cut -d\> -f2 |cut -d\< -f1)" "work/"
@@ -928,12 +917,17 @@ if [ true ]; then
                 cp "$extractedIpsw$(awk "/""${model}""/{x=1}x&&/adc/{print;exit}" work/BuildManifest.plist | grep '<string>' |cut -d\> -f2 |cut -d\< -f1)" "work/"
                 "$dir"/img4 -i work/"$(awk "/""${model}""/{x=1}x&&/adc/{print;exit}" work/BuildManifest.plist | grep '<string>' |cut -d\> -f2 |cut -d\< -f1 | sed 's/Firmware[/]isp_bni[/]//')" -o work/ISP.img4 -M work/IM4M
             fi
-            remote_cp work/*.img4 root@localhost:/mnt4/"$active"/usr/standalone/firmware/FUD/
 
+            if [ "$(remote_cp work/*.img4 root@localhost:/mnt4/"$active"/usr/standalone/firmware/FUD/)" ]; then
+                rm work/*.img4
+            else
+                fixHard=1
+            fi
             echo "Finished Fixing firmwares"
-            rm work/*.img4
+        
         fi
         
+        echo "rebooting"
         remote_cmd "/usr/sbin/nvram auto-boot=false"
         remote_cmd "/sbin/reboot"
         _wait recovery
