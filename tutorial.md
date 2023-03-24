@@ -8,19 +8,19 @@
 
 4. To boot the other iOS, run <code>./dualboot.sh --boot</code>.
 
-# How to Jailbreak the second iOS version  
+# How to jailbreak the second iOS version  
 
-1. Run `./dualboot.sh --jailbreak 14.2` (add `--fixHard` if you fixed the firmwares before)(the version to dualboot) ( this is very recomendable,its better use this jailbreak) , when this finish, open Pogo and tap install, then tap Do All. If you reboot your device, you will only need to tap Do all in Pogo.
+1. Run `./dualboot.sh --jailbreak 14.2` (add `--fixHard` if you fixed the firmwares before)(the version to dualboot) (highly recommended to use this over Taurine). When this finishes, open Pogo and tap Install, then Do All. If you reboot your device, you will only need to tap Do All in Pogo.
 
-2. Jailbreak with Taurine: <code>./dualboot.sh --jailbreak 14.3 --taurine </code> (not recomndable dont use it if you are not pro on this,)( when that finsh install TrollStore from AppleTV and refresh icon using TrollStore, open taurine and click jailbroken. If you reboot your device, you will only need to tap Do all in Pogo).
+2. Jailbreak with Taurine: <code>./dualboot.sh --jailbreak 14.3 --taurine </code> (not recommended, don't use this unless you are a professional jailbreaker). When this finishes, install TrollStore from the Apple TV app and refresh icon using TrollStore, open Taurine and click Jailbreak.
 
-# How to fix hardware 
+# How do I fix hardware?
 
 If you have already dualbooted previously (and have not removed said dualboot), run the script with the arguments `--dualboot 14.3 --dont-create-part --fixHard`.
 
 If you have not dualbooted yet, run the script with the arguments `--dualboot 14.3 --fixHard`.
 
-# Delete the dualbooted iOS
+# How do I delete the dualbooted iOS?
 
 1. <code>./dualboot.sh --restorerootfs 14.2 </code> (if you have palera1n semi-tethered you must add <code>--jail-palera1n</code>)
 
