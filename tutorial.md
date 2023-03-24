@@ -17,20 +17,20 @@
 
 # how to fix hardware 
 
-if you had the dualboot already done, just do --dualboot 14.3 --dont-create-part --fixHard
+If you have already dualbooted previously (and have not removed said dualboot), run the script with the arguments `--dualboot 14.3 --dont-create-part --fixHard`.
 
-if you have not dualbooted yet, just do --dualboot 14.3 --fixHard
+If you have not dualbooted yet, run the script with the arguments `--dualboot 14.3 --fixHard`.
 
-# Delete the second iOS install from your device
+# Delete the dualbooted iOS
 
-1. <code>./dualboot.sh --restorerootfs 14.2 </code> (if you have palera1n semitethered you have to put <code>--jail-palera1n</code>)
+1. <code>./dualboot.sh --restorerootfs 14.2 </code> (if you have palera1n semi-tethered you must add <code>--jail-palera1n</code>)
 
 
 # issues 
 
-1. problem installing something in sileo using taurine jailbreak, so you can solve that problem removing substrate from sileo.
+1. Problem when installing something in Sileo whilst jailbroken with Taurine. You can solve this problem by removing Substrate.
 
 
-2. deep sleep = the idevice poweroff automatically when I let use it. installing Fiona tweaks can fix that problem.
+2. "Deep sleep", the iDevice not "waking up" when it's supposed to. Installing the "Fiona" tweak will fix this.
 
 
