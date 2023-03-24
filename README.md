@@ -106,7 +106,7 @@ in [Paypal](https://www.paypal.me/EdwinNunez2004)
 - [libimobiledevice](https://github.com/libimobiledevice) for several tools used in this project (irecovery, ideviceenterrecovery etc), and [nikias](https://github.com/nikias) for keeping it up to date
 - [Dora](https://github.com/dora2-iOS) for kpf
 - [Sam Bingner](https://github.com/sbingner) for [Substitute](https://github.com/sbingner/substitute)
-- [CoolStar](https://github.com/coolstar) for [Libhooker]
+- [CoolStar](https://github.com/coolstar) for [Libhooker](https://libhooker.com/docs/index.html)
 - [Ralp0045](https://github.com/Ralph0045/Kernel64Patcher) for the amazing dtree_patcher and kernel64patcher
 </details>
 </p>
