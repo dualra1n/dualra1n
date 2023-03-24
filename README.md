@@ -25,7 +25,7 @@ Example: `./dualboot.sh --dualboot 14.3`
 
 `--boot`              Lets you boot into dualbooted iOS. use this when you are already dualbooted . Usage : ./dualboot.sh --boot
 
-`--dont-create-part`   Skips creating a new disk partition if you have one already.
+`--dont-create-part`   Skips creating a new disk partition if you have them already, so using this this downloads the boot files. Usage : ./dualboot.sh --dualboot 14.3 --dont-create-part.
 
 `--restorerootfs`     Deletes the dualbooted iOS. (also add --jail-palera1n if you are jailbroken semi-tethered with palera1n)
     
@@ -62,6 +62,7 @@ iOS 13 is working but only 13.6, 13.7. If you want to dualboot iOS 13, use the [
 
 - iPads may have issues with "Deep Sleep" (iOS not "waking up" after the display going to sleep). Installing the tweak [Fiona](https://www.ios-repo-updates.com/repository/julioverne-s-repo/package/com.julioverne.fiona/) may fix this.
 
+- check  [A full tutorial](https://github.com/dualra1n/dualra1n/blob/main/tutorial.md) to fix the above problem using --fixHard
 
 # How would I dualboot?
 
@@ -88,7 +89,9 @@ iOS 13 is working but only 13.6, 13.7. If you want to dualboot iOS 13, use the [
 
 - [Fatih](https://github.com/swayea) for helping with the readme, testing linux support and being a very good person
 - Edward, my brother, for giving me a Hackintosh to test this on
-- [azaz0322](https://github.com/m00nl1ghts), [Huy Nguyen](https://github.com/34306), [Uckermark](https://github.com/Uckermark) and [aditya11110](https://github.com/aditya11110) for helping with the readme\
+- [azaz0322](https://github.com/m00nl1ghts), [Huy Nguyen](https://github.com/34306), [Uckermark](https://github.com/Uckermark), [DarwinUang](https://github.com/DarwinUang) and [aditya11110](https://github.com/aditya11110) for helping with the readme\
+</details>
+<details><summary>Credits for tools used in dualra1n</summary>
 
 - [palera1n](https://github.com/palera1n) for some of the code
 - [Dualboot guide](https://dualbootfun.github.io/) for the guide
