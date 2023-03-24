@@ -92,16 +92,9 @@ in [Paypal](https://www.paypal.me/EdwinNunez2004)
 
 - [Edwin](https://github.com/edwin170) owner :)
 
-- [Fatih](https://github.com/swayea) help with readme and tester of linux support and is a very good person.
-    <details><summary>readme constributors</summary>
-    <p>
-        
-    - [azaz0322](https://github.com/m00nl1ghts), [Huy Nguyen](https://github.com/34306), [Uckermark](https://github.com/Uckermark) aditya11110 helped          with readme.
-    </details>
-</details>
-<details><summary>Other credits for tools and codes used in dualra1n</summary>
-
-- Edward thanks for my brother for gave me a hackintosh to test this:).
+- [Fatih](https://github.com/swayea) for helping with the readme, testing linux support and being a very good person
+- Edward, my brother, for giving me a Hackintosh to test this on
+- [azaz0322](https://github.com/m00nl1ghts), [Huy Nguyen](https://github.com/34306), [Uckermark](https://github.com/Uckermark) and [aditya11110](https://github.com/aditya11110) for helping with the readme\
 
 - [palera1n](https://github.com/palera1n) for some of the code
 - [Dualboot guide](https://dualbootfun.github.io/) for the guide
@@ -116,7 +109,6 @@ in [Paypal](https://www.paypal.me/EdwinNunez2004)
 - [Dora](https://github.com/dora2-iOS) for kpf
 - [Sam Bingner](https://github.com/sbingner) for [Substitute](https://github.com/sbingner/substitute)
 - [CoolStar](https://github.com/coolstar) for [Libhooker]
-- [Ralp0045](https://github.com/Ralph0045/Kernel64Patcher) amazing dtree_patcher and kernel64patcher ;)
-
-</p>
+- [Ralp0045](https://github.com/Ralph0045/Kernel64Patcher) for the amazing dtree_patcher and kernel64patcher
 </details>
+</p>
