@@ -2,35 +2,33 @@
 
 1. <code>git clone --recursive https://github.com/dualra1n/dualra1n</code>
 
-2. Download the ipsw file which you want to dualboot with and paste it into ipsw/ directory. You can use this website to download: https://ipsw.me (Remember, only iOS 14.0 to iOS 14.8.1. are supported. iOS 13.7 is supported too, but requires the iOS 13 branch. All other versions are unsupported.)
+2. Download the .iPSW file for the iOS version which you want to dualboot with and put it in the [ipsw/](https://github.com/dualra1n/dualra1n/tree/main/ipsw) directory. You can download those from [ipsw.me](https://ipsw.me). (Remember, only iOS 14.0 to iOS 14.8.1. are supported. iOS 13.7 is supported too, but requires using the [ios13](https://github.com/dualra1n/dualra1n/tree/ios13) branch)
 
-3. Run <code>./dualboot.sh --dualboot 14.2 or (the version to dualboot) </code>
+3. Run `./dualboot.sh --dualboot (iOSver)`, replacing "(iOSver)" with the iOS version you wish to dualboot.
 
-4. To boot the second iOS, run <code>./dualboot.sh --boot</code>
+4. To boot the other iOS, run <code>./dualboot.sh --boot</code>.
 
+# How do I jailbreak the dualbooted iOS?
 
-# How to Jailbreak the second iOS version  
+1. Run `./dualboot.sh --jailbreak 14.2` (add `--fixHard` if uou have done so previously). When this finishes, open Pogo and tap Install, then Do All. If you reboot your device, you will only need to tap Do All in Pogo. (it is ***highly recommended*** to use this over Taurine)
 
-1. Run <code>./dualboot.sh --jailbreak 14.2 (put --fixHard if you fixed the firmwares before)(the version to dualboot) </code> ( this is very recomendable,its better use this jailbreak) , when this finish, open Pogo and tap install, then tap Do All. If you reboot your device, you will only need to tap Do all in Pogo.
+2. Jailbreak with Taurine: <code>./dualboot.sh --jailbreak 14.3 --taurine </code> (not recommended, don't use this unless you are a professional jailbreaker). When this finishes, install TrollStore from the Apple TV app and refresh icon using TrollStore, open Taurine and click Jailbreak.
 
-2. Jailbreak with Taurine: <code>./dualboot.sh --jailbreak 14.3 --taurine </code> (not recomndable dont use it if you are not pro on this,)( when that finsh install TrollStore from AppleTV and refresh icon using TrollStore, open taurine and click jailbroken. If you reboot your device, you will only need to tap Do all in Pogo).
+# How do I fix hardware?
 
-# how to fix hardware 
+If you have already dualbooted previously (and have not removed said dualboot), run the script with the arguments `--dualboot 14.3 --dont-create-part --fixHard`.
 
-if you had the dualboot already done, just do --dualboot 14.3 --dont-create-part --fixHard
+If you have not dualbooted yet, run the script with the arguments `--dualboot 14.3 --fixHard`.
 
-if you have not dualbooted yet, just do --dualboot 14.3 --fixHard
+# How do I delete the dualbooted iOS?
 
-# Delete the second iOS install from your device
+1. <code>./dualboot.sh --restorerootfs 14.2 </code> (if you have palera1n semi-tethered you must add <code>--jail-palera1n</code>)
 
-1. <code>./dualboot.sh --restorerootfs 14.2 </code> (if you have palera1n semitethered you have to put <code>--jail-palera1n</code>)
+# Issues 
 
-
-# issues 
-
-1. problem installing something in sileo using taurine jailbreak, so you can solve that problem removing substrate from sileo.
+1. Problem when installing something in Sileo whilst jailbroken with Taurine. You can solve this problem by removing Substrate.
 
 
-2. deep sleep = the idevice poweroff automatically when I let use it. installing Fiona tweaks can fix that problem.
+2. "Deep sleep", the iDevice not "waking up" when it's supposed to. Installing [Fiona](https://www.ios-repo-updates.com/repository/julioverne-s-repo/package/com.julioverne.fiona/) will fix this.
 
 
