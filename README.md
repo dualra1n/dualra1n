@@ -75,16 +75,14 @@ iOS 13 is working but only 13.6, 13.7. If you want to dualboot iOS 13, use the [
 # if you want, you can support me 
 
 in [Paypal](https://www.paypal.me/EdwinNunez2004)
-<details><summary>why I decided to put a donate me ?</summary>
-    dualran its not a team, this is just a name for this tool, this means that i created this script, therefore you can support me with whatever you have, that its important for me because rn I am not working cause this tool and i would be glad to receive something for it. if you cant no problem, just enjoy this.
+<details><summary>Why did I decide to put a donate me?</summary>
+"dualra1n" is not a team, it is just a name for this tool, this means that I created this script, therefore you can support me with whatever you have. This is important for me because right now, I don't have any source of income. I would be glad to receive something for creating this tool. If you can't donate, no problem, just enjoy dualbooting.
 </details>
 
 
 # Credits
 
-# with love Edwin :)
-
-<details><summary>thanks to</summary>
+<details><summary>Thanks to:</summary>
 <p>
 
 - [Edwin](https://github.com/edwin170) owner :)
