@@ -14,7 +14,7 @@
 
 2. Jailbreak with Taurine: <code>./dualboot.sh --jailbreak 14.3 --taurine </code> (not recomndable dont use it if you are not pro on this,)( when that finsh install TrollStore from AppleTV and refresh icon using TrollStore, open taurine and click jailbroken. If you reboot your device, you will only need to tap Do all in Pogo).
 
-# how to fix hardware 
+# How to fix hardware 
 
 If you have already dualbooted previously (and have not removed said dualboot), run the script with the arguments `--dualboot 14.3 --dont-create-part --fixHard`.
 
@@ -25,7 +25,7 @@ If you have not dualbooted yet, run the script with the arguments `--dualboot 14
 1. <code>./dualboot.sh --restorerootfs 14.2 </code> (if you have palera1n semi-tethered you must add <code>--jail-palera1n</code>)
 
 
-# issues 
+# Issues 
 
 1. Problem when installing something in Sileo whilst jailbroken with Taurine. You can solve this problem by removing Substrate.
 
