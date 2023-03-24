@@ -1,103 +1,104 @@
-# dualra1n # THIS BRANCH IS FOR IOS 13 DUALBOOT NOT OTHER IOS PLEASE
+# dualra1n
 
-A script that lets you dualboot iOS 13 on checkm8 devices. thank you so much to give me some information to get this mcg29 and pyboot for some code which fix the most of problems.
-
-remember not put passcode because that give some problems on dualboot ios 13.
-
-
-# What issues you will have known so far
-
-- A9 : Everything works perfect expect camera. (Fixable with ldrestart) # when i jailbreak it the camera always work without using ldrestart (on my iphone6s i dualbooted with ios 14.2 and camera work fine and flash too, i dont know why on others version is different however that work fine on ios 14.2)
-
-
-- iPhone 7, 7+ : Home button is not working at the moment. You can use tweaks that brings X gestures to move. Also camera is not working too. 
-
-- iPhone 8 , 8+ : Home button is not working at the moment. You can use tweaks that brings X gestures to move. Also camera is not working too. https://www.youtube.com/watch?v=k8-2NhCcVMg&t=0s that is a video how to activate assesive touch in order to settting the setup so after you can install tweaks to dont have to use button one of that is gesture13 or minixs
-
-- iPhone X : Touchscreen is not working.
+A script that lets you dualboot iOS 13.7 (semi-tethered) on [checkm8](https://www.theiphonewiki.com/wiki/Checkm8_Exploit)-vulnerable devices.
 
 
 # Usage
 
-Example: ./dualboot.sh --dualboot 13.7 or the version that you want to dualboot 
+Example: `./dualboot.sh --dualboot 13.7`
 
-    --dualboot          Dualboot your device with any SEP and Baseband compatible iOS 14 version.
-    
-    --jail_palera1n     Use this only when you already jailbroken with semitethered palera1n to avoid disk errors. 
-    
-    --jailbreak         Jailbreak the dualbooted iOS with Pogo. Usage :  ./dualboot.sh --jailbreak 14.3
+`--dualboot`          Dualboot your iDevice.
 
-    --taurine           Jailbreak dualbooted iOS with Taurine. Usage: ./dualboot.sh --jailbreak 14.3 --taurine 
+`--jail-palera1n`     Use this when you are already jailbroken with semi-tethered palera1n to avoid disk errors. 
+
+`--jailbreak`         Jailbreak dualbooted iOS with [Pogo](https://github.com/elihwyma/Pogo). Usage :  `./dualboot.sh --jailbreak 13.7`
+
+`--taurine`           Jailbreak dualbooted iOS with [Taurine](https://taurine.app). Usage: `./dualboot.sh --jailbreak 13.7 --taurine` (currently ***NOT RECOMMENDED***)
    
-    --help              Print this help.
+`--fixHard`           Fixes microphone, girocopes, camera, audio, touch, etc. (the Home button is not fixed yet)
+
+`--help`              Print this help.
        
-    --getIpsw           Automaticly downloads IPSW that you want to dualboot. Dont forget specify iOS version.
+`--get-ipsw`          Automatically downloads .iPSW of the iOS version that you want to dualboot. Don't forget to specify iOS version. (currently ***DOES NOT WORK***)
 
-    --dfuhelper         A helper to enter DFU if you struggling in it.
-    
-    --boot              Lets you boot into dualbooted iOS. Use it alone. Usage : ./dualboot.sh --boot
-    
-    --dont_createPart   Skips the creating a new disk partition if you have them already.
-    
-    --restorerootfs     Deletes dualbooted OS. and remember put --jail_palera1n if you have palera1n semitethered jailbreak 
-    
-    --fix_preboot       that restore preboot with the prebootBackup. --fix_preboot
-    
-    --debug             Debug the script
+`--dfuhelper`         A helper to help you enter DFU if you are struggling to do it manually.
 
-Subcommands:
+`--boot`              Lets you boot into dualbooted iOS. use this when you are already dualbooted . Usage : ./dualboot.sh --boot
 
-    clean               Deletes the created boot files 
+`--dont-create-part`   Skips creating a new disk partition if you have them already, so using this this downloads the boot files. Usage : ./dualboot.sh --dualboot 14.3 --dont-create-part.
 
----
+`--restorerootfs`     Deletes the dualbooted iOS. (also add --jail-palera1n if you are jailbroken semi-tethered with palera1n)
+    
+`--recoveryModeAlways`    Fixes the main iOS when it is recovery looping.
 
-# Warning
+`--debug`             Makes the script significantly more verbose. (meaning it will output exactly what command it is running)
+
+`clean`               Deletes the created boot files.
+
+# Dependencies
+- A deactivated passcode on A10-A11 
+- unzip, python3, libimobiledevice-utils, libusbmuxd-tools
+- An .iPSW file for iOS 13.7 
+- Around 15 gigabytes of free storage
+- A computer with macOS or Linux (if you have neither, you can temporarily "install" a Linux distro to RAM)
+# Warnings
 - I am **NOT** responsible for any data loss. The user of this program accepts responsibility should something happen to their device.
  **If your device is stuck in recovery, please run one of the following:**
    - futurerestore --exit-recovery
    - irecovery -n
 
+# Ideal Dualboot Versions
+iOS 13 is working but only 13.6, 13.7. If you want to dualboot iOS 13, use the [ios13](https://github.com/dualra1n/dualra1n/tree/ios13) branch.
 
-# how to dualboot
+# Common Issues
 
-Step 1: download your ipsw file which is wanted to dualboot. you can use --getIpsw that will do automatically however if that give error you must download manual and put the ipsw file into the ipsw/ directory 
+- A9 : Everything works except Camera, Microphone and Gyroscope. (Can be fixed with a userspace reboot or by using iOS 14.2)
 
-Step 2: ./dualboot.sh --dualboot 14.3 (other options)
+- A10/11/X: Home button is not working. You can, however, use tweaks like GesturesXV to simulate iPhone X gestures. You can also activate Assistive Touch on the main iOS and have it also enabled on the dualbooted iOS.
 
-Step 3: when that is already installed and you would want to dualboot your second ios, you will have to use ./dualboot.sh --boot
+- iPads may have issues with "Deep Sleep" (iOS not "waking up" after the display going to sleep). Installing the tweak [Fiona](https://www.ios-repo-updates.com/repository/julioverne-s-repo/package/com.julioverne.fiona/) may fix this.
 
+# How would I dualboot?
 
-
-
-# How to jailbreak 
-
-1) Jailbreak with Pogo : to jailbreak your device: ./dualboot.sh --jailbreak 14.3 (or your version) remember that if you have palera1n jailbreak you have to put --jail_palera1n. Then after boot, open Pogo tap install, after that tap Do All. Then have fun.
-
-2) Jailbreak with Taurine :  ./dualboot.sh --jailbreak 14.3 --taurine (if you have palera1n jailbreak use --jail_palera1n). After boot, open TV App and install Trollstore, then install ldid and rebuild icon cache. Taurine should appear on your homescreen, open it and tap jailbreak (If it shows Jailbroken, forget it and tap). when that reboot you can not press jsilbroken again or install taurine because that can give erros, each time that you reboot you will have to open pogo app and press do all (never press install because that can create conflict).
-
-3) To jailbreak ios 13 dualbooted Download the ipa-
-
-https://github.com/dualra1n/Odyssey/releases/tag/v1.4.2
-
-This ipa is specially made for dualbooted ios
-13. You can install it through sideloady application.
+- [A full tutorial](https://github.com/dualra1n/dualra1n/blob/main/tutorial.md)
 
 
-- Tested on iPhone 6s on iOS 15.7-15.7.2 - macOS Big Sur, Kali Linux, Ubuntu 22.04
+# If there are any other issues, please contact me on the [dualra1n Discord server](https://discord.gg/E6jj48hzd5)
 
-# Problems and issues contact me here https://discord.gg/NWV72KWG
+# Buy me a coffee?
+
+[My Paypal](https://www.paypal.me/EdwinNunez2004)
+
+<details><summary>Why did I decide to put a donate me?</summary>
+"dualra1n" is not a team, it is just a name for this tool, this means that I created this script, therefore you can support me with whatever you have. This is important for me because right now, I don't have any source of income. I would be glad to receive something for creating this tool. If you can't donate, no problem, just enjoy dualbooting.
+</details>
 
 # Credits
 
-- [palera1n](https://github.com/palera1n) for most of code
+<details><summary>Thanks to:</summary>
+<p>
 
-- [verygenericname](https://github.com/verygenericname) for SSH Ramdisk
+- [Edwin](https://github.com/edwin170) owner :)
 
-- [Dualboot guide](https://dualbootfun.github.io/) for guide
+- [Fatih](https://github.com/swayea) for helping with the readme, testing linux support and being a very good person
+- Edward, my brother, for giving me a Hackintosh to test this on
+- [azaz0322](https://github.com/m00nl1ghts), [Huy Nguyen](https://github.com/34306), [Uckermark](https://github.com/Uckermark), [DarwinUang](https://github.com/DarwinUang) and [aditya11110](https://github.com/aditya11110) for helping with the readme\
+</details>
+<details><summary>Credits for tools used in dualra1n</summary>
 
-- [Darling](https://github.com/darlinghq) for macOS emulator
-
-- [blacktop](https://github.com/blacktop) for ipsw downloader
-
-- [dora2-iOS]( https://github.com/dora2-iOS) for home button fix
-
+- [palera1n](https://github.com/palera1n) for some of the code
+- [Dualboot guide](https://dualbootfun.github.io/) for the guide
+- [blacktop](https://github.com/blacktop) for the iPSW downloader
+- [Nathan](https://github.com/verygenericname) for the ramdisk
+- [Amy](https://github.com/elihwyma) for the [Pogo](https://github.com/elihwyma/Pogo) app
+- [checkra1n](https://github.com/checkra1n) for the base of the kpf
+- [m1sta](https://github.com/m1stadev) for [pyimg4](https://github.com/m1stadev/PyIMG4)
+- [tihmstar](https://github.com/tihmstar) for [pzb](https://github.com/tihmstar/partialZipBrowser)/original [iBoot64Patcher](https://github.com/tihmstar/iBoot64Patcher)/original [liboffsetfinder64](https://github.com/tihmstar/liboffsetfinder64)/[img4tool](https://github.com/tihmstar/img4tool)
+- [xerub](https://github.com/xerub) for [img4lib](https://github.com/xerub/img4lib) and [restored_external](https://github.com/xerub/sshrd) in the ramdisk
+- [libimobiledevice](https://github.com/libimobiledevice) for several tools used in this project (irecovery, ideviceenterrecovery etc), and [nikias](https://github.com/nikias) for keeping it up to date
+- [Dora](https://github.com/dora2-iOS) for kpf
+- [Sam Bingner](https://github.com/sbingner) for [Substitute](https://github.com/sbingner/substitute)
+- [CoolStar](https://github.com/coolstar) for [Libhooker](https://libhooker.com/docs/index.html)
+- [Ralp0045](https://github.com/Ralph0045) for [dtree_patcher](https://github.com/Ralph0045/dtree_patcher) and [Kernel64Patcher](https://github.com/Ralph0045/Kernel64Patcher)
+</details>
+</p>
