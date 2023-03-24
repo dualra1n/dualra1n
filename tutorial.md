@@ -11,7 +11,7 @@
 
 # How to Jailbreak the second iOS version  
 
-1. Run <code>./dualboot.sh --jailbreak 14.2 (put --fixHard if you fixed the firmwares before)(the version to dualboot) </code> ( this is very recomendable,its better use this jailbreak) , when this finish, open Pogo and tap install, then tap Do All. If you reboot your device, you will only need to tap Do all in Pogo.
+1. Run <code>./dualboot.sh --jailbreak 14.2` (add `--fixHard` if you fixed the firmwares before)(the version to dualboot) ( this is very recomendable,its better use this jailbreak) , when this finish, open Pogo and tap install, then tap Do All. If you reboot your device, you will only need to tap Do all in Pogo.
 
 2. Jailbreak with Taurine: <code>./dualboot.sh --jailbreak 14.3 --taurine </code> (not recomndable dont use it if you are not pro on this,)( when that finsh install TrollStore from AppleTV and refresh icon using TrollStore, open taurine and click jailbroken. If you reboot your device, you will only need to tap Do all in Pogo).
 
@@ -31,6 +31,6 @@ If you have not dualbooted yet, run the script with the arguments `--dualboot 14
 1. Problem when installing something in Sileo whilst jailbroken with Taurine. You can solve this problem by removing Substrate.
 
 
-2. "Deep sleep", the iDevice not "waking up" when it's supposed to. Installing the "Fiona" tweak will fix this.
+2. "Deep sleep", the iDevice not "waking up" when it's supposed to. Installing [Fiona](https://www.ios-repo-updates.com/repository/julioverne-s-repo/package/com.julioverne.fiona/) will fix this.
 
 
