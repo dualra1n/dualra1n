@@ -107,6 +107,6 @@ in [Paypal](https://www.paypal.me/EdwinNunez2004)
 - [Dora](https://github.com/dora2-iOS) for kpf
 - [Sam Bingner](https://github.com/sbingner) for [Substitute](https://github.com/sbingner/substitute)
 - [CoolStar](https://github.com/coolstar) for [Libhooker](https://libhooker.com/docs/index.html)
-- [Ralp0045](https://github.com/Ralph0045/Kernel64Patcher) for the amazing dtree_patcher and kernel64patcher
+- [Ralp0045](https://github.com/Ralph0045) for [dtree_patcher](https://github.com/Ralph0045/dtree_patcher) and [Kernel64Patcher](https://github.com/Ralph0045/Kernel64Patcher)
 </details>
 </p>
