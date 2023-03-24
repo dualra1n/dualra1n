@@ -8,7 +8,7 @@
 
 4. To boot the other iOS, run <code>./dualboot.sh --boot</code>.
 
-# How to jailbreak the second iOS version  
+# How do I jailbreak the dualbooted iOS?
 
 1. Run `./dualboot.sh --jailbreak 14.2` (add `--fixHard` if you fixed the firmwares before)(the version to dualboot) (highly recommended to use this over Taurine). When this finishes, open Pogo and tap Install, then Do All. If you reboot your device, you will only need to tap Do All in Pogo.
 
