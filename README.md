@@ -7,6 +7,8 @@ A script that lets you dualboot iOS 14-15 (semi-tethered) on [checkm8](https://w
 
 Example: `./dualboot.sh --dualboot 14.3`
 
+Options:
+
 `--dualboot`          Dualboot your iDevice.
 
 `--jail-palera1n`     Use this when you are already jailbroken with semi-tethered palera1n to avoid disk errors. 
@@ -15,7 +17,7 @@ Example: `./dualboot.sh --dualboot 14.3`
 
 `--taurine`           Jailbreak dualbooted iOS with [Taurine](https://taurine.app). Usage: `./dualboot.sh --jailbreak 14.3 --taurine` (currently ***NOT RECOMMENDED***)
    
-`--fixHard`           Fixes microphone, girocopes, camera, audio, touch, etc. (the Home button is not fixed yet)
+`--fixHard`           Fixes microphone, girocopes, camera, audio, touchscreen, etc. (the Home button is not fixed yet)
 
 `--help`              Print this help.
        
@@ -23,7 +25,7 @@ Example: `./dualboot.sh --dualboot 14.3`
 
 `--dfuhelper`         A helper to help you enter DFU if you are struggling to do it manually.
 
-`--boot`              Lets you boot into dualbooted iOS. use this when you are already dualbooted . Usage : ./dualboot.sh --boot
+`--boot`              Lets you boot into dualbooted iOS. Use this when you already have the dualbooted iOS installed. Usage : ./dualboot.sh --boot
 
 `--dont-create-part`   Skips creating a new disk partition if you have them already, so using this this downloads the boot files. Usage : ./dualboot.sh --dualboot 14.3 --dont-create-part.
 
@@ -32,6 +34,8 @@ Example: `./dualboot.sh --dualboot 14.3`
 `--recoveryModeAlways`    Fixes the main iOS when it is recovery looping.
 
 `--debug`             Makes the script significantly more verbose. (meaning it will output exactly what command it is running)
+
+Subcommands:
 
 `clean`               Deletes the created boot files.
 
@@ -62,7 +66,7 @@ iOS 13 is working but only 13.6, 13.7. If you want to dualboot iOS 13, use the [
 
 - iPads may have issues with "Deep Sleep" (iOS not "waking up" after the display going to sleep). Installing the tweak [Fiona](https://www.ios-repo-updates.com/repository/julioverne-s-repo/package/com.julioverne.fiona/) may fix this.
 
-- check  [A full tutorial](https://github.com/dualra1n/dualra1n/blob/main/tutorial.md) to fix the above problem using --fixHard
+- You can fix the above problems by adding `--fixHard`. For instructions on how to do thaqt, check [a full tutorial](https://github.com/dualra1n/dualra1n/blob/main/tutorial.md).
 
 # How would I dualboot?
 
