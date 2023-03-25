@@ -99,7 +99,7 @@ parse_opt() {
         --boot)
             boot=1
             ;;
-        --fix-boot)
+        --fixBoot)
             fixBoot=1
             ;;
         --fixHard)
