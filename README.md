@@ -15,7 +15,7 @@ Example: `./dualboot.sh --dualboot 14.3`
 
 `--taurine`           Jailbreak dualbooted iOS with [Taurine](https://taurine.app). Usage: `./dualboot.sh --jailbreak 14.3 --taurine` (currently ***NOT RECOMMENDED***)
    
-`--fixHard`           Fixes microphone, girocopes, camera, audio, touch, etc. (the Home button is not fixed yet)
+`--fixHard`           Fixes microphone, girocopes, camera, audio, touchscreen, etc. (the Home button is not fixed yet)
 
 `--help`              Print this help.
        
