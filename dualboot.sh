@@ -922,7 +922,7 @@ if [ true ]; then
         echo "fixing firmwares"
 
         if [ "$fixHard" = "1" ]; then
-            if [ ! "$dont_createPart" = "1" ]; then
+            if [ "$dont_createPart" = "1" ]; then
                 remote_cmd "/sbin/mount_apfs /dev/disk0s1s${disk} /mnt8/"
             fi
 
