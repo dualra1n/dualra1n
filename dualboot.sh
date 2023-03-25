@@ -53,32 +53,27 @@ step() {
 
 print_help() {
     cat << EOF
-Usage: $0 [Options] [ subcommand | iOS version which are you] remember you need to have 10 gb free, no sean brurros y vean primero. (put your ipsw in the directory ipsw)
-iOS 15 - 14 Dualboot tool ./dualboot --dualboot 14.2 (the ios of your device) 
-put ipsw file of ios 14 into the ipsw directory, you must make sure that this is the correct ipsw for the iphone. only ios 15 - 14.0.
+Usage: $0 [options] [ subcommand | iOS version that you're on ]
+You must have around 10 GB of free storage, and the .iPSW file of the iOS which you wish to downgrade to in dualra1n/ipsw/.
+Currently, only iOS 14 and 15 are supported. Downgrading from or upgrading to iOS 16 is not and will likely never be supported.
 
 Options:
-    --dualboot          dualboot your idevice with ios 14,15. 
-    --jail-palera1n     uses only if you have the palera1n semitethered jailbreak installed, it will create partition on disk + 1 because palera1n create a new partition. disk0s1s8 however if you jailbreakd with palera1n the disk would be disk0s1s9"
-    --get-ipsw          sometimes this does'nt work well ,using this will download a ipsw of your version which you want to dualboot. its better that you download the ipsw manually. if you will use this ,use it alone and the version --get-ipsw 14.2.
-    --jailbreak         jailbreak your second ios. you can use it when your device boot correctly the second ios. alone for example --jailbreak 14.2
-    --fixHard           this will fix microphone, girocopes, camera, audio, etc. at the moment home button its not fixed yet. 
-    --taurine           this will install the jailbreak of taurine. ./dualboot.sh --jailbreak 14.3 --taurine. not recommended
-    --fixBoot           this just will download the boot files instead of using the ipsw ones
-    --help              Print this help
-    --dfuhelper         A helper to help get A11 devices into DFU mode from recovery mode
-    --boot              put boot alone, to boot your second ios  
-    --dont-create-part   Don't create the partitions if you have already created. when you use this that only will create the boot files again. for example --dualboot 14.2 --dont-create-part
-    --restorerootfs     Remove partitions of dualboot 
-    --recoveryModeAlways    this fixed the first ios when the first ios or the main ios always are entering in recovery mode 
-    --debug             Debug the script
-
+    --dualboot              dualboot your idevice with ios 14,15. 
+    --dualboot              Dualboot your iDevice.
+    --jail-palera1n         Use this when you are already jailbroken with semi-tethered palera1n to avoid disk errors. 
+    --jailbreak             Jailbreak dualbooted iOS with Pogo. Usage :  ./dualboot.sh --jailbreak 14.3
+    --taurine               Jailbreak dualbooted iOS with Taurine. (currently ***NOT RECOMMENDED***). Usage: ./dualboot.sh --jailbreak 14.3 --taurine 
+    --fixHard               Fixes microphone, girocopes, camera, audio, touchscreen, etc. (the Home button is not fixed yet)
+    --help                  Print this help.
+    --get-ipsw              Automatically downloads .iPSW of the iOS version that you want to dualboot. Don't forget to specify iOS version. (currently ***DOES NOT WORK***)
+    --dfuhelper             A helper to help you enter DFU if you are struggling to do it manually.
+    --boot`                 Boots your iDevice into the dualbooted iOS. Use this when you already have the dualbooted iOS installed. Usage : ./dualboot.sh --boot
+    --dont-create-part      Skips creating a new disk partition if you have them already, so using this this downloads the boot files. Usage : ./dualboot.sh --dualboot 14.3 --dont-create-part.
+    --restorerootfs         Deletes the dualbooted iOS. (also add --jail-palera1n if you are jailbroken semi-tethered with palera1n)
+    --recoveryModeAlways    Fixes the main iOS when it is recovery looping.
+    --debug                 Makes the script significantly more verbose. (meaning it will output exactly what command it is running)
 Subcommands:
-    clean               Deletes the created boot files
-help:
-    in case that the device show black screen you can try : ./dualboot.sh --dualboot 14.3 --debug --dont-create-part --fixBoot 
-
-
+    clean                   Deletes the created boot files.
 
 The iOS version argument should be the iOS version of your device.
 It is required when starting from DFU mode.
