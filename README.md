@@ -66,7 +66,7 @@ iOS 13 is working but only 13.6, 13.7. If you want to dualboot iOS 13, use the [
 
 - iPads may have issues with "Deep Sleep" (iOS not "waking up" after the display going to sleep). Installing the tweak [Fiona](https://www.ios-repo-updates.com/repository/julioverne-s-repo/package/com.julioverne.fiona/) may fix this.
 
-- You can fix the above problems by adding `--fixHard`. For instructions on how to do thaqt, check [a full tutorial](https://github.com/dualra1n/dualra1n/blob/main/tutorial.md).
+- You can fix the above problems by adding `--fixHard`. For instructions on how to do that, check [a full tutorial](https://github.com/dualra1n/dualra1n/blob/main/tutorial.md).
 
 # How would I dualboot?
 
