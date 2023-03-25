@@ -601,7 +601,7 @@ if [ true ]; then
     chmod +x sshrd.sh
     echo "[*] Creating ramdisk"
     tweaks=1
-    ./sshrd.sh 14.3
+    ./sshrd.sh 14.8
 
     echo "[*] Booting ramdisk"
     ./sshrd.sh boot
@@ -915,13 +915,16 @@ if [ true ]; then
             remote_cmd "/sbin/mount_apfs /dev/disk0s1s${factoryDataPart} /mnt5/"
             remote_cmd "cp -a /mnt5/FactoryData/* /mnt8/"
 
-            echo "finish to copy partition so if you will create the boot files again put --dont_createPart in order to dont have to copy the filesystem again"
+            echo "finish to copy partition so if you will create the boot files again put --dont-create-part in order to dont have to copy the filesystem again"
             sleep 3
         fi
 
         echo "fixing firmwares"
 
         if [ "$fixHard" = "1" ]; then
+            if [ ! "$dont_createPart" = "1" ]; then
+                remote_cmd "/sbin/mount_apfs /dev/disk0s1s${disk} /mnt8/"
+            fi
 
             if [ -e "prebootBackup/$deviceid/mnt6/$active/usr/standalone/firmware/FUD/AOP.img4" ]; then
                 echo "AOP FOUND"
