@@ -58,7 +58,6 @@ You must have around 10 GB of free storage, and the .iPSW file of the iOS which 
 Currently, only iOS 14 and 15 are supported. Downgrading from or upgrading to iOS 16 is not and will likely never be supported.
 
 Options:
-    --dualboot              dualboot your idevice with ios 14,15. 
     --dualboot              Dualboot your iDevice.
     --jail-palera1n         Use this when you are already jailbroken with semi-tethered palera1n to avoid disk errors. 
     --jailbreak             Jailbreak dualbooted iOS with Pogo. Usage :  ./dualboot.sh --jailbreak 14.3
