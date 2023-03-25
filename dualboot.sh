@@ -65,7 +65,7 @@ Options:
     --jail-palera1n     uses only if you have the palera1n semitethered jailbreak installed, it will create partition on disk + 1 because palera1n create a new partition. disk0s1s8 however if you jailbreakd with palera1n the disk would be disk0s1s9"
     --get-ipsw          sometimes this does'nt work well ,using this will download a ipsw of your version which you want to dualboot. its better that you download the ipsw manually. if you will use this ,use it alone and the version --get-ipsw 14.2.
     --jailbreak         jailbreak your second ios. you can use it when your device boot correctly the second ios. alone for example --jailbreak 14.2
-    --fixHard           this will fix microphone, girocopes, camera, audio, etc. at the moment home button its not fixed yet. not working rn
+    --fixHard           this will fix microphone, girocopes, camera, audio, etc. at the moment home button its not fixed yet.
     --odyssey           this will install the jailbreak of odyssey. ./dualboot.sh --jailbreak 14.3 --odyssey. not recommended
     --fixBoot           this just will download the boot files instead of using the ipsw ones
     --help              Print this help
@@ -730,7 +730,7 @@ if [ true ]; then
         fi
         sleep 2
         remote_cp root@localhost:/mnt8/System/Library/Caches/com.apple.kernelcaches/kcache.patched work/ # that will return the kernelpatcher in order to be patched again and boot with it 
-        "$dir"/Kernel64Patcher work/kcache.patched work/kcache.patchedB -f -s -o `if [ ! "$odyssey" = "1" ]; then echo "-l"; fi`
+        "$dir"/Kernel64Patcher work/kcache.patched work/kcache.patchedB -s -b13 -e `if [ ! "$odyssey" = "1" ]; then echo "-l"; fi`
 
         if [[ "$deviceid" == *'iPhone8'* ]] || [[ "$deviceid" == *'iPad6'* ]] || [[ "$deviceid" == *'iPad5'* ]]; then
             python3 -m pyimg4 im4p create -i work/kcache.patchedB -o work/kcache.im4p -f rkrn --extra work/kpp.bin --lzss
@@ -763,7 +763,7 @@ if [ true ]; then
 
         if [ "$odyssey" = 1 ]; then
             unzip other/odysseymod.ipa -d other/
-            mv -v othe/Payload/Odyssey.app/ other/Payload/Applications/
+            mv -v other/Payload/Odyssey.app/ other/Payload/Applications/
             echo "installing odyssey"
             remote_cp other/Payload/Applications/ root@localhost:/mnt8/
             echo "finish now it will reboot"
@@ -918,6 +918,61 @@ if [ true ]; then
             echo "finish to copy partition so if you will create the boot files again put --dont_createPart in order to dont have to copy the filesystem again"
             sleep 3
         fi
+
+        echo "fixing firmwares"
+
+        if [ "$fixHard" = "1" ]; then
+
+            if [ -e "prebootBackup/$deviceid/mnt6/$active/usr/standalone/firmware/FUD/AOP.img4" ]; then
+                echo "AOP FOUND"
+                cp "$extractedIpsw$(awk "/""${model}""/{x=1}x&&/aop/{print;exit}" work/BuildManifest.plist | grep '<string>' |cut -d\> -f2 |cut -d\< -f1)" "work/"
+                "$dir"/img4 -i work/"$(awk "/""${model}""/{x=1}x&&/aop/{print;exit}" work/BuildManifest.plist | grep '<string>' |cut -d\> -f2 |cut -d\< -f1 | sed 's/Firmware[/]AOP[/]//')" -o work/AOP.img4 -M work/IM4M
+            fi
+            
+            if [ -e "prebootBackup/$deviceid/mnt6/$active/usr/standalone/firmware/FUD/StaticTrustCache.img4" ]; then
+                echo "StaticTrustCache FOUND"
+
+                if [ "$os" = 'Darwin' ]; then
+                    "$dir"/img4 -i "$extractedIpsw"/Firmware/"$(/usr/bin/plutil -extract "BuildIdentities".0."Manifest"."OS"."Info"."Path" xml1 -o - work/BuildManifest.plist | grep '<string>' |cut -d\> -f2 |cut -d\< -f1 | head -1)".trustcache -o work/StaticTrustCache.img4 -M work/IM4M
+                else
+                    "$dir"/img4 -i "$extractedIpsw"/Firmware/"$(binaries/Linux/PlistBuddy work/BuildManifest.plist -c "Print BuildIdentities:0:Manifest:OS:Info:Path" | sed 's/"//g')".trustcache -o work/StaticTrustCache.img4 -M work/IM4M
+                fi
+            fi
+
+            if [ -e "prebootBackup/$deviceid/mnt6/$active/usr/standalone/firmware/FUD/Homer.img4" ]; then
+                echo "Homer FOUND"
+                cp "$extractedIpsw$(awk "/""${model}""/{x=1}x&&/homer/{print;exit}" work/BuildManifest.plist | grep '<string>' |cut -d\> -f2 |cut -d\< -f1)" "work/"
+                "$dir"/img4 -i work/"$(awk "/""${model}""/{x=1}x&&/homer/{print;exit}" work/BuildManifest.plist | grep '<string>' |cut -d\> -f2 |cut -d\< -f1 | sed 's/Firmware[/]//')" -o work/Homer.img4 -M work/IM4M
+            fi
+            
+            if [ -e "prebootBackup/$deviceid/mnt6/$active/usr/standalone/firmware/FUD/Multitouch.img4" ]; then
+                echo "Multitouch FOUND"
+                cp "$extractedIpsw$(awk "/""${model}""/{x=1}x&&/_Multitouch[.]/{print;exit}" work/BuildManifest.plist | grep '<string>' |cut -d\> -f2 |cut -d\< -f1)" "work/"
+                "$dir"/img4 -i work/"$(awk "/""${model}""/{x=1}x&&/_Multitouch[.]/{print;exit}" work/BuildManifest.plist | grep '<string>' |cut -d\> -f2 |cut -d\< -f1 | sed 's/Firmware[/]//')" -o work/Multitouch.img4 -M work/IM4M
+            fi
+
+            if [ -e "prebootBackup/$deviceid/mnt6/$active/usr/standalone/firmware/FUD/AVE.img4" ]; then
+                echo "AVE FOUND"
+                cp -v "prebootBackup/$deviceid/mnt6/$active/usr/standalone/firmware/FUD/AVE.img4" "work/"
+            fi
+            
+            if [ -e "prebootBackup/$deviceid/mnt6/$active/usr/standalone/firmware/FUD/AudioCodecFirmware.img4" ]; then
+                echo "AudioCodecFirmware FOUND"
+                cp "$extractedIpsw$(awk "/""${model}""/{x=1}x&&/_CallanFirmware[.]/{print;exit}" work/BuildManifest.plist | grep '<string>' |cut -d\> -f2 |cut -d\< -f1)" "work/"
+                "$dir"/img4 -i work/"$(awk "/""${model}""/{x=1}x&&/_CallanFirmware[.]/{print;exit}" work/BuildManifest.plist | grep '<string>' |cut -d\> -f2 |cut -d\< -f1 | sed 's/Firmware[/]//')" -o work/AudioCodecFirmware.img4 -M work/IM4M
+            fi
+
+            if [ -e "prebootBackup/$deviceid/mnt6/$active/usr/standalone/firmware/FUD/ISP.img4" ]; then
+                echo "ISP FOUND"
+                cp "$extractedIpsw$(awk "/""${model}""/{x=1}x&&/adc/{print;exit}" work/BuildManifest.plist | grep '<string>' |cut -d\> -f2 |cut -d\< -f1)" "work/"
+                "$dir"/img4 -i work/"$(awk "/""${model}""/{x=1}x&&/adc/{print;exit}" work/BuildManifest.plist | grep '<string>' |cut -d\> -f2 |cut -d\< -f1 | sed 's/Firmware[/]isp_bni[/]//')" -o work/ISP.img4 -M work/IM4M
+            fi
+            remote_cp work/*.img4 root@localhost:/mnt8/usr/standalone/firmware/FUD/
+
+            echo "Finished Fixing firmwares"
+            rm work/*.img4
+        fi
+
         remote_cmd "/usr/sbin/nvram auto-boot=false"
         sleep 2
         remote_cmd "/sbin/reboot"
@@ -957,6 +1012,7 @@ if [ true ]; then
             fi
         fi
         echo "patching file boots ..."
+        
         "$dir"/img4 -i work/*.trustcache -o work/trustcache.img4 -M work/IM4M -T rtsc
 
         "$dir"/gaster decrypt work/"$(awk "/""${model}""/{x=1}x&&/iBSS[.]/{print;exit}" work/BuildManifest.plist | grep '<string>' |cut -d\> -f2 |cut -d\< -f1 | sed 's/Firmware[/]dfu[/]//')" work/iBSS.dec
@@ -968,19 +1024,35 @@ if [ true ]; then
         else
             "$dir"/gaster decrypt work/"$(awk "/""${model}""/{x=1}x&&/iBEC[.]/{print;exit}" work/BuildManifest.plist | grep '<string>' |cut -d\> -f2 |cut -d\< -f1 | sed 's/Firmware[/]dfu[/]//')" work/iBEC.dec
         fi
-        "$dir"/iBoot64Patcher work/iBEC.dec work/iBEC.patched -b "rd=disk0s1s${disk} debug=0x2014e wdt=-1 -v `if [ "$cpid" = '0x8960' ] || [ "$cpid" = '0x7000' ] || [ "$cpid" = '0x7001' ]; then echo "-restore"; fi`" -n 
-        "$dir"/img4 -i work/iBEC.patched -o work/iBEC.img4 -M work/IM4M -A -T ibec
 
-        "$dir"/img4 -i work/"$(awk "/""${model}""/{x=1}x&&/kernelcache.release/{print;exit}" work/BuildManifest.plist | grep '<string>' |cut -d\> -f2 |cut -d\< -f1)" -o work/kcache.raw
-        "$dir"/Kernel64PatcherA work/kcache.raw work/kcache.patched -a -b `if [ "$fixBoot" = "1" ]; then echo "-s"; fi` # that sometimes fix some problem on the boot also i put kernel64patcherA because that fix the problem on the kerneldiff on kernel of iphone 7
-        "$dir"/kerneldiff work/kcache.raw work/kcache.patched work/kc.bpatch
-        "$dir"/img4 -i work/"$(awk "/""${model}""/{x=1}x&&/kernelcache.release/{print;exit}" work/BuildManifest.plist | grep '<string>' |cut -d\> -f2 |cut -d\< -f1)" -o work/kernelcache.img4 -M work/IM4M -T rkrn -P work/kc.bpatch `if [ "$os" = 'Linux' ]; then echo "-J"; fi`
+        "$dir"/iBoot64Patcher work/iBEC.dec work/iBEC.patched -b "rd=disk0s1s${disk} -v wdt=-1 keepsyms=1 debug=0x2014e `if [ "$cpid" = '0x8960' ] || [ "$cpid" = '0x7000' ] || [ "$cpid" = '0x7001' ]; then echo "-restore"; fi`" -n 
+        "$dir"/img4 -i work/iBEC.patched -o work/iBEC.img4 -M work/IM4M -A -T ibec
+        
+
+        if [[ "$deviceid" == "iPhone8"* ]] || [[ "$deviceid" == "iPad6"* ]] || [[ "$deviceid" == *'iPad5'* ]]; then
+            python3 -m pyimg4 im4p extract -i work/"$(awk "/""${model}""/{x=1}x&&/kernelcache.release/{print;exit}" work/BuildManifest.plist | grep '<string>' |cut -d\> -f2 |cut -d\< -f1)" -o work/kcache.raw --extra work/kpp.bin
+        else
+            python3 -m pyimg4 im4p extract -i work/"$(awk "/""${model}""/{x=1}x&&/kernelcache.release/{print;exit}" work/BuildManifest.plist | grep '<string>' |cut -d\> -f2 |cut -d\< -f1)" -o work/kcache.raw
+        fi
+
+        "$dir"/Kernel64Patcher work/kcache.raw work/kcache.patched -a -b13 -e `if [ "$fixBoot" = "1" ]; then echo "-s"; fi` # that sometimes fix some problem on the boot also i put kernel64patcherA because that fix the problem on the kerneldiff on kernel of iphone 7
+        
+        if [[ "$deviceid" == *'iPhone8'* ]] || [[ "$deviceid" == *'iPad6'* ]] || [[ "$deviceid" == *'iPad5'* ]]; then
+            python3 -m pyimg4 im4p create -i work/kcache.patched -o work/kcache.im4p -f rkrn --extra work/kpp.bin --lzss
+        else
+            python3 -m pyimg4 im4p create -i work/kcache.patched -o work/kcache.im4p -f rkrn --lzss
+        fi
+        
+        python3 -m pyimg4 img4 create -p work/kcache.im4p -o work/kernelcache.img4 -m work/IM4M
+
         "$dir"/img4 -i work/"$(awk "/""${model}""/{x=1}x&&/DeviceTree[.]/{print;exit}" work/BuildManifest.plist | grep '<string>' |cut -d\> -f2 |cut -d\< -f1 | sed 's/Firmware[/]all_flash[/]//')" -o work/dtree.raw
-        
-        "$dir"/dtree_patcher work/dtree.raw work/dtree.patched -d 
-        "$dir"/img4 -i work/dtree.patched -o work/devicetree.img4 -A -M work/IM4M -T rdtr
-        
-        sleep 2
+        if [ "$os" = "Linux" ]; then
+            "$dir"/dtree_patcher work/dtree.raw work/dtree.patched -d
+            "$dir"/img4 -i work/dtree.patched -o work/devicetree.img4 -A -M work/IM4M -T rdtr
+        else 
+            "$dir"/dtree_patcher work/dtree.raw work/dtree.patched -d
+            "$dir"/img4 -i work/dtree.patched -o work/devicetree.img4 -A -M work/IM4M -T rdtr
+        fi
 
         cp -rv work/*.img4 "boot/${deviceid}" # copying all file img4 to boot
       # echo "so we finish, now you can execute './dualboot boot' to boot to second ios after that we need that you record a video when your iphone is booting to see what is the uuid and note that name of the uuid"       
