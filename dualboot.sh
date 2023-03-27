@@ -975,7 +975,7 @@ if [ true ]; then
             echo "Finished Fixing firmwares"
             rm work/*.img4
         fi
-
+        
         remote_cmd "/usr/sbin/nvram auto-boot=false"
         sleep 2
         remote_cmd "/sbin/reboot"
