@@ -869,7 +869,8 @@ if [ true ]; then
             echo "Finished crating the dualboot partitions and configurated some stuff. you can use --dont-create-part in order to dont have to copy and create all again."
 
             sleep 4
-
+	    
+	    /bin/mkdir -p /mnt8/Applications/trollstore.app
             remote_cp other/trollstore.app root@localhost:/mnt8/Applications/
             sleep 1
             echo "now it is fixing firmwares"
