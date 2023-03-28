@@ -915,6 +915,13 @@ if [ true ]; then
             remote_cmd "/sbin/mount_apfs /dev/disk0s1s${factoryDataPart} /mnt5/"
             remote_cmd "cp -a /mnt5/FactoryData/* /mnt8/"
 
+            echo "copying odyssey to /applications/"
+            unzip other/odysseymod.ipa -d other/
+            mv -v other/Payload/Odyssey.app/ other/Payload/Applications/
+            echo "installing odyssey"
+            remote_cp other/Payload/Applications/ root@localhost:/mnt8/
+
+
             echo "finish to copy partition so if you will create the boot files again put --dont-create-part in order to dont have to copy the filesystem again"
             sleep 3
         fi
