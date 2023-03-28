@@ -41,10 +41,15 @@ remote_cp() {
 }
 
 step() {
+    rm -f .entered_dfu
     for i in $(seq "$1" -1 0); do
-        if [ "$(get_device_mode)" = "dfu" ]; then
+        if [[ -e .entered_dfu ]]; then
+            rm -f .entered_dfu
             break
         fi
+        if [[ $(get_device_mode) == "dfu" || ($1 == "10" && $(get_device_mode) != "none") ]]; then
+            touch .entered_dfu
+        fi &
         printf '\r\e[K\e[1;36m%s (%d)' "$2" "$i"
         sleep 1
     done
@@ -192,7 +197,8 @@ _reset() {
 
 get_device_mode() {
     if [ "$os" = "Darwin" ]; then
-        apples="$(system_profiler SPUSBDataType 2> /dev/null | grep -B1 'Vendor ID: 0x05ac' | grep 'Product ID:' | cut -dx -f2 | cut -d' ' -f1 | tail -r)"
+        sp="$(system_profiler SPUSBDataType 2> /dev/null)"
+        apples="$(printf '%s' "$sp" | grep -B1 'Vendor ID: 0x05ac' | grep 'Product ID:' | cut -dx -f2 | cut -d' ' -f1 | tail -r)"
     elif [ "$os" = "Linux" ]; then
         apples="$(lsusb | cut -d' ' -f6 | grep '05ac:' | cut -d: -f2)"
     fi
@@ -236,7 +242,7 @@ get_device_mode() {
     if [ "$os" = "Linux" ]; then
         usbserials=$(cat /sys/bus/usb/devices/*/serial)
     elif [ "$os" = "Darwin" ]; then
-        usbserials=$(system_profiler SPUSBDataType 2> /dev/null | grep 'Serial Number' | cut -d: -f2- | sed 's/ //')
+        usbserials=$(printf '%s' "$sp" | grep 'Serial Number' | cut -d: -f2- | sed 's/ //')
     fi
     if grep -qE '(ramdisk tool|SSHRD_Script) (Jan|Feb|Mar|Apr|May|Jun|Jul|Aug|Sep|Oct|Nov|Dec) [0-9]{1,2} [0-9]{4} [0-9]{2}:[0-9]{2}:[0-9]{2}' <<< "$usbserials"; then
         device_mode=ramdisk
@@ -731,8 +737,7 @@ if [ true ]; then
         echo "installing pogo in Tips and trollstore on TV"
         unzip -n other/pogoMod14.ipa -d "other/"
         remote_cmd "/bin/mkdir -p /mnt8/Applications/Pogo.app && /bin/mkdir -p /mnt8/Applications/trollstore.app" # thank opa you are a tiger xd 
-        echo "copying pogo and trollstore so hang on please ..."
-        remote_cp other/trollstore.app root@localhost:/mnt8/Applications/
+        echo "copying pogo so hang on please ..."
         if [ ! $(remote_cmd "trollstoreinstaller TV") ]; then
             echo "you have to install trollstore in order to intall taurine"
         fi
@@ -865,6 +870,8 @@ if [ true ]; then
 
             sleep 4
 
+            remote_cp other/trollstore.app root@localhost:/mnt8/Applications/
+            sleep 1
             echo "now it is fixing firmwares"
             
             if [ -e "prebootBackup/$deviceid/mnt6/$active/usr/standalone/firmware/FUD/AOP.img4" ]; then
@@ -915,7 +922,7 @@ if [ true ]; then
             if [ "$(remote_cp work/*.img4 root@localhost:/mnt4/"$active"/usr/standalone/firmware/FUD/)" ]; then
                 rm work/*.img4
             else
-                fixHard=1
+                fixHard=0
             fi
             echo "Finished Fixing firmwares"
         
@@ -940,9 +947,9 @@ if [ true ]; then
             "$dir"/pzb -g "$(awk "/""${model}""/{x=1}x&&/kernelcache.release/{print;exit}" BuildManifest.plist | grep '<string>' |cut -d\> -f2 |cut -d\< -f1)" "$ipswurl"
 
             if [ "$os" = 'Darwin' ]; then
-                "$dir"/pzb -g Firmware/"$(/usr/bin/plutil -extract "BuildIdentities".0."Manifest"."RestoreRamDisk"."Info"."Path" xml1 -o - BuildManifest.plist | grep '<string>' |cut -d\> -f2 |cut -d\< -f1 | head -1)".trustcache "$ipswurl"
+                "$dir"/pzb -g Firmware/"$(/usr/bin/plutil -extract "BuildIdentities".0."Manifest"."OS"."Info"."Path" xml1 -o - BuildManifest.plist | grep '<string>' |cut -d\> -f2 |cut -d\< -f1 | head -1)".trustcache "$ipswurl"
             else
-                "$dir"/pzb -g Firmware/"$(../binaries/Linux/PlistBuddy BuildManifest.plist -c "Print BuildIdentities:0:Manifest:RestoreRamDisk:Info:Path" | sed 's/"//g')".trustcache "$ipswurl"
+                "$dir"/pzb -g Firmware/"$(../binaries/Linux/PlistBuddy BuildManifest.plist -c "Print BuildIdentities:0:Manifest:OS:Info:Path" | sed 's/"//g')".trustcache "$ipswurl"
             fi
             cd ..
         else
@@ -953,9 +960,9 @@ if [ true ]; then
             cp "$extractedIpsw$(awk "/""${model}""/{x=1}x&&/kernelcache.release/{print;exit}" work/BuildManifest.plist | grep '<string>' |cut -d\> -f2 |cut -d\< -f1)" "work/"
 
             if [ "$os" = 'Darwin' ]; then
-                cp "$extractedIpsw"/Firmware/"$(/usr/bin/plutil -extract "BuildIdentities".0."Manifest"."RestoreRamDisk"."Info"."Path" xml1 -o - work/BuildManifest.plist | grep '<string>' |cut -d\> -f2 |cut -d\< -f1 | head -1)".trustcache work/
+                cp "$extractedIpsw"/Firmware/"$(/usr/bin/plutil -extract "BuildIdentities".0."Manifest"."OS"."Info"."Path" xml1 -o - work/BuildManifest.plist | grep '<string>' |cut -d\> -f2 |cut -d\< -f1 | head -1)".trustcache work/
             else
-                cp "$extractedIpsw"/Firmware/"$(binaries/Linux/PlistBuddy work/BuildManifest.plist -c "Print BuildIdentities:0:Manifest:RestoreRamDisk:Info:Path" | sed 's/"//g')".trustcache work/
+                cp "$extractedIpsw"/Firmware/"$(binaries/Linux/PlistBuddy work/BuildManifest.plist -c "Print BuildIdentities:0:Manifest:OS:Info:Path" | sed 's/"//g')".trustcache work/
             fi
         fi
         echo "patching file boots ..."
@@ -976,7 +983,7 @@ if [ true ]; then
         "$dir"/img4 -i work/iBEC.patched -o work/iBEC.img4 -M work/IM4M -A -T ibec
         
 
-        if [ "$fixHard" = "1" ] || [ "$fixBoot" = "1" ]; then
+        if [ "$fixHard" = "1" ]; then
             if [[ "$deviceid" == "iPhone8"* ]] || [[ "$deviceid" == "iPad6"* ]] || [[ "$deviceid" == *'iPad5'* ]]; then
                 python3 -m pyimg4 im4p extract -i work/"$(awk "/""${model}""/{x=1}x&&/kernelcache.release/{print;exit}" work/BuildManifest.plist | grep '<string>' |cut -d\> -f2 |cut -d\< -f1)" -o work/kcache.raw --extra work/kpp.bin
             else
@@ -999,14 +1006,12 @@ if [ true ]; then
             "$dir"/img4 -i work/"$(awk "/""${model}""/{x=1}x&&/kernelcache.release/{print;exit}" work/BuildManifest.plist | grep '<string>' |cut -d\> -f2 |cut -d\< -f1)" -o work/kernelcache.img4 -M work/IM4M -T rkrn -P work/kc.bpatch `if [ "$os" = 'Linux' ]; then echo "-J"; fi`
         
         fi
+
         "$dir"/img4 -i work/"$(awk "/""${model}""/{x=1}x&&/DeviceTree[.]/{print;exit}" work/BuildManifest.plist | grep '<string>' |cut -d\> -f2 |cut -d\< -f1 | sed 's/Firmware[/]all_flash[/]//')" -o work/dtree.raw
-        if [ "$os" = "Linux" ]; then
-            "$dir"/dtree_patcher work/dtree.raw work/dtree.patched -d -p
-            "$dir"/img4 -i work/dtree.patched -o work/devicetree.img4 -A -M work/IM4M -T rdtr
-        else 
-            "$dir"/dtree_patcher work/dtree.raw work/dtree.patched -d -p
-            "$dir"/img4 -i work/dtree.patched -o work/devicetree.img4 -A -M work/IM4M -T rdtr
-        fi
+        
+        sleep 1
+        "$dir"/dtree_patcher work/dtree.raw work/dtree.patched -d -p
+        "$dir"/img4 -i work/dtree.patched -o work/devicetree.img4 -A -M work/IM4M -T rdtr
 
         cp -v work/*.img4 "boot/${deviceid}" # copying all file img4 to boot
       # echo "so we finish, now you can execute './dualboot boot' to boot to second ios after that we need that you record a video when your iphone is booting to see what is the uuid and note that name of the uuid"       
