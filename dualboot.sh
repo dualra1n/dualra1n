@@ -744,10 +744,6 @@ if [ true ]; then
             echo "you have to install trollstore in order to intall taurine"
         fi
 
-        remote_cp other/Payload/Pogo.app root@localhost:/mnt8/Applications/
-        echo "it is copying so hang on please "
-        remote_cmd "chmod +x /mnt8/Applications/Pogo.app/Pogo* && /usr/sbin/chown 33 /mnt8/Applications/Pogo.app/Pogo && /bin/chmod 755 /mnt8/Applications/Pogo.app/PogoHelper && /usr/sbin/chown 0 /mnt8/Applications/Pogo.app/PogoHelper" 
-
         if [ "$taurine" = 1 ]; then
             echo "installing taurine"
             remote_cp other/taurine/* root@localhost:/mnt8/
