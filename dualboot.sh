@@ -442,11 +442,15 @@ if [ "$debug" = "1" ]; then
 fi
 
 if [ "$clean" = "1" ]; then
-    rm -rf  work blobs/ boot/$deviceid/  ipsw/*
+    if [ "$os" = "Darwin" ]; then
+        rm -rf  work blobs/ boot/$deviceid/  ipsw/extracted/ ipsw/out.dmg
+    else
+        rm -rf  work blobs/ boot/$deviceid/  ipsw/extracted/
+
+    fi
     echo "[*] Removed the created boot files"
     exit
 fi
-
 
 # Get device's iOS version from ideviceinfo if in normal mode
 echo "[*] Waiting for devices"
@@ -601,7 +605,7 @@ if [ true ]; then
     chmod +x sshrd.sh
     echo "[*] Creating ramdisk"
     tweaks=1
-    ./sshrd.sh 14.8
+    ./sshrd.sh 15.6
 
     echo "[*] Booting ramdisk"
     ./sshrd.sh boot
@@ -912,6 +916,10 @@ if [ true ]; then
                 echo "the com.apple.factorydata not exist so continuing"
             fi
 
+            echo "adding the kernel"
+            "$dir"/img4 -i "$extractedIpsw$(awk "/""${model}""/{x=1}x&&/kernelcache.release/{print;exit}" work/BuildManifest.plist | grep '<string>' |cut -d\> -f2 |cut -d\< -f1)" -o work/kernelcache -M IM4M -T rkrn
+            remote_cp work/kernelcache "root@localhost:/mnt8/System/Library/Caches/com.apple.kernelcaches/kernelcache"
+
             remote_cmd "/sbin/mount_apfs /dev/disk0s1s${factoryDataPart} /mnt5/"
             remote_cmd "cp -a /mnt5/FactoryData/* /mnt8/"
 
@@ -982,6 +990,27 @@ if [ true ]; then
             echo "Finished Fixing firmwares"
             rm work/*.img4
         fi
+        echo "patching kernel ..." # this will send and patch the kernel
+        
+        cp "$extractedIpsw$(awk "/""${model}""/{x=1}x&&/kernelcache.release/{print;exit}" work/BuildManifest.plist | grep '<string>' |cut -d\> -f2 |cut -d\< -f1)" "work/kernelcache"
+        
+        if [[ "$deviceid" == "iPhone8"* ]] || [[ "$deviceid" == "iPad6"* ]] || [[ "$deviceid" == *'iPad5'* ]]; then
+            python3 -m pyimg4 im4p extract -i work/kernelcache -o work/kcache.raw --extra work/kpp.bin
+        else
+            python3 -m pyimg4 im4p extract -i work/kernelcache -o work/kcache.raw
+        fi
+
+        #remote_cmd "/sbin/mount_apfs /dev/disk0s1s${prebootB} /mnt4/"
+        remote_cp work/kcache.raw root@localhost:/mnt8/System/Library/Caches/com.apple.kernelcaches/kcache.raw
+        remote_cp binaries/Kernel13Patcher.ios root@localhost:/mnt8/private/var/root/kpf13.ios
+        remote_cmd "/usr/sbin/chown 0 /mnt8/private/var/root/kpf13.ios"
+        remote_cmd "/bin/chmod 755 /mnt8/private/var/root/kpf13.ios"
+        sleep 1
+        if [ ! $(remote_cmd "/mnt8/private/var/root/kpf13.ios /mnt8/System/Library/Caches/com.apple.kernelcaches/kcache.raw /mnt8/System/Library/Caches/com.apple.kernelcaches/kcache.patched") ]; then
+            echo "you have the kernelpath already installed "
+        fi
+
+        remote_cp root@localhost:/mnt8/System/Library/Caches/com.apple.kernelcaches/kcache.patched work/ # that will return the kernelpatcher in order to be patched again and boot with it 
         
         remote_cmd "/usr/sbin/nvram auto-boot=false"
         sleep 2
@@ -1037,32 +1066,21 @@ if [ true ]; then
 
         "$dir"/iBoot64Patcher work/iBEC.dec work/iBEC.patched -b "rd=disk0s1s${disk} -v wdt=-1 keepsyms=1 debug=0x2014e `if [ "$cpid" = '0x8960' ] || [ "$cpid" = '0x7000' ] || [ "$cpid" = '0x7001' ]; then echo "-restore"; fi`" -n 
         "$dir"/img4 -i work/iBEC.patched -o work/iBEC.img4 -M work/IM4M -A -T ibec
-        
 
-        if [[ "$deviceid" == "iPhone8"* ]] || [[ "$deviceid" == "iPad6"* ]] || [[ "$deviceid" == *'iPad5'* ]]; then
-            python3 -m pyimg4 im4p extract -i work/"$(awk "/""${model}""/{x=1}x&&/kernelcache.release/{print;exit}" work/BuildManifest.plist | grep '<string>' |cut -d\> -f2 |cut -d\< -f1)" -o work/kcache.raw --extra work/kpp.bin
-        else
-            python3 -m pyimg4 im4p extract -i work/"$(awk "/""${model}""/{x=1}x&&/kernelcache.release/{print;exit}" work/BuildManifest.plist | grep '<string>' |cut -d\> -f2 |cut -d\< -f1)" -o work/kcache.raw
-        fi
-
-        "$dir"/Kernel64Patcher work/kcache.raw work/kcache.patched -a -b13 -e `if [ "$fixBoot" = "1" ]; then echo "-s"; fi` # that sometimes fix some problem on the boot also i put kernel64patcherA because that fix the problem on the kerneldiff on kernel of iphone 7
+        "$dir"/Kernel64Patcher work/kcache.patched work/kcache.patchedB -a -b13 -e `if [ "$fixBoot" = "1" ]; then echo "-s"; fi` # that sometimes fix some problem on the boot also i put kernel64patcherA because that fix the problem on the kerneldiff on kernel of iphone 7
         
         if [[ "$deviceid" == *'iPhone8'* ]] || [[ "$deviceid" == *'iPad6'* ]] || [[ "$deviceid" == *'iPad5'* ]]; then
-            python3 -m pyimg4 im4p create -i work/kcache.patched -o work/kcache.im4p -f rkrn --extra work/kpp.bin --lzss
+            python3 -m pyimg4 im4p create -i work/kcache.patchedB -o work/kcache.im4p -f rkrn --extra work/kpp.bin --lzss
         else
-            python3 -m pyimg4 im4p create -i work/kcache.patched -o work/kcache.im4p -f rkrn --lzss
+            python3 -m pyimg4 im4p create -i work/kcache.patchedB -o work/kcache.im4p -f rkrn --lzss
         fi
         
         python3 -m pyimg4 img4 create -p work/kcache.im4p -o work/kernelcache.img4 -m work/IM4M
 
         "$dir"/img4 -i work/"$(awk "/""${model}""/{x=1}x&&/DeviceTree[.]/{print;exit}" work/BuildManifest.plist | grep '<string>' |cut -d\> -f2 |cut -d\< -f1 | sed 's/Firmware[/]all_flash[/]//')" -o work/dtree.raw
-        if [ "$os" = "Linux" ]; then
-            "$dir"/dtree_patcher work/dtree.raw work/dtree.patched -d
-            "$dir"/img4 -i work/dtree.patched -o work/devicetree.img4 -A -M work/IM4M -T rdtr
-        else 
-            "$dir"/dtree_patcher work/dtree.raw work/dtree.patched -d
-            "$dir"/img4 -i work/dtree.patched -o work/devicetree.img4 -A -M work/IM4M -T rdtr
-        fi
+        "$dir"/dtree_patcher work/dtree.raw work/dtree.patched -d
+        "$dir"/img4 -i work/dtree.patched -o work/devicetree.img4 -A -M work/IM4M -T rdtr
+
 
         cp -v work/*.img4 "boot/${deviceid}" # copying all file img4 to boot
       # echo "so we finish, now you can execute './dualboot boot' to boot to second ios after that we need that you record a video when your iphone is booting to see what is the uuid and note that name of the uuid"       
