@@ -652,12 +652,12 @@ if [ true ]; then
         exit
     fi
     active=$(remote_cmd "cat /mnt6/active" 2> /dev/null)
-    echo "backup preboot partition... please dont delete directory prebootBackup" # this will backup your perboot parition in case that was deleted by error 
+    echo "[*] Backing up preboot. Do not delete ./prebootBackup" # this will backup your perboot parition in case that was deleted by error 
     mkdir -p "prebootBackup"
     if [ ! -d "prebootBackup/${deviceid}" ]; then
         mkdir -p "prebootBackup/${deviceid}"
         if [ ! $(remote_cp root@localhost:/mnt6/ "prebootBackup/${deviceid}") ]; then # that had a error so in case the error the script wont stop 
-            echo "finish backup"
+            echo "[*] Finished backup"
         fi
     fi
     
@@ -666,7 +666,7 @@ if [ true ]; then
     if [ "$restorerootfs" = "1" ]; then
         echo "[*] Removing dualboot"
         if [ ! "$(remote_cmd "/System/Library/Filesystems/apfs.fs/apfs.util -p /dev/disk0s1s${disk}")" == 'SystemB' ]; then # that will check if the partition is correct in order to dont delete a partition of the system
-            echo "error partition, maybe that partition is important so it could be deleted by apfs_deletefs, that is bad"
+            echo "[!] Partition error. Something may have been deleted improperly."
             exit; 
         fi
         # this eliminate dualboot paritions 
@@ -712,7 +712,7 @@ if [ true ]; then
         remote_cmd "/bin/chmod 755 /mnt8/private/var/root/Kernel15Patcher.ios"
         sleep 1
         if [ ! $(remote_cmd "/mnt8/private/var/root/Kernel15Patcher.ios /mnt4/$active/System/Library/Caches/com.apple.kernelcaches/kcache.raw /mnt4/$active/System/Library/Caches/com.apple.kernelcaches/kcache.patched") ]; then
-            echo "you have the kernelpath already installed "
+            echo "[!] Kernel patch already installed"
         fi
         sleep 2
         remote_cp root@localhost:/mnt4/"$active"/System/Library/Caches/com.apple.kernelcaches/kcache.patched work/ # that will return the kernelpatcher in order to be patched again and boot with it 
@@ -734,18 +734,18 @@ if [ true ]; then
         #remote_cp root@localhost:/mnt4/$active/System/Library/Caches/com.apple.kernelcaches/kernelcachd work/kernelcache.img4
         cp -rv "work/kernelcache.img4" "boot/${deviceid}"
         
-        echo "installing pogo in Tips and trollstore on TV"
+        echo "[*] Swapping out Tips with Pogo and TV with TrollHelper"
         unzip -n other/pogoMod14.ipa -d "other/"
         remote_cmd "/bin/mkdir -p /mnt8/Applications/Pogo.app && /bin/mkdir -p /mnt8/Applications/trollstore.app" # thank opa you are a tiger xd 
         echo "copying pogo so hang on please ..."
 
 	
         if [ ! $(remote_cmd "trollstoreinstaller TV") ]; then
-            echo "you have to install trollstore in order to intall taurine"
+            
         fi
 
         if [ "$taurine" = 1 ]; then
-            echo "installing taurine"
+            echo "[*} Installing Taurine"
             remote_cp other/taurine/* root@localhost:/mnt8/
             echo "finish now it will reboot"
             remote_cmd "/sbin/reboot"
