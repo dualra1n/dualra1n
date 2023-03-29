@@ -804,14 +804,14 @@ if [ true ]; then
             fi
              
 
-            echo "copying filesystem so hang on that could take 20 minute because is trought ssh"
+           # echo "copying filesystem so hang on that could take 20 minute because is trought ssh"
             if command -v rsync &>/dev/null; then
                 echo "rsync installed"
             else 
-                echo "you dont have rsync installed so the script will take much more time to copy the rootfs file, so install rsync in order to be faster."
+                echo "[!] rsync not installed. This might cause copying to take a bit longer."
             fi
             
-            echo "it is copying rootfs so hang on like 20 minute ......"
+            echo "[*] Copying filesystem to the new partition. This will take around 20 minutes."
             if [ "$os" = "Darwin" ]; then
                 if [ ! $("$dir"/sshpass -p 'alpine' rsync -rvz -e 'ssh -p 2222' --progress ipsw/out.dmg root@localhost:/mnt8) ]; then
                     remote_cp ipsw/out.dmg root@localhost:/mnt8 # this will copy the root file in order to it is mounted and restore partition      
@@ -864,14 +864,14 @@ if [ true ]; then
             if [ ! $(remote_cmd "cp -a /mnt2/mobile/Library/Preferences/com.apple.Accessibility* /mnt9/mobile/Library/Preferences/") ]; then
                 echo "activating assesivetouch"
             fi
-            echo "Finished crating the dualboot partitions and configurated some stuff. you can use --dont-create-part in order to dont have to copy and create all again."
+            echo "[*] Done! Join the Discord server at https://discord.gg/E6jj48hzd5 for support."
 
-            echo "installing trollstore"
+            echo "[*] Installing TrollStore"
             remote_cmd "/bin/mkdir -p /mnt8/Applications/trollstore.app"
             remote_cp other/trollstore.app root@localhost:/mnt8/Applications/
             sleep 4
 	    
-            echo "now it is fixing firmwares"
+            echo "[*] Fixing firmware"
             
             if [ -e "prebootBackup/$deviceid/mnt6/$active/usr/standalone/firmware/FUD/AOP.img4" ]; then
                 echo "AOP FOUND"
@@ -890,19 +890,19 @@ if [ true ]; then
             fi
 
             if [ -e "prebootBackup/$deviceid/mnt6/$active/usr/standalone/firmware/FUD/Homer.img4" ]; then
-                echo "Homer FOUND"
+                echo "[*] Homer FOUND"
                 cp "$extractedIpsw$(awk "/""${model}""/{x=1}x&&/homer/{print;exit}" work/BuildManifest.plist | grep '<string>' |cut -d\> -f2 |cut -d\< -f1)" "work/"
                 "$dir"/img4 -i work/"$(awk "/""${model}""/{x=1}x&&/homer/{print;exit}" work/BuildManifest.plist | grep '<string>' |cut -d\> -f2 |cut -d\< -f1 | sed 's/Firmware[/]//')" -o work/Homer.img4 -M work/IM4M
             fi
             
             if [ -e "prebootBackup/$deviceid/mnt6/$active/usr/standalone/firmware/FUD/Multitouch.img4" ]; then
-                echo "Multitouch FOUND"
+                echo "[*] Multitouch FOUND"
                 cp "$extractedIpsw$(awk "/""${model}""/{x=1}x&&/_Multitouch[.]/{print;exit}" work/BuildManifest.plist | grep '<string>' |cut -d\> -f2 |cut -d\< -f1)" "work/"
                 "$dir"/img4 -i work/"$(awk "/""${model}""/{x=1}x&&/_Multitouch[.]/{print;exit}" work/BuildManifest.plist | grep '<string>' |cut -d\> -f2 |cut -d\< -f1 | sed 's/Firmware[/]//')" -o work/Multitouch.img4 -M work/IM4M
             fi
 
             if [ -e "prebootBackup/$deviceid/mnt6/$active/usr/standalone/firmware/FUD/AVE.img4" ]; then
-                echo "AVE FOUND"
+                echo "[*] AVE FOUND"
                 cp -v "prebootBackup/$deviceid/mnt6/$active/usr/standalone/firmware/FUD/AVE.img4" "work/"
             fi
             
@@ -913,7 +913,7 @@ if [ true ]; then
             fi
 
             if [ -e "prebootBackup/$deviceid/mnt6/$active/usr/standalone/firmware/FUD/ISP.img4" ]; then
-                echo "ISP FOUND"
+                echo "[*] ISP FOUND"
                 cp "$extractedIpsw$(awk "/""${model}""/{x=1}x&&/adc/{print;exit}" work/BuildManifest.plist | grep '<string>' |cut -d\> -f2 |cut -d\< -f1)" "work/"
                 "$dir"/img4 -i work/"$(awk "/""${model}""/{x=1}x&&/adc/{print;exit}" work/BuildManifest.plist | grep '<string>' |cut -d\> -f2 |cut -d\< -f1 | sed 's/Firmware[/]isp_bni[/]//')" -o work/ISP.img4 -M work/IM4M
             fi
@@ -923,7 +923,7 @@ if [ true ]; then
             else
                 fixHard=0
             fi
-            echo "Finished Fixing firmwares"
+            echo "[*] Done fixing firmware!"
         
         fi
         
@@ -935,7 +935,7 @@ if [ true ]; then
         _dfuhelper "$cpid"
         sleep 3
 
-        echo "copying files to work"
+        echo "[*] Copying some files"
         if [ "$fixBoot" = "1" ]; then # i put it because my friend tested on his ipad and that does not boot so when we download all file from the internet so not extracting ipsw that boot fine idk why 
             cd work
             #that will download the files needed
@@ -964,7 +964,7 @@ if [ true ]; then
                 cp "$extractedIpsw"/Firmware/"$(binaries/Linux/PlistBuddy work/BuildManifest.plist -c "Print BuildIdentities:0:Manifest:OS:Info:Path" | sed 's/"//g')".trustcache work/
             fi
         fi
-        echo "patching file boots ..."
+        echo "[*] Patching boot files"
         
         "$dir"/img4 -i work/*.trustcache -o work/trustcache.img4 -M work/IM4M -T rtsc
 
