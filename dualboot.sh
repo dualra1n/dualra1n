@@ -741,7 +741,7 @@ if [ true ]; then
 
 	
         if [ ! $(remote_cmd "trollstoreinstaller TV") ]; then
-            
+            echo "error installing trollstore continuing ..."
         fi
 
         if [ "$taurine" = 1 ]; then
