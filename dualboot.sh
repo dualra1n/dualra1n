@@ -864,7 +864,7 @@ if [ true ]; then
             if [ ! $(remote_cmd "cp -a /mnt2/mobile/Library/Preferences/com.apple.Accessibility* /mnt9/mobile/Library/Preferences/") ]; then
                 echo "activating assesivetouch"
             fi
-            echo "[*] Done! Join the Discord server at https://discord.gg/E6jj48hzd5 for support."
+            echo "Finished crating the dualboot partitions and configurated some stuff. you can use --dont-create-part in order to dont have to copy and create all again."
 
             echo "[*] Installing TrollStore"
             remote_cmd "/bin/mkdir -p /mnt8/Applications/trollstore.app"
