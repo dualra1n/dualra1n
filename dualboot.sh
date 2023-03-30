@@ -855,16 +855,16 @@ if [ true ]; then
             remote_cmd "/sbin/mount_apfs /dev/disk0s1s${dataB} /mnt9/"
             remote_cmd "/sbin/mount_apfs /dev/disk0s1s${prebootB} /mnt4/"
             if [ ! $(remote_cmd "cp -a /mnt8/private/var/* /mnt9/") ]; then # this will copy all file which is needed by dataB
-                echo "var was copied"
+                echo "[*] /var copied successfully!"
             fi
             sleep 2
             
             remote_cmd "mount_filesystems"
             remote_cmd "cp -na /mnt6/* /mnt4/" # copy preboot to prebootB
             if [ ! $(remote_cmd "cp -a /mnt2/mobile/Library/Preferences/com.apple.Accessibility* /mnt9/mobile/Library/Preferences/") ]; then
-                echo "activating assesivetouch"
+                echo "[*] Activating Assistive Touch"
             fi
-            echo "Finished crating the dualboot partitions and configurated some stuff. you can use --dont-create-part in order to dont have to copy and create all again."
+            echo "[*] Finished creating the dualboot partitions!"
 
             echo "[*] Installing TrollStore"
             remote_cmd "/bin/mkdir -p /mnt8/Applications/trollstore.app"
