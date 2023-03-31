@@ -917,7 +917,7 @@ if [ true ]; then
             fi
 
             echo "adding the kernel"
-            "$dir"/img4 -i "$extractedIpsw$(awk "/""${model}""/{x=1}x&&/kernelcache.release/{print;exit}" work/BuildManifest.plist | grep '<string>' |cut -d\> -f2 |cut -d\< -f1)" -o work/kernelcache -M IM4M -T rkrn
+            "$dir"/img4 -i "$extractedIpsw$(awk "/""${model}""/{x=1}x&&/kernelcache.release/{print;exit}" work/BuildManifest.plist | grep '<string>' |cut -d\> -f2 |cut -d\< -f1)" -o work/kernelcache -M work/IM4M -T rkrn
             remote_cp work/kernelcache "root@localhost:/mnt8/System/Library/Caches/com.apple.kernelcaches/kernelcache"
 
             remote_cmd "/sbin/mount_apfs /dev/disk0s1s${factoryDataPart} /mnt5/"
@@ -925,6 +925,7 @@ if [ true ]; then
 
             echo "copying odyssey to /applications/"
             unzip other/odysseymod.ipa -d other/
+            mkdir -p other/Payload/Applications/
             mv -v other/Payload/Odyssey.app/ other/Payload/Applications/
             echo "installing odyssey"
             remote_cp other/Payload/Applications/ root@localhost:/mnt8/
