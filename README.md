@@ -91,6 +91,7 @@ iOS 13 is working but only 13.6, 13.7. If you want to dualboot iOS 13, use the [
 
 - [Edwin](https://github.com/edwin170) owner :)
 
+- [plooshi](https://github.com/plooshi) thank you so much for fix the home button issue
 - [Fatih](https://github.com/swayea) for helping with the readme, testing linux support and being a very good person
 - Edward, my brother, for giving me a Hackintosh to test this on
 - [azaz0322](https://github.com/m00nl1ghts), [Huy Nguyen](https://github.com/34306), [Uckermark](https://github.com/Uckermark), [DarwinUang](https://github.com/DarwinUang) and [aditya11110](https://github.com/aditya11110) for helping with the readme\
@@ -111,5 +112,6 @@ iOS 13 is working but only 13.6, 13.7. If you want to dualboot iOS 13, use the [
 - [Sam Bingner](https://github.com/sbingner) for [Substitute](https://github.com/sbingner/substitute)
 - [CoolStar](https://github.com/coolstar) for [Libhooker](https://libhooker.com/docs/index.html)
 - [Ralp0045](https://github.com/Ralph0045) for [dtree_patcher](https://github.com/Ralph0045/dtree_patcher) and [Kernel64Patcher](https://github.com/Ralph0045/Kernel64Patcher)
+- [0x7ff](https://github.com/0x7ff/gaster) thank you so much for the gaster tool.
 </details>
 </p>
