@@ -71,7 +71,7 @@ Options:
     --help                  Print this help.
     --get-ipsw              Automatically downloads .iPSW of the iOS version that you want to dualboot. Don't forget to specify iOS version. (currently ***DOES NOT WORK***)
     --dfuhelper             A helper to help you enter DFU if you are struggling to do it manually.
-    --boot`                 Boots your iDevice into the dualbooted iOS. Use this when you already have the dualbooted iOS installed. Usage : ./dualboot.sh --boot
+    --boot                 Boots your iDevice into the dualbooted iOS. Use this when you already have the dualbooted iOS installed. Usage : ./dualboot.sh --boot
     --dont-create-part      Skips creating a new disk partition if you have them already, so using this this downloads the boot files. Usage : ./dualboot.sh --dualboot 14.3 --dont-create-part.
     --restorerootfs         Deletes the dualbooted iOS. (also add --jail-palera1n if you are jailbroken semi-tethered with palera1n)
     --recoveryModeAlways    Fixes the main iOS when it is recovery looping.
@@ -431,7 +431,7 @@ if [ "$debug" = "1" ]; then
 fi
 
 if [ "$clean" = "1" ]; then
-    rm -rf  work blobs/ boot/"$deviceid"/  ipsw/*
+    rm -rf  work/* blobs/* boot/"$deviceid"/  ipsw/extracted ipsw/out.dmg
     echo "[*] Removed the created boot files"
     exit
 fi
@@ -459,9 +459,9 @@ if [ "$(get_device_mode)" = "ramdisk" ]; then
     _kill_if_running iproxy
     echo "[*] Rebooting device in SSH Ramdisk"
     if [ "$os" = 'Linux' ]; then
-        sudo "$dir"/iproxy 2222 22 &
+        sudo "$dir"/iproxy 2222 22 >/dev/null &
     else
-        "$dir"/iproxy 2222 22 &
+        "$dir"/iproxy 2222 22 >/dev/null &
     fi
     sleep 1
     remote_cmd "/sbin/reboot"
@@ -606,9 +606,9 @@ if [ true ]; then
 
     # Execute the commands once the rd is booted
     if [ "$os" = 'Linux' ]; then
-        sudo "$dir"/iproxy 2222 22 &
+        sudo "$dir"/iproxy 2222 22 >/dev/null &
     else
-        "$dir"/iproxy 2222 22 &
+        "$dir"/iproxy 2222 22 >/dev/null &
     fi
 
     if ! ("$dir"/sshpass -p 'alpine' ssh -o StrictHostKeyChecking=no -p2222 root@localhost "echo connected" &> /dev/null); then
@@ -652,7 +652,7 @@ if [ true ]; then
         exit
     fi
     active=$(remote_cmd "cat /mnt6/active" 2> /dev/null)
-    echo "backup preboot partition... please dont delete directory prebootBackup" # this will backup your perboot parition in case that was deleted by error 
+    echo "backup preboot partition... please dont delete the directory prebootBackup" # this will backup your perboot parition in case that was deleted by error 
     mkdir -p "prebootBackup"
     if [ ! -d "prebootBackup/${deviceid}" ]; then
         mkdir -p "prebootBackup/${deviceid}"
@@ -716,7 +716,7 @@ if [ true ]; then
         fi
         sleep 2
         remote_cp root@localhost:/mnt4/"$active"/System/Library/Caches/com.apple.kernelcaches/kcache.patched work/ # that will return the kernelpatcher in order to be patched again and boot with it 
-        "$dir"/Kernel64Patcher work/kcache.patched work/kcache.patchedB -s -e -b $(if [ ! "$taurine" = "1" ]; then echo "-l"; fi) $(if [ ! "$fixHard" = "1" ]; then echo "-f"; fi)
+        "$dir"/Kernel64Patcher work/kcache.patched work/kcache.patchedB -s -e -b $(if [ ! "$taurine" = "1" ]; then echo "-l"; fi)
 
         if [[ "$deviceid" == *'iPhone8'* ]] || [[ "$deviceid" == *'iPad6'* ]] || [[ "$deviceid" == *'iPad5'* ]]; then
             python3 -m pyimg4 im4p create -i work/kcache.patchedB -o work/kcache.im4p -f rkrn --extra work/kpp.bin --lzss
@@ -784,8 +784,22 @@ if [ true ]; then
 
     if [ "$dualboot" = "1" ]; then
         if [ -z "$dont_createPart" ]; then # if you have already your second ios you can omited with this
+            echo "verifying if we can continue with the dualboot"
+
+            if [ "$(remote_cmd "ls /dev/disk0s1s${disk}")" ]; then
+                if [ "$(remote_cmd "/System/Library/Filesystems/apfs.fs/apfs.util -p /dev/disk0s1s${disk}")" == 'Xystem' ]; then
+                    echo "that look like you have the palera1n semitethered jailbreak, always add the command --jail-palera1n in order to fix it "
+                    exit;
+                else
+                    echo "you have a system installed on the partition that will be used by this so ctrl +c and try to restorerootfs or ignore this (probably this wont boot into the second ios if you dont --restorerootfs before this)."
+                    read -p "click enter if you want to continue"
+                fi
+            else
+                echo "sucessfull verified"
+            fi
+
             echo "[*] Creating partitions"
-            
+
         	if [ ! $(remote_cmd "/sbin/newfs_apfs -o role=i -A -v SystemB /dev/disk0s1") ] && [ ! $(remote_cmd "/sbin/newfs_apfs -o role=0 -A -v DataB /dev/disk0s1") ] && [ ! $(remote_cmd "/sbin/newfs_apfs -o role=D -A -v PrebootB /dev/disk0s1") ]; then # i put this in case that resturn a error the script can continuing
                 echo "[*] partitions created, continuing..."
 	        fi
@@ -854,7 +868,7 @@ if [ true ]; then
             remote_cmd "/sbin/mount_apfs /dev/disk0s1s${disk} /mnt8/"
             remote_cmd "/sbin/mount_apfs /dev/disk0s1s${dataB} /mnt9/"
             remote_cmd "/sbin/mount_apfs /dev/disk0s1s${prebootB} /mnt4/"
-            if [ ! $(remote_cmd "cp -a /mnt8/private/var/* /mnt9/") ]; then # this will copy all file which is needed by dataB
+            if [ ! $(remote_cmd "cp -a /mnt8/private/var/. /mnt9/.") ]; then # this will copy all file which is needed by dataB
                 echo "var was copied"
             fi
             sleep 2
@@ -872,14 +886,16 @@ if [ true ]; then
             sleep 4
 	    
             echo "now it is fixing firmwares"
+            fixHard=1
             
-            if [ -e "prebootBackup/$deviceid/mnt6/$active/usr/standalone/firmware/FUD/AOP.img4" ]; then
+             if [ "$(remote_cmd "ls /mnt6/$active/usr/standalone/firmware/FUD/AOP.img4")" ]; then
                 echo "AOP FOUND"
                 cp "$extractedIpsw$(awk "/""${model}""/{x=1}x&&/aop/{print;exit}" work/BuildManifest.plist | grep '<string>' |cut -d\> -f2 |cut -d\< -f1)" "work/"
                 "$dir"/img4 -i work/"$(awk "/""${model}""/{x=1}x&&/aop/{print;exit}" work/BuildManifest.plist | grep '<string>' |cut -d\> -f2 |cut -d\< -f1 | sed 's/Firmware[/]AOP[/]//')" -o work/AOP.img4 -M work/IM4M
             fi
             
-            if [ -e "prebootBackup/$deviceid/mnt6/$active/usr/standalone/firmware/FUD/StaticTrustCache.img4" ]; then
+            if [ "$(remote_cmd "ls /mnt6/$active/usr/standalone/firmware/FUD/StaticTrustCache.img4")" ]; then
+
                 echo "StaticTrustCache FOUND"
 
                 if [ "$os" = 'Darwin' ]; then
@@ -889,30 +905,35 @@ if [ true ]; then
                 fi
             fi
 
-            if [ -e "prebootBackup/$deviceid/mnt6/$active/usr/standalone/firmware/FUD/Homer.img4" ]; then
+            if [ "$(remote_cmd "ls /mnt6/$active/usr/standalone/firmware/FUD/Homer.img4")" ]; then
+
                 echo "Homer FOUND"
                 cp "$extractedIpsw$(awk "/""${model}""/{x=1}x&&/homer/{print;exit}" work/BuildManifest.plist | grep '<string>' |cut -d\> -f2 |cut -d\< -f1)" "work/"
                 "$dir"/img4 -i work/"$(awk "/""${model}""/{x=1}x&&/homer/{print;exit}" work/BuildManifest.plist | grep '<string>' |cut -d\> -f2 |cut -d\< -f1 | sed 's/Firmware[/]//')" -o work/Homer.img4 -M work/IM4M
             fi
             
-            if [ -e "prebootBackup/$deviceid/mnt6/$active/usr/standalone/firmware/FUD/Multitouch.img4" ]; then
+            if [ "$(remote_cmd "ls /mnt6/$active/usr/standalone/firmware/FUD/Multitouch.img4")" ]; then
+
                 echo "Multitouch FOUND"
                 cp "$extractedIpsw$(awk "/""${model}""/{x=1}x&&/_Multitouch[.]/{print;exit}" work/BuildManifest.plist | grep '<string>' |cut -d\> -f2 |cut -d\< -f1)" "work/"
                 "$dir"/img4 -i work/"$(awk "/""${model}""/{x=1}x&&/_Multitouch[.]/{print;exit}" work/BuildManifest.plist | grep '<string>' |cut -d\> -f2 |cut -d\< -f1 | sed 's/Firmware[/]//')" -o work/Multitouch.img4 -M work/IM4M
             fi
 
-            if [ -e "prebootBackup/$deviceid/mnt6/$active/usr/standalone/firmware/FUD/AVE.img4" ]; then
+            if [ "$(remote_cmd "ls /mnt6/$active/usr/standalone/firmware/FUD/AVE.img4")" ]; then
+
                 echo "AVE FOUND"
                 cp -v "prebootBackup/$deviceid/mnt6/$active/usr/standalone/firmware/FUD/AVE.img4" "work/"
             fi
             
-            if [ -e "prebootBackup/$deviceid/mnt6/$active/usr/standalone/firmware/FUD/AudioCodecFirmware.img4" ]; then
+            if [ "$(remote_cmd "ls /mnt6/$active/usr/standalone/firmware/FUD/AudioCodecFirmware.img4")" ]; then
+
                 echo "AudioCodecFirmware FOUND"
                 cp "$extractedIpsw$(awk "/""${model}""/{x=1}x&&/_CallanFirmware[.]/{print;exit}" work/BuildManifest.plist | grep '<string>' |cut -d\> -f2 |cut -d\< -f1)" "work/"
                 "$dir"/img4 -i work/"$(awk "/""${model}""/{x=1}x&&/_CallanFirmware[.]/{print;exit}" work/BuildManifest.plist | grep '<string>' |cut -d\> -f2 |cut -d\< -f1 | sed 's/Firmware[/]//')" -o work/AudioCodecFirmware.img4 -M work/IM4M
             fi
 
-            if [ -e "prebootBackup/$deviceid/mnt6/$active/usr/standalone/firmware/FUD/ISP.img4" ]; then
+            if [ "$(remote_cmd "ls /mnt6/$active/usr/standalone/firmware/FUD/ISP.img4")" ]; then
+
                 echo "ISP FOUND"
                 cp "$extractedIpsw$(awk "/""${model}""/{x=1}x&&/adc/{print;exit}" work/BuildManifest.plist | grep '<string>' |cut -d\> -f2 |cut -d\< -f1)" "work/"
                 "$dir"/img4 -i work/"$(awk "/""${model}""/{x=1}x&&/adc/{print;exit}" work/BuildManifest.plist | grep '<string>' |cut -d\> -f2 |cut -d\< -f1 | sed 's/Firmware[/]isp_bni[/]//')" -o work/ISP.img4 -M work/IM4M
@@ -920,11 +941,11 @@ if [ true ]; then
 
             if [ "$(remote_cp work/*.img4 root@localhost:/mnt4/"$active"/usr/standalone/firmware/FUD/)" ]; then
                 rm work/*.img4
+                echo "Finished Fixing firmwares"
             else
+                echo "error fixing firmware, skipping ..."
                 fixHard=0
-            fi
-            echo "Finished Fixing firmwares"
-        
+            fi   
         fi
         
         echo "rebooting"
@@ -978,33 +999,29 @@ if [ true ]; then
             "$dir"/gaster decrypt work/"$(awk "/""${model}""/{x=1}x&&/iBEC[.]/{print;exit}" work/BuildManifest.plist | grep '<string>' |cut -d\> -f2 |cut -d\< -f1 | sed 's/Firmware[/]dfu[/]//')" work/iBEC.dec
         fi
 
-        "$dir"/iBoot64Patcher work/iBEC.dec work/iBEC.patched -b "rd=disk0s1s${disk} -v wdt=-1 keepsyms=1 debug=0x2014e `if [ "$cpid" = '0x8960' ] || [ "$cpid" = '0x7000' ] || [ "$cpid" = '0x7001' ]; then echo "-restore"; fi`" -n 
-        "$dir"/img4 -i work/iBEC.patched -o work/iBEC.img4 -M work/IM4M -A -T ibec
-        
-
-        if [ "$fixHard" = "1" ]; then
-            if [[ "$deviceid" == "iPhone8"* ]] || [[ "$deviceid" == "iPad6"* ]] || [[ "$deviceid" == *'iPad5'* ]]; then
-                python3 -m pyimg4 im4p extract -i work/"$(awk "/""${model}""/{x=1}x&&/kernelcache.release/{print;exit}" work/BuildManifest.plist | grep '<string>' |cut -d\> -f2 |cut -d\< -f1)" -o work/kcache.raw --extra work/kpp.bin
-            else
-                python3 -m pyimg4 im4p extract -i work/"$(awk "/""${model}""/{x=1}x&&/kernelcache.release/{print;exit}" work/BuildManifest.plist | grep '<string>' |cut -d\> -f2 |cut -d\< -f1)" -o work/kcache.raw
-            fi
-
-            "$dir"/Kernel64Patcher work/kcache.raw work/kcache.patched -a -b -e `if [ "$fixBoot" = "1" ]; then echo "-s"; fi` # that sometimes fix some problem on the boot also i put kernel64patcherA because that fix the problem on the kerneldiff on kernel of iphone 7
-
-            if [[ "$deviceid" == *'iPhone8'* ]] || [[ "$deviceid" == *'iPad6'* ]] || [[ "$deviceid" == *'iPad5'* ]]; then
-                python3 -m pyimg4 im4p create -i work/kcache.patched -o work/kcache.im4p -f rkrn --extra work/kpp.bin --lzss
-            else
-                python3 -m pyimg4 im4p create -i work/kcache.patched -o work/kcache.im4p -f rkrn --lzss
-            fi
-            python3 -m pyimg4 img4 create -p work/kcache.im4p -o work/kernelcache.img4 -m work/IM4M
-
+        "$dir"/iBoot64Patcher work/iBEC.dec work/iBEC.patched -b "$(if [[ ! "$deviceid" == iPhone9,[1-4] ]] || [[ ! "$deviceid" == "iPhone10,"* ]]; then echo "rd=disk0s1s${disk}"; fi) -v wdt=-1 keepsyms=1 debug=0x2014e `if [ "$cpid" = '0x8960' ] || [ "$cpid" = '0x7000' ] || [ "$cpid" = '0x7001' ]; then echo "-restore"; fi`" -n 
+        if [[ "$deviceid" == iPhone9,[1-4] ]] || [[ "$deviceid" == "iPhone10,"* ]]; then
+            "$dir"/kairos work/iBEC.patched work/iBEC.patchedB -d "8"
+            "$dir"/img4 -i work/iBEC.patchedB -o work/iBEC.img4 -M work/IM4M -A -T ibec
         else
-            "$dir"/img4 -i work/"$(awk "/""${model}""/{x=1}x&&/kernelcache.release/{print;exit}" work/BuildManifest.plist | grep '<string>' |cut -d\> -f2 |cut -d\< -f1)" -o work/kcache.raw
-            "$dir"/Kernel64PatcherA work/kcache.raw work/kcache.patched -a -f -e `if [ "$fixBoot" = "1" ]; then echo "-s"; fi` # that sometimes fix some problem on the boot also i put kernel64patcherA because that fix the problem on the kerneldiff on kernel of iphone 7
-            "$dir"/kerneldiff work/kcache.raw work/kcache.patched work/kc.bpatch
-            "$dir"/img4 -i work/"$(awk "/""${model}""/{x=1}x&&/kernelcache.release/{print;exit}" work/BuildManifest.plist | grep '<string>' |cut -d\> -f2 |cut -d\< -f1)" -o work/kernelcache.img4 -M work/IM4M -T rkrn -P work/kc.bpatch `if [ "$os" = 'Linux' ]; then echo "-J"; fi`
-        
+            "$dir"/img4 -i work/iBEC.patched -o work/iBEC.img4 -M work/IM4M -A -T ibec
         fi
+
+        if [[ "$deviceid" == "iPhone8"* ]] || [[ "$deviceid" == "iPad6"* ]] || [[ "$deviceid" == *'iPad5'* ]]; then
+            python3 -m pyimg4 im4p extract -i work/"$(awk "/""${model}""/{x=1}x&&/kernelcache.release/{print;exit}" work/BuildManifest.plist | grep '<string>' |cut -d\> -f2 |cut -d\< -f1)" -o work/kcache.raw --extra work/kpp.bin
+        else
+            python3 -m pyimg4 im4p extract -i work/"$(awk "/""${model}""/{x=1}x&&/kernelcache.release/{print;exit}" work/BuildManifest.plist | grep '<string>' |cut -d\> -f2 |cut -d\< -f1)" -o work/kcache.raw
+        fi
+
+        "$dir"/Kernel64Patcher work/kcache.raw work/kcache.patched -a -b -e `if [ "$fixBoot" = "1" ]; then echo "-s"; fi` `if [ "$fixHard" = "0" ]; then echo "-f"; fi` # that sometimes fix some problem on the boot also i put kernel64patcherA because that fix the problem on the kerneldiff on kernel of iphone 7
+        
+        if [[ "$deviceid" == *'iPhone8'* ]] || [[ "$deviceid" == *'iPad6'* ]] || [[ "$deviceid" == *'iPad5'* ]]; then
+            python3 -m pyimg4 im4p create -i work/kcache.patched -o work/kcache.im4p -f rkrn --extra work/kpp.bin --lzss
+        else
+            python3 -m pyimg4 im4p create -i work/kcache.patched -o work/kcache.im4p -f rkrn --lzss
+        fi
+        python3 -m pyimg4 img4 create -p work/kcache.im4p -o work/kernelcache.img4 -m work/IM4M
+
 
         "$dir"/img4 -i work/"$(awk "/""${model}""/{x=1}x&&/DeviceTree[.]/{print;exit}" work/BuildManifest.plist | grep '<string>' |cut -d\> -f2 |cut -d\< -f1 | sed 's/Firmware[/]all_flash[/]//')" -o work/dtree.raw
         
