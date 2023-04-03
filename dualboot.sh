@@ -935,11 +935,9 @@ if [ true ]; then
         fi
         remote_cp work/*.img4 root@localhost:/mnt4/"$active"/usr/standalone/firmware/FUD/
         if [ "$(rm work/*.img4)" ]; then
-            
             echo "Finished Fixing firmwares"
         else
             echo "error fixing firmware, skipping ..."
-            fixHard=0
         fi   
         
         echo "rebooting"
