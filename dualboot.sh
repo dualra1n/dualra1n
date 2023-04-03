@@ -791,8 +791,7 @@ if [ true ]; then
                     echo "that look like you have the palera1n semitethered jailbreak, always add the command --jail-palera1n in order to fix it "
                     exit;
                 else
-                    echo "you have a system installed on the partition that will be used by this so ctrl +c and try to restorerootfs or ignore this (probably this wont boot into the second ios if you dont --restorerootfs before this)."
-                    read -p "click enter if you want to continue"
+                    echo "you have a system installed on the partition that will be used by this so ctrl +c and try to restorerootfs or ignore this (probably this wont boot into the second ios)."
                 fi
             else
                 echo "sucessfull verified"
@@ -868,7 +867,7 @@ if [ true ]; then
             remote_cmd "/sbin/mount_apfs /dev/disk0s1s${disk} /mnt8/"
             remote_cmd "/sbin/mount_apfs /dev/disk0s1s${dataB} /mnt9/"
             remote_cmd "/sbin/mount_apfs /dev/disk0s1s${prebootB} /mnt4/"
-            if [ ! $(remote_cmd "cp -a /mnt8/private/var/. /mnt9/.") ]; then # this will copy all file which is needed by dataB
+            if [ ! $(remote_cmd "cp -a /mnt8/private/var/* /mnt9/") ]; then # this will copy all file which is needed by dataB
                 echo "var was copied"
             fi
             sleep 2
@@ -941,11 +940,11 @@ if [ true ]; then
 
             if [ "$(remote_cp work/*.img4 root@localhost:/mnt4/"$active"/usr/standalone/firmware/FUD/)" ]; then
                 rm work/*.img4
-                echo "Finished Fixing firmwares"
             else
-                echo "error fixing firmware, skipping ..."
                 fixHard=0
-            fi   
+            fi
+            echo "Finished Fixing firmwares"
+        
         fi
         
         echo "rebooting"
@@ -999,13 +998,9 @@ if [ true ]; then
             "$dir"/gaster decrypt work/"$(awk "/""${model}""/{x=1}x&&/iBEC[.]/{print;exit}" work/BuildManifest.plist | grep '<string>' |cut -d\> -f2 |cut -d\< -f1 | sed 's/Firmware[/]dfu[/]//')" work/iBEC.dec
         fi
 
-        "$dir"/iBoot64Patcher work/iBEC.dec work/iBEC.patched -b "$(if [[ ! "$deviceid" == iPhone9,[1-4] ]] || [[ ! "$deviceid" == "iPhone10,"* ]]; then echo "rd=disk0s1s${disk}"; fi) -v wdt=-1 keepsyms=1 debug=0x2014e `if [ "$cpid" = '0x8960' ] || [ "$cpid" = '0x7000' ] || [ "$cpid" = '0x7001' ]; then echo "-restore"; fi`" -n 
-        if [[ "$deviceid" == iPhone9,[1-4] ]] || [[ "$deviceid" == "iPhone10,"* ]]; then
-            "$dir"/kairos work/iBEC.patched work/iBEC.patchedB -d "8"
-            "$dir"/img4 -i work/iBEC.patchedB -o work/iBEC.img4 -M work/IM4M -A -T ibec
-        else
-            "$dir"/img4 -i work/iBEC.patched -o work/iBEC.img4 -M work/IM4M -A -T ibec
-        fi
+        "$dir"/iBoot64Patcher work/iBEC.dec work/iBEC.patched -b "rd=disk0s1s${disk} -v wdt=-1 keepsyms=1 debug=0x2014e `if [ "$cpid" = '0x8960' ] || [ "$cpid" = '0x7000' ] || [ "$cpid" = '0x7001' ]; then echo "-restore"; fi`" -n 
+        "$dir"/img4 -i work/iBEC.patched -o work/iBEC.img4 -M work/IM4M -A -T ibec
+        
 
         if [[ "$deviceid" == "iPhone8"* ]] || [[ "$deviceid" == "iPad6"* ]] || [[ "$deviceid" == *'iPad5'* ]]; then
             python3 -m pyimg4 im4p extract -i work/"$(awk "/""${model}""/{x=1}x&&/kernelcache.release/{print;exit}" work/BuildManifest.plist | grep '<string>' |cut -d\> -f2 |cut -d\< -f1)" -o work/kcache.raw --extra work/kpp.bin
