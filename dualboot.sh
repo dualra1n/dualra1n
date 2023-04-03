@@ -939,8 +939,10 @@ if [ true ]; then
                 "$dir"/img4 -i work/"$(awk "/""${model}""/{x=1}x&&/adc/{print;exit}" work/BuildManifest.plist | grep '<string>' |cut -d\> -f2 |cut -d\< -f1 | sed 's/Firmware[/]isp_bni[/]//')" -o work/ISP.img4 -M work/IM4M
             fi
 
-            if [ "$(remote_cp work/*.img4 root@localhost:/mnt4/"$active"/usr/standalone/firmware/FUD/)" ]; then
-                rm work/*.img4
+            remote_cp work/*.img4 root@localhost:/mnt4/"$active"/usr/standalone/firmware/FUD/
+
+            if [ "$(rm work/*.img4)" ]; then
+                
                 echo "Finished Fixing firmwares"
             else
                 echo "error fixing firmware, skipping ..."
