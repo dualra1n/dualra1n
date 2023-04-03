@@ -1,0 +1,5 @@
+[*] Command ran: sudo ./dualboot.sh --boot
+[18:17:56.521][3] usbmuxd v1.1.1 starting up
+[18:17:56.522][3] Using libusb 1.0.26
+[18:17:56.529][3] Initialization complete
+Clonando en '/home/edwin/Documentos/ios/dualBoot/dualboot-ios-15-with-14-script/ramdisk'...

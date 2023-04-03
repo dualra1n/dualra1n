@@ -652,12 +652,16 @@ if [ true ]; then
         exit
     fi
     active=$(remote_cmd "cat /mnt6/active" 2> /dev/null)
+<<<<<<< HEAD
     echo "backup preboot partition... please dont delete the directory prebootBackup" # this will backup your perboot parition in case that was deleted by error 
+=======
+    echo "[*] Backing up preboot. Do not delete ./prebootBackup" # this will backup your perboot parition in case that was deleted by error 
+>>>>>>> f7b399773dc54cb5ba1563fa12e609633c2405dd
     mkdir -p "prebootBackup"
     if [ ! -d "prebootBackup/${deviceid}" ]; then
         mkdir -p "prebootBackup/${deviceid}"
         if [ ! $(remote_cp root@localhost:/mnt6/ "prebootBackup/${deviceid}") ]; then # that had a error so in case the error the script wont stop 
-            echo "finish backup"
+            echo "[*] Finished backup"
         fi
     fi
     
@@ -666,7 +670,7 @@ if [ true ]; then
     if [ "$restorerootfs" = "1" ]; then
         echo "[*] Removing dualboot"
         if [ ! "$(remote_cmd "/System/Library/Filesystems/apfs.fs/apfs.util -p /dev/disk0s1s${disk}")" == 'SystemB' ]; then # that will check if the partition is correct in order to dont delete a partition of the system
-            echo "error partition, maybe that partition is important so it could be deleted by apfs_deletefs, that is bad"
+            echo "[!] Partition error. Something may have been deleted improperly."
             exit; 
         fi
         # this eliminate dualboot paritions 
@@ -712,7 +716,7 @@ if [ true ]; then
         remote_cmd "/bin/chmod 755 /mnt8/private/var/root/Kernel15Patcher.ios"
         sleep 1
         if [ ! $(remote_cmd "/mnt8/private/var/root/Kernel15Patcher.ios /mnt4/$active/System/Library/Caches/com.apple.kernelcaches/kcache.raw /mnt4/$active/System/Library/Caches/com.apple.kernelcaches/kcache.patched") ]; then
-            echo "you have the kernelpath already installed "
+            echo "[!] Kernel patch already installed"
         fi
         sleep 2
         remote_cp root@localhost:/mnt4/"$active"/System/Library/Caches/com.apple.kernelcaches/kcache.patched work/ # that will return the kernelpatcher in order to be patched again and boot with it 
@@ -734,18 +738,18 @@ if [ true ]; then
         #remote_cp root@localhost:/mnt4/$active/System/Library/Caches/com.apple.kernelcaches/kernelcachd work/kernelcache.img4
         cp -rv "work/kernelcache.img4" "boot/${deviceid}"
         
-        echo "installing pogo in Tips and trollstore on TV"
+        echo "[*] Swapping out Tips with Pogo and TV with TrollHelper"
         unzip -n other/pogoMod14.ipa -d "other/"
         remote_cmd "/bin/mkdir -p /mnt8/Applications/Pogo.app && /bin/mkdir -p /mnt8/Applications/trollstore.app" # thank opa you are a tiger xd 
         echo "copying pogo so hang on please ..."
 
 	
         if [ ! $(remote_cmd "trollstoreinstaller TV") ]; then
-            echo "you have to install trollstore in order to intall taurine"
+            echo "error installing trollstore continuing ..."
         fi
 
         if [ "$taurine" = 1 ]; then
-            echo "installing taurine"
+            echo "[*} Installing Taurine"
             remote_cp other/taurine/* root@localhost:/mnt8/
             echo "finish now it will reboot"
             remote_cmd "/sbin/reboot"
@@ -791,7 +795,8 @@ if [ true ]; then
                     echo "that look like you have the palera1n semitethered jailbreak, always add the command --jail-palera1n in order to fix it "
                     exit;
                 else
-                    echo "you have a system installed on the partition that will be used by this so ctrl +c and try to restorerootfs or ignore this (probably this wont boot into the second ios)."
+                    echo "you have a system installed on the partition that will be used by this so ctrl +c and try to restorerootfs or ignore this (probably this wont boot into the second ios if you dont --restorerootfs before this)."
+                    read -p "click enter if you want to continue"
                 fi
             else
                 echo "sucessfull verified"
@@ -817,14 +822,14 @@ if [ true ]; then
             fi
              
 
-            echo "copying filesystem so hang on that could take 20 minute because is trought ssh"
+           # echo "copying filesystem so hang on that could take 20 minute because is trought ssh"
             if command -v rsync &>/dev/null; then
                 echo "rsync installed"
             else 
-                echo "you dont have rsync installed so the script will take much more time to copy the rootfs file, so install rsync in order to be faster."
+                echo "[!] rsync not installed. This might cause copying to take a bit longer."
             fi
             
-            echo "it is copying rootfs so hang on like 20 minute ......"
+            echo "[*] Copying filesystem to the new partition. This will take around 20 minutes."
             if [ "$os" = "Darwin" ]; then
                 if [ ! $("$dir"/sshpass -p 'alpine' rsync -rvz -e 'ssh -p 2222' --progress ipsw/out.dmg root@localhost:/mnt8) ]; then
                     remote_cp ipsw/out.dmg root@localhost:/mnt8 # this will copy the root file in order to it is mounted and restore partition      
@@ -867,25 +872,34 @@ if [ true ]; then
             remote_cmd "/sbin/mount_apfs /dev/disk0s1s${disk} /mnt8/"
             remote_cmd "/sbin/mount_apfs /dev/disk0s1s${dataB} /mnt9/"
             remote_cmd "/sbin/mount_apfs /dev/disk0s1s${prebootB} /mnt4/"
-            if [ ! $(remote_cmd "cp -a /mnt8/private/var/* /mnt9/") ]; then # this will copy all file which is needed by dataB
+<<<<<<< HEAD
+            if [ ! $(remote_cmd "cp -a /mnt8/private/var/. /mnt9/.") ]; then # this will copy all file which is needed by dataB
                 echo "var was copied"
+=======
+            if [ ! $(remote_cmd "cp -a /mnt8/private/var/* /mnt9/") ]; then # this will copy all file which is needed by dataB
+                echo "[*] /var copied successfully!"
+>>>>>>> f7b399773dc54cb5ba1563fa12e609633c2405dd
             fi
             sleep 2
             
             remote_cmd "mount_filesystems"
             remote_cmd "cp -na /mnt6/* /mnt4/" # copy preboot to prebootB
             if [ ! $(remote_cmd "cp -a /mnt2/mobile/Library/Preferences/com.apple.Accessibility* /mnt9/mobile/Library/Preferences/") ]; then
-                echo "activating assesivetouch"
+                echo "[*] Activating Assistive Touch"
             fi
-            echo "Finished crating the dualboot partitions and configurated some stuff. you can use --dont-create-part in order to dont have to copy and create all again."
+            echo "[*] Finished creating the dualboot partitions!"
 
-            echo "installing trollstore"
+            echo "[*] Installing TrollStore"
             remote_cmd "/bin/mkdir -p /mnt8/Applications/trollstore.app"
             remote_cp other/trollstore.app root@localhost:/mnt8/Applications/
             sleep 4
 	    
+<<<<<<< HEAD
             echo "now it is fixing firmwares"
             fixHard=1
+=======
+            echo "[*] Fixing firmware"
+>>>>>>> f7b399773dc54cb5ba1563fa12e609633c2405dd
             
              if [ "$(remote_cmd "ls /mnt6/$active/usr/standalone/firmware/FUD/AOP.img4")" ]; then
                 echo "AOP FOUND"
@@ -904,23 +918,38 @@ if [ true ]; then
                 fi
             fi
 
+<<<<<<< HEAD
             if [ "$(remote_cmd "ls /mnt6/$active/usr/standalone/firmware/FUD/Homer.img4")" ]; then
 
                 echo "Homer FOUND"
+=======
+            if [ -e "prebootBackup/$deviceid/mnt6/$active/usr/standalone/firmware/FUD/Homer.img4" ]; then
+                echo "[*] Homer FOUND"
+>>>>>>> f7b399773dc54cb5ba1563fa12e609633c2405dd
                 cp "$extractedIpsw$(awk "/""${model}""/{x=1}x&&/homer/{print;exit}" work/BuildManifest.plist | grep '<string>' |cut -d\> -f2 |cut -d\< -f1)" "work/"
                 "$dir"/img4 -i work/"$(awk "/""${model}""/{x=1}x&&/homer/{print;exit}" work/BuildManifest.plist | grep '<string>' |cut -d\> -f2 |cut -d\< -f1 | sed 's/Firmware[/]//')" -o work/Homer.img4 -M work/IM4M
             fi
             
+<<<<<<< HEAD
             if [ "$(remote_cmd "ls /mnt6/$active/usr/standalone/firmware/FUD/Multitouch.img4")" ]; then
 
                 echo "Multitouch FOUND"
+=======
+            if [ -e "prebootBackup/$deviceid/mnt6/$active/usr/standalone/firmware/FUD/Multitouch.img4" ]; then
+                echo "[*] Multitouch FOUND"
+>>>>>>> f7b399773dc54cb5ba1563fa12e609633c2405dd
                 cp "$extractedIpsw$(awk "/""${model}""/{x=1}x&&/_Multitouch[.]/{print;exit}" work/BuildManifest.plist | grep '<string>' |cut -d\> -f2 |cut -d\< -f1)" "work/"
                 "$dir"/img4 -i work/"$(awk "/""${model}""/{x=1}x&&/_Multitouch[.]/{print;exit}" work/BuildManifest.plist | grep '<string>' |cut -d\> -f2 |cut -d\< -f1 | sed 's/Firmware[/]//')" -o work/Multitouch.img4 -M work/IM4M
             fi
 
+<<<<<<< HEAD
             if [ "$(remote_cmd "ls /mnt6/$active/usr/standalone/firmware/FUD/AVE.img4")" ]; then
 
                 echo "AVE FOUND"
+=======
+            if [ -e "prebootBackup/$deviceid/mnt6/$active/usr/standalone/firmware/FUD/AVE.img4" ]; then
+                echo "[*] AVE FOUND"
+>>>>>>> f7b399773dc54cb5ba1563fa12e609633c2405dd
                 cp -v "prebootBackup/$deviceid/mnt6/$active/usr/standalone/firmware/FUD/AVE.img4" "work/"
             fi
             
@@ -931,20 +960,31 @@ if [ true ]; then
                 "$dir"/img4 -i work/"$(awk "/""${model}""/{x=1}x&&/_CallanFirmware[.]/{print;exit}" work/BuildManifest.plist | grep '<string>' |cut -d\> -f2 |cut -d\< -f1 | sed 's/Firmware[/]//')" -o work/AudioCodecFirmware.img4 -M work/IM4M
             fi
 
+<<<<<<< HEAD
             if [ "$(remote_cmd "ls /mnt6/$active/usr/standalone/firmware/FUD/ISP.img4")" ]; then
 
                 echo "ISP FOUND"
+=======
+            if [ -e "prebootBackup/$deviceid/mnt6/$active/usr/standalone/firmware/FUD/ISP.img4" ]; then
+                echo "[*] ISP FOUND"
+>>>>>>> f7b399773dc54cb5ba1563fa12e609633c2405dd
                 cp "$extractedIpsw$(awk "/""${model}""/{x=1}x&&/adc/{print;exit}" work/BuildManifest.plist | grep '<string>' |cut -d\> -f2 |cut -d\< -f1)" "work/"
                 "$dir"/img4 -i work/"$(awk "/""${model}""/{x=1}x&&/adc/{print;exit}" work/BuildManifest.plist | grep '<string>' |cut -d\> -f2 |cut -d\< -f1 | sed 's/Firmware[/]isp_bni[/]//')" -o work/ISP.img4 -M work/IM4M
             fi
 
             if [ "$(remote_cp work/*.img4 root@localhost:/mnt4/"$active"/usr/standalone/firmware/FUD/)" ]; then
                 rm work/*.img4
+                echo "Finished Fixing firmwares"
             else
+                echo "error fixing firmware, skipping ..."
                 fixHard=0
+<<<<<<< HEAD
+            fi   
+=======
             fi
-            echo "Finished Fixing firmwares"
+            echo "[*] Done fixing firmware!"
         
+>>>>>>> f7b399773dc54cb5ba1563fa12e609633c2405dd
         fi
         
         echo "rebooting"
@@ -955,7 +995,7 @@ if [ true ]; then
         _dfuhelper "$cpid"
         sleep 3
 
-        echo "copying files to work"
+        echo "[*] Copying some files"
         if [ "$fixBoot" = "1" ]; then # i put it because my friend tested on his ipad and that does not boot so when we download all file from the internet so not extracting ipsw that boot fine idk why 
             cd work
             #that will download the files needed
@@ -984,7 +1024,7 @@ if [ true ]; then
                 cp "$extractedIpsw"/Firmware/"$(binaries/Linux/PlistBuddy work/BuildManifest.plist -c "Print BuildIdentities:0:Manifest:OS:Info:Path" | sed 's/"//g')".trustcache work/
             fi
         fi
-        echo "patching file boots ..."
+        echo "[*] Patching boot files"
         
         "$dir"/img4 -i work/*.trustcache -o work/trustcache.img4 -M work/IM4M -T rtsc
 
@@ -998,9 +1038,13 @@ if [ true ]; then
             "$dir"/gaster decrypt work/"$(awk "/""${model}""/{x=1}x&&/iBEC[.]/{print;exit}" work/BuildManifest.plist | grep '<string>' |cut -d\> -f2 |cut -d\< -f1 | sed 's/Firmware[/]dfu[/]//')" work/iBEC.dec
         fi
 
-        "$dir"/iBoot64Patcher work/iBEC.dec work/iBEC.patched -b "rd=disk0s1s${disk} -v wdt=-1 keepsyms=1 debug=0x2014e `if [ "$cpid" = '0x8960' ] || [ "$cpid" = '0x7000' ] || [ "$cpid" = '0x7001' ]; then echo "-restore"; fi`" -n 
-        "$dir"/img4 -i work/iBEC.patched -o work/iBEC.img4 -M work/IM4M -A -T ibec
-        
+        "$dir"/iBoot64Patcher work/iBEC.dec work/iBEC.patched -b "$(if [[ ! "$deviceid" == iPhone9,[1-4] ]] || [[ ! "$deviceid" == "iPhone10,"* ]]; then echo "rd=disk0s1s${disk}"; fi) -v wdt=-1 keepsyms=1 debug=0x2014e `if [ "$cpid" = '0x8960' ] || [ "$cpid" = '0x7000' ] || [ "$cpid" = '0x7001' ]; then echo "-restore"; fi`" -n 
+        if [[ "$deviceid" == iPhone9,[1-4] ]] || [[ "$deviceid" == "iPhone10,"* ]]; then
+            "$dir"/kairos work/iBEC.patched work/iBEC.patchedB -d "8"
+            "$dir"/img4 -i work/iBEC.patchedB -o work/iBEC.img4 -M work/IM4M -A -T ibec
+        else
+            "$dir"/img4 -i work/iBEC.patched -o work/iBEC.img4 -M work/IM4M -A -T ibec
+        fi
 
         if [[ "$deviceid" == "iPhone8"* ]] || [[ "$deviceid" == "iPad6"* ]] || [[ "$deviceid" == *'iPad5'* ]]; then
             python3 -m pyimg4 im4p extract -i work/"$(awk "/""${model}""/{x=1}x&&/kernelcache.release/{print;exit}" work/BuildManifest.plist | grep '<string>' |cut -d\> -f2 |cut -d\< -f1)" -o work/kcache.raw --extra work/kpp.bin
