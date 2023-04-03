@@ -804,6 +804,21 @@ if [ true ]; then
 
     if [ "$dualboot" = "1" ]; then
         if [ -z "$dont_createPart" ]; then # if you have already your second ios you can omited with this
+            echo "verifying if we can continue with the dualboot"
+
+            if [ "$(remote_cmd "ls /dev/disk0s1s${disk}")" ]; then
+                if [ "$(remote_cmd "/System/Library/Filesystems/apfs.fs/apfs.util -p /dev/disk0s1s${disk}")" == 'Xystem' ]; then
+                    echo "that look like you have the palera1n semitethered jailbreak, always add the command --jail-palera1n in order to fix it "
+                    exit;
+                else
+                    echo "you have a system installed on the partition that will be used by this so ctrl +c and try to restorerootfs or ignore this (probably this wont boot into the second ios if you dont --restorerootfs before this)."
+                    read -p "click enter if you want to continue"
+                fi
+            else
+                echo "sucessfull verified"
+            fi
+           
+           
             echo "[*] Creating partitions"
 
         	if [ ! $(remote_cmd "/sbin/newfs_apfs -o role=i -A -v SystemX /dev/disk0s1") ] && [ ! $(remote_cmd "/sbin/newfs_apfs -o role=0 -A -v DataX /dev/disk0s1") ]; then # i put this in case that resturn a error the script can continuing
@@ -851,7 +866,7 @@ if [ true ]; then
                 if [[ ! "$version" = "13."* ]]; then
                     remote_cmd "/sbin/mount_apfs -o ro $dmg_disk /mnt5/"
                 else 
-                    remote_cmd "/sbin/mount_apfs -o ro "$dmg_disk"s1 /mnt5/"
+                    remote_cmd "/sbin/mount_apfs -o ro ""$dmg_disk""s1 /mnt5/"
                 fi
                 echo "it is extracting the files so please hang on ......."
                 
@@ -861,7 +876,7 @@ if [ true ]; then
                 if [[ ! "$version" = "13."* ]]; then
                     remote_cmd "/sbin/umount $dmg_disk"
                 else
-                    remote_cmd "/sbin/umount "$dmg_disk"s1 "
+                    remote_cmd "/sbin/umount ""$dmg_disk""s1"
                 fi
                 remote_cmd "rm -rv /mnt8/${dmgfile}"
             fi
@@ -939,16 +954,18 @@ if [ true ]; then
 
         if [ "$fixHard" = "1" ]; then
             if [ "$dont_createPart" = "1" ]; then
-                remote_cmd "/sbin/mount_apfs /dev/disk0s1s${disk} /mnt8/"
+            remote_cmd "/sbin/mount_apfs /dev/disk0s1s${disk} /mnt8/"
+            sleep 1
             fi
 
-            if [ -e "prebootBackup/$deviceid/mnt6/$active/usr/standalone/firmware/FUD/AOP.img4" ]; then
+            if [ "$(remote_cmd "ls /mnt6/$active/usr/standalone/firmware/FUD/AOP.img4")" ]; then
                 echo "AOP FOUND"
                 cp "$extractedIpsw$(awk "/""${model}""/{x=1}x&&/aop/{print;exit}" work/BuildManifest.plist | grep '<string>' |cut -d\> -f2 |cut -d\< -f1)" "work/"
                 "$dir"/img4 -i work/"$(awk "/""${model}""/{x=1}x&&/aop/{print;exit}" work/BuildManifest.plist | grep '<string>' |cut -d\> -f2 |cut -d\< -f1 | sed 's/Firmware[/]AOP[/]//')" -o work/AOP.img4 -M work/IM4M
             fi
             
-            if [ -e "prebootBackup/$deviceid/mnt6/$active/usr/standalone/firmware/FUD/StaticTrustCache.img4" ]; then
+            if [ "$(remote_cmd "ls /mnt6/$active/usr/standalone/firmware/FUD/StaticTrustCache.img4")" ]; then
+
                 echo "StaticTrustCache FOUND"
 
                 if [ "$os" = 'Darwin' ]; then
@@ -958,30 +975,35 @@ if [ true ]; then
                 fi
             fi
 
-            if [ -e "prebootBackup/$deviceid/mnt6/$active/usr/standalone/firmware/FUD/Homer.img4" ]; then
+            if [ "$(remote_cmd "ls /mnt6/$active/usr/standalone/firmware/FUD/Homer.img4")" ]; then
+
                 echo "Homer FOUND"
                 cp "$extractedIpsw$(awk "/""${model}""/{x=1}x&&/homer/{print;exit}" work/BuildManifest.plist | grep '<string>' |cut -d\> -f2 |cut -d\< -f1)" "work/"
                 "$dir"/img4 -i work/"$(awk "/""${model}""/{x=1}x&&/homer/{print;exit}" work/BuildManifest.plist | grep '<string>' |cut -d\> -f2 |cut -d\< -f1 | sed 's/Firmware[/]//')" -o work/Homer.img4 -M work/IM4M
             fi
             
-            if [ -e "prebootBackup/$deviceid/mnt6/$active/usr/standalone/firmware/FUD/Multitouch.img4" ]; then
+            if [ "$(remote_cmd "ls /mnt6/$active/usr/standalone/firmware/FUD/Multitouch.img4")" ]; then
+
                 echo "Multitouch FOUND"
                 cp "$extractedIpsw$(awk "/""${model}""/{x=1}x&&/_Multitouch[.]/{print;exit}" work/BuildManifest.plist | grep '<string>' |cut -d\> -f2 |cut -d\< -f1)" "work/"
                 "$dir"/img4 -i work/"$(awk "/""${model}""/{x=1}x&&/_Multitouch[.]/{print;exit}" work/BuildManifest.plist | grep '<string>' |cut -d\> -f2 |cut -d\< -f1 | sed 's/Firmware[/]//')" -o work/Multitouch.img4 -M work/IM4M
             fi
 
-            if [ -e "prebootBackup/$deviceid/mnt6/$active/usr/standalone/firmware/FUD/AVE.img4" ]; then
+            if [ "$(remote_cmd "ls /mnt6/$active/usr/standalone/firmware/FUD/AVE.img4")" ]; then
+
                 echo "AVE FOUND"
                 cp -v "prebootBackup/$deviceid/mnt6/$active/usr/standalone/firmware/FUD/AVE.img4" "work/"
             fi
             
-            if [ -e "prebootBackup/$deviceid/mnt6/$active/usr/standalone/firmware/FUD/AudioCodecFirmware.img4" ]; then
+            if [ "$(remote_cmd "ls /mnt6/$active/usr/standalone/firmware/FUD/AudioCodecFirmware.img4")" ]; then
+
                 echo "AudioCodecFirmware FOUND"
                 cp "$extractedIpsw$(awk "/""${model}""/{x=1}x&&/_CallanFirmware[.]/{print;exit}" work/BuildManifest.plist | grep '<string>' |cut -d\> -f2 |cut -d\< -f1)" "work/"
                 "$dir"/img4 -i work/"$(awk "/""${model}""/{x=1}x&&/_CallanFirmware[.]/{print;exit}" work/BuildManifest.plist | grep '<string>' |cut -d\> -f2 |cut -d\< -f1 | sed 's/Firmware[/]//')" -o work/AudioCodecFirmware.img4 -M work/IM4M
             fi
 
-            if [ -e "prebootBackup/$deviceid/mnt6/$active/usr/standalone/firmware/FUD/ISP.img4" ]; then
+            if [ "$(remote_cmd "ls /mnt6/$active/usr/standalone/firmware/FUD/ISP.img4")" ]; then
+
                 echo "ISP FOUND"
                 cp "$extractedIpsw$(awk "/""${model}""/{x=1}x&&/adc/{print;exit}" work/BuildManifest.plist | grep '<string>' |cut -d\> -f2 |cut -d\< -f1)" "work/"
                 "$dir"/img4 -i work/"$(awk "/""${model}""/{x=1}x&&/adc/{print;exit}" work/BuildManifest.plist | grep '<string>' |cut -d\> -f2 |cut -d\< -f1 | sed 's/Firmware[/]isp_bni[/]//')" -o work/ISP.img4 -M work/IM4M
@@ -1065,8 +1087,13 @@ if [ true ]; then
             "$dir"/gaster decrypt work/"$(awk "/""${model}""/{x=1}x&&/iBEC[.]/{print;exit}" work/BuildManifest.plist | grep '<string>' |cut -d\> -f2 |cut -d\< -f1 | sed 's/Firmware[/]dfu[/]//')" work/iBEC.dec
         fi
 
-        "$dir"/iBoot64Patcher work/iBEC.dec work/iBEC.patched -b "rd=disk0s1s${disk} -v wdt=-1 keepsyms=1 debug=0x2014e `if [ "$cpid" = '0x8960' ] || [ "$cpid" = '0x7000' ] || [ "$cpid" = '0x7001' ]; then echo "-restore"; fi`" -n 
-        "$dir"/img4 -i work/iBEC.patched -o work/iBEC.img4 -M work/IM4M -A -T ibec
+        "$dir"/iBoot64Patcher work/iBEC.dec work/iBEC.patched -b "$(if [[ ! "$deviceid" == iPhone9,[1-4] ]] || [[ ! "$deviceid" == "iPhone10,"* ]]; then echo "rd=disk0s1s${disk}"; fi) -v wdt=-1 keepsyms=1 debug=0x2014e `if [ "$cpid" = '0x8960' ] || [ "$cpid" = '0x7000' ] || [ "$cpid" = '0x7001' ]; then echo "-restore"; fi`" -n 
+        if [[ "$deviceid" == iPhone9,[1-4] ]] || [[ "$deviceid" == "iPhone10,"* ]]; then
+            "$dir"/kairos work/iBEC.patched work/iBEC.patchedB -d "8"
+            "$dir"/img4 -i work/iBEC.patchedB -o work/iBEC.img4 -M work/IM4M -A -T ibec
+        else
+            "$dir"/img4 -i work/iBEC.patched -o work/iBEC.img4 -M work/IM4M -A -T ibec
+        fi
 
         "$dir"/Kernel64Patcher work/kcache.patched work/kcache.patchedB -a -b13 -e `if [ "$fixBoot" = "1" ]; then echo "-s"; fi` # that sometimes fix some problem on the boot also i put kernel64patcherA because that fix the problem on the kerneldiff on kernel of iphone 7
         
