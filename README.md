@@ -17,7 +17,7 @@ Options:
 
 `--taurine`           Jailbreak dualbooted iOS with [Taurine](https://taurine.app). Usage: `./dualboot.sh --jailbreak 14.3 --taurine` (currently ***NOT RECOMMENDED***)
    
-`--fixHard`           Fixes microphone, girocopes, camera, audio, touchscreen, etc. (the Home button is not fixed yet)
+`--fixHard`           Fixes microphone, girocopes, camera, audio, touchscreen, etc.
 
 `--help`              Print this help.
        
@@ -60,17 +60,15 @@ iOS 13 is working but only 13.6, 13.7. If you want to dualboot iOS 13, use the [
 
 # Common Issues
 
-- A9 : Everything works except Camera, Microphone and Gyroscope. (Can be fixed with a userspace reboot or by using iOS 14.2)
-
-- A10/11/X: Home button is not working. You can, however, use tweaks like GesturesXV to simulate iPhone X gestures. You can also activate Assistive Touch on the main iOS and have it also enabled on the dualbooted iOS.
-
-- iPads may have issues with "Deep Sleep" (iOS not "waking up" after the display going to sleep). Installing the tweak [Fiona](https://www.ios-repo-updates.com/repository/julioverne-s-repo/package/com.julioverne.fiona/) may fix this.
+- iPhone and iPads may have issues with "Deep Sleep" (iOS not "waking up" after the display going to sleep). Installing the tweak [Fiona](https://www.ios-repo-updates.com/repository/julioverne-s-repo/package/com.julioverne.fiona/) may fix this.
 
 - You can fix the above problems by adding `--fixHard`. For instructions on how to do that, check [a full tutorial](https://github.com/dualra1n/dualra1n/blob/main/tutorial.md).
 
 # How would I dualboot?
 
+
 - [A full tutorial](https://github.com/dualra1n/dualra1n/blob/main/tutorial.md)
+
 
 - [Video tutorial from burhanrana](https://www.youtube.com/watch?v=4iCZv7Ox5AA)
 
@@ -81,7 +79,7 @@ iOS 13 is working but only 13.6, 13.7. If you want to dualboot iOS 13, use the [
 [My Paypal](https://www.paypal.me/EdwinNunez2004)
 
 <details><summary>Why did I decide to put a donate me?</summary>
-"dualra1n" is not a team, it is just a name for this tool, this means that I created this script, therefore you can support me with whatever you have. This is important for me because right now, I don't have any source of income. I would be glad to receive something for creating this tool. If you can't donate, no problem, just enjoy dualbooting.
+"dualra1n" is not a team, it is just a name for this tool, this means that I created this script, therefore you can support me with whatever you have. If you can't donate, no problem, just enjoy dualbooting.
 </details>
 
 # Credits
