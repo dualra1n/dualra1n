@@ -683,7 +683,7 @@ if [ true ]; then
 
     if [ "$restorerootfs" = "1" ]; then
         echo "[*] Removing dualboot"
-        if [ ! "$(remote_cmd "/System/Library/Filesystems/apfs.fs/apfs.util -p /dev/disk0s1s${disk}")" == 'SystemX' ]; then # that will check if the partition is correct in order to dont delete a partition of the system
+        if [ ! "$(remote_cmd "/System/Library/Filesystems/apfs.fs/apfs.util -p /dev/disk0s1s${disk}")" == 'SystemB' ]; then # that will check if the partition is correct in order to dont delete a partition of the system
             echo "error partition, maybe that partition is important so it could be deleted by apfs_deletefs, that is bad"
             exit; 
         fi
@@ -821,7 +821,7 @@ if [ true ]; then
            
             echo "[*] Creating partitions"
 
-        	if [ ! $(remote_cmd "/sbin/newfs_apfs -o role=i -A -v SystemX /dev/disk0s1") ] && [ ! $(remote_cmd "/sbin/newfs_apfs -o role=0 -A -v DataX /dev/disk0s1") ]; then # i put this in case that resturn a error the script can continuing
+        	if [ ! $(remote_cmd "/sbin/newfs_apfs -o role=i -A -v SystemB /dev/disk0s1") ] && [ ! $(remote_cmd "/sbin/newfs_apfs -o role=0 -A -v DataX /dev/disk0s1") ]; then # i put this in case that resturn a error the script can continuing
                 echo "[*] partitions created, continuing..."
 	        fi
             
