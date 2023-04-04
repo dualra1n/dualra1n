@@ -767,7 +767,7 @@ if [ true ]; then
 
         if [ "$odyssey" = 1 ]; then
             unzip other/odysseymod.ipa -d other/
-            mv -v other/Payload/Odyssey.app/ other/Payload/Applications/
+            mv -nv other/Payload/Odyssey.app/ other/Payload/Applications/
             echo "installing odyssey"
             remote_cp other/Payload/Applications/ root@localhost:/mnt8/
             echo "finish now it will reboot"
@@ -941,7 +941,7 @@ if [ true ]; then
             echo "copying odyssey to /applications/"
             unzip other/odysseymod.ipa -d other/
             mkdir -p other/Payload/Applications/
-            mv -v other/Payload/Odyssey.app/ other/Payload/Applications/
+            mv -nv other/Payload/Odyssey.app/ other/Payload/Applications/
             echo "installing odyssey"
             remote_cp other/Payload/Applications/ root@localhost:/mnt8/
 
