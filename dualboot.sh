@@ -60,7 +60,7 @@ print_help() {
     cat << EOF
 Usage: $0 [options] [ subcommand | iOS version that you're on ]
 You must have around 10 GB of free storage, and the .iPSW file of the iOS which you wish to downgrade to in dualra1n/ipsw/.
-Currently, only iOS 14 and 15 are supported. Downgrading from or upgrading to iOS 16 is not and will likely never be supported.
+Currently, only iOS 14 and 15 are supported. Downgrading from or dualboot to iOS 16 is not and will likely never be supported.
 
 Options:
     --dualboot              Dualboot your iDevice.
@@ -791,7 +791,7 @@ if [ true ]; then
                     echo "that look like you have the palera1n semitethered jailbreak, always add the command --jail-palera1n in order to fix it "
                     exit;
                 else
-                    echo "you have a system installed on the partition that will be used by this so ctrl +c and try to restorerootfs or ignore this (probably this wont boot into the second ios if you dont --restorerootfs before this)."
+                    echo "you have a system installed on the partition that will be used by this, so ctrl+c and try to restorerootfs or ignore this by pressing [enter]. (probably dualboot wont boot into the second ios if you dont --restorerootfs before this)."
                     read -p "click enter if you want to continue"
                 fi
             else
