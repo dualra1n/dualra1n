@@ -52,7 +52,7 @@ iOS 13 is working but only 13.6, 13.7. If you want to dualboot iOS 13, use the [
 
 # Common Issues
 
-- A9 : Everything works except Camera, Microphone and Gyroscope. (Can be fixed with a userspace reboot or by using iOS 14.2)
+- A9 : Everything works except.
 
 - A10/11/X: Home button is not working. You can, however, use tweaks like GesturesXV to simulate iPhone X gestures. You can also activate Assistive Touch on the main iOS and have it also enabled on the dualbooted iOS.
 
