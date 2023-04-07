@@ -64,9 +64,7 @@ Options:
     --dualboot          dualboot your idevice with ios 13. 
     --jail-palera1n     uses only if you have the palera1n semitethered jailbreak installed, it will create partition on disk + 1 because palera1n create a new partition. disk0s1s8 however if you jailbreakd with palera1n the disk would be disk0s1s9"
     --get-ipsw          sometimes this does'nt work well ,using this will download a ipsw of your version which you want to dualboot. its better that you download the ipsw manually. if you will use this ,use it alone and the version --get-ipsw 14.2.
-    --jailbreak         jailbreak your second ios. you can use it when your device boot correctly the second ios. alone for example --jailbreak 14.2
-    --fixHard           this will fix microphone, girocopes, camera, audio, etc. at the moment home button its not fixed yet.
-    --odyssey           this will install the jailbreak of odyssey. ./dualboot.sh --jailbreak 14.3 --odyssey. not recommended
+    --fixHard           this will fix microphone, girocopes, camera, audio, etc.  home button its not working on ios 13.
     --fixBoot           this just will download the boot files instead of using the ipsw ones
     --help              Print this help
     --dfuhelper         A helper to help get A11 devices into DFU mode from recovery mode
@@ -113,12 +111,6 @@ parse_opt() {
             ;;
         --jail-palera1n)
             jail_palera1n=1
-            ;;
-        --jailbreak)
-            jailbreak=1
-            ;;
-        --odyssey)
-            odyssey=1
             ;;
         --dfuhelper)
             dfuhelper=1
@@ -572,7 +564,7 @@ if [[ ${#ipsw_files[@]} -gt 1 ]]; then
 fi
 cd ..
 
-if [ "$dualboot" = "1" ] || [ "$jailbreak" = "1" ]; then
+if [ "$dualboot" = "1" ]; then
     # extracting ipsw
     echo "extracting ipsw, hang on please ..." # this will extract the ipsw into ipsw/extracted
     unzip -n $ipsw -d "ipsw/extracted"
@@ -604,7 +596,6 @@ if [ true ]; then
     cd ramdisk
     chmod +x sshrd.sh
     echo "[*] Creating ramdisk"
-    tweaks=1
     ./sshrd.sh 15.6
 
     echo "[*] Booting ramdisk"
@@ -707,100 +698,6 @@ if [ true ]; then
     #rm dump.raw
     remote_cp root@localhost:/mnt6/$active/System/Library/Caches/apticket.der blobs/"$deviceid"-"$version".der
     cp -av blobs/"$deviceid"-"$version".der work/IM4M
-
-    if [ "$jailbreak" = "1" ]; then
-        echo "patching kernel" # this will send and patch the kernel
-        cp "$extractedIpsw$(awk "/""${model}""/{x=1}x&&/kernelcache.release/{print;exit}" work/BuildManifest.plist | grep '<string>' |cut -d\> -f2 |cut -d\< -f1)" "work/"
-        cp work/"$(awk "/""${model}""/{x=1}x&&/kernelcache.release/{print;exit}" work/BuildManifest.plist | grep '<string>' |cut -d\> -f2 |cut -d\< -f1)" work/kernelcache 
-        
-        if [[ "$deviceid" == "iPhone8"* ]] || [[ "$deviceid" == "iPad6"* ]] || [[ "$deviceid" == *'iPad5'* ]]; then
-            python3 -m pyimg4 im4p extract -i work/kernelcache -o work/kcache.raw --extra work/kpp.bin
-        else
-            python3 -m pyimg4 im4p extract -i work/kernelcache -o work/kcache.raw
-        fi
-        
-        remote_cmd "/sbin/mount_apfs /dev/disk0s1s${disk} /mnt8/"
-        remote_cmd "/sbin/umount /dev/disk0s1s2"
-        remote_cmd "/sbin/mount_apfs /dev/disk0s1s${dataB} /mnt2/"
-        #remote_cmd "/sbin/mount_apfs /dev/disk0s1s${prebootB} /mnt4/"
-        remote_cp work/kcache.raw root@localhost:/mnt8/System/Library/Caches/com.apple.kernelcaches/kcache.raw
-        remote_cp boot/"${deviceid}"/kernelcache.img4 "root@localhost:/mnt8/System/Library/Caches/com.apple.kernelcaches/kernelcache"
-        remote_cp binaries/Kernel13Patcher.ios root@localhost:/mnt8/private/var/root/Kernel13Patcher.ios
-        remote_cmd "/usr/sbin/chown 0 /mnt8/private/var/root/Kernel13Patcher.ios"
-        remote_cmd "/bin/chmod 755 /mnt8/private/var/root/Kernel13Patcher.ios"
-        sleep 1
-        if [ ! $(remote_cmd "/mnt8/private/var/root/Kernel13Patcher.ios /mnt8/System/Library/Caches/com.apple.kernelcaches/kcache.raw /mnt8/System/Library/Caches/com.apple.kernelcaches/kcache.patched") ]; then
-            echo "you have the kernelpath already installed "
-        fi
-        sleep 2
-        remote_cp root@localhost:/mnt8/System/Library/Caches/com.apple.kernelcaches/kcache.patched work/ # that will return the kernelpatcher in order to be patched again and boot with it 
-        "$dir"/Kernel64Patcher work/kcache.patched work/kcache.patchedB -s -b13 -e `if [ ! "$odyssey" = "1" ]; then echo "-l"; fi`
-
-        if [[ "$deviceid" == *'iPhone8'* ]] || [[ "$deviceid" == *'iPad6'* ]] || [[ "$deviceid" == *'iPad5'* ]]; then
-            python3 -m pyimg4 im4p create -i work/kcache.patchedB -o work/kcache.im4p -f rkrn --extra work/kpp.bin --lzss
-        elif [ "$tweaks" = "1" ]; then
-            python3 -m pyimg4 im4p create -i work/kcache.patchedB -o work/kcache.im4p -f rkrn --lzss
-        fi
-
-        remote_cp work/kcache.im4p root@localhost:/mnt8/System/Library/Caches/com.apple.kernelcaches/
-        remote_cmd "img4 -i /mnt8/System/Library/Caches/com.apple.kernelcaches/kcache.im4p -o /mnt8/System/Library/Caches/com.apple.kernelcaches/kernelcache -M /mnt8/System/Library/Caches/apticket.der"
-        remote_cmd "rm -f /mnt8/System/Library/Caches/com.apple.kernelcaches/kcache.raw /mnt8/System/Library/Caches/com.apple.kernelcaches/kcache.patched /mnt8/System/Library/Caches/com.apple.kernelcaches/kcache.im4p"
-        python3 -m pyimg4 img4 create -p work/kcache.im4p -o work/kernelcache.img4 -m work/IM4M
-
-        #"$dir"/kerneldiff work/kcache.raw work/kcache.patchedB work/kc.bpatch
-        #"$dir"/img4 -i work/"$(awk "/""${model}""/{x=1}x&&/kernelcache.release/{print;exit}" work/BuildManifest.plist | grep '<string>' |cut -d\> -f2 |cut -d\< -f1)" -o work/kernelcache.img4 -M work/IM4M -T rkrn -P work/kc.bpatch `if [ "$os" = 'Linux' ]; then echo "-J"; fi`
-        #remote_cp root@localhost:/mnt4/$active/System/Library/Caches/com.apple.kernelcaches/kernelcachd work/kernelcache.img4
-        cp -rv "work/kernelcache.img4" "boot/${deviceid}"
-        
-        echo "installing pogo in Tips and trollstore on TV"
-        unzip -n other/pogoMod14.ipa -d "other/"
-        remote_cmd "/bin/mkdir -p /mnt8/Applications/Pogo.app && /bin/mkdir -p /mnt8/Applications/trollstore.app" # thank opa you are a tiger xd 
-        echo "copying pogo and trollstore so hang on please ..."
-        remote_cp other/trollstore.app root@localhost:/mnt8/Applications/
-        if [ ! $(remote_cmd "trollstoreinstaller TV") ]; then
-            echo "you have to install trollstore in order to intall odyssey"
-        fi
-
-        remote_cp other/Payload/Pogo.app root@localhost:/mnt8/Applications/
-        echo "it is copying so hang on please "
-        remote_cmd "chmod +x /mnt8/Applications/Pogo.app/Pogo* && /usr/sbin/chown 33 /mnt8/Applications/Pogo.app/Pogo && /bin/chmod 755 /mnt8/Applications/Pogo.app/PogoHelper && /usr/sbin/chown 0 /mnt8/Applications/Pogo.app/PogoHelper" 
-
-        if [ "$odyssey" = 1 ]; then
-            unzip other/odysseymod.ipa -d other/
-            mv -nv other/Payload/Odyssey.app/ other/Payload/Applications/
-            echo "installing odyssey"
-            remote_cp other/Payload/Applications/ root@localhost:/mnt8/
-            echo "finish now it will reboot"
-            remote_cmd "/sbin/reboot"
-            exit;
-        fi
-
-        remote_cp other/Payload/Pogo.app root@localhost:/mnt8/Applications/
-        echo "it is copying so hang on please "
-        remote_cmd "chmod +x /mnt8/Applications/Pogo.app/Pogo* && /usr/sbin/chown 33 /mnt8/Applications/Pogo.app/Pogo && /bin/chmod 755 /mnt8/Applications/Pogo.app/PogoHelper && /usr/sbin/chown 0 /mnt8/Applications/Pogo.app/PogoHelper" 
-        echo "installing palera1n jailbreak, thanks palera1n team"
-        echo "[*] Copying files to rootfs"
-        remote_cmd "rm -rf /mnt8/jbin /mnt8/.installed_palera1n"
-        sleep 1
-        remote_cmd "mkdir -p /mnt8/jbin/binpack /mnt8/jbin/loader.app"
-        sleep 1
-
-
-        sleep 1
-        # this is the jailbreak of palera1n being installing 
-        cp -v other/post.sh other/rootfs/jbin/
-        remote_cp -r other/rootfs/* root@localhost:/mnt8/
-        remote_cmd "ldid -s /mnt8/jbin/launchd /mnt8/jbin/jbloader /mnt8/jbin/jb.dylib"
-        remote_cmd "chmod +rwx /mnt8/jbin/launchd /mnt8/jbin/jbloader /mnt8/jbin/post.sh"
-        remote_cmd "tar -xvf /mnt8/jbin/binpack/binpack.tar -C /mnt8/jbin/binpack/"
-        sleep 1
-        remote_cmd "rm /mnt8/jbin/binpack/binpack.tar"
-        remote_cmd "/usr/sbin/nvram auto-boot=true"
-        echo "[*] DONE ... now reboot and boot again"        
-        remote_cmd "/sbin/reboot"
-        exit;
-
-    fi
 
     if [ "$dualboot" = "1" ]; then
         if [ -z "$dont_createPart" ]; then # if you have already your second ios you can omited with this
@@ -941,10 +838,18 @@ if [ true ]; then
             echo "copying odyssey to /applications/"
             unzip other/odysseymod.ipa -d other/
             mkdir -p other/Payload/Applications/
-            mv -nv other/Payload/Odyssey.app/ other/Payload/Applications/
             echo "installing odyssey"
+
+            echo "installing dualra1n-loader"
+            unzip other/dualra1n-loader.ipa -d other/
+
+            mv -nv other/Payload/Odyssey.app/  other/Payload/dualra1n-loader.app/  other/Payload/Applications/
             remote_cp other/Payload/Applications/ root@localhost:/mnt8/
 
+            echo "saving snapshot"
+            if [ "$(remote_cmd "/usr/bin/snaputil -c orig-fs /mnt8")" ]; then
+                echo "error saving snapshot, SKIPPING ..."
+            fi
 
             echo "finish to copy partition so if you will create the boot files again put --dont-create-part in order to dont have to copy the filesystem again"
             sleep 3
@@ -1013,6 +918,7 @@ if [ true ]; then
             echo "Finished Fixing firmwares"
             rm work/*.img4
         fi
+
         echo "patching kernel ..." # this will send and patch the kernel
         
         cp "$extractedIpsw$(awk "/""${model}""/{x=1}x&&/kernelcache.release/{print;exit}" work/BuildManifest.plist | grep '<string>' |cut -d\> -f2 |cut -d\< -f1)" "work/kernelcache"

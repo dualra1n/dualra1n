@@ -10,7 +10,11 @@
 
 # How do I jailbreak the dualbooted iOS? jailbreak its not working at all
 
-2. Jailbreak with odyssey: <code>./dualboot.sh --jailbreak 14.3 --odyssey </code> (not recommended, don't use this unless you are a professional jailbreaker). When this finishes, install TrollStore from the Apple TV app and refresh icon using TrollStore, open Taurine and click Jailbreak.
+-   you can jailbreak with the dualra1n-loader or the odyssey jailbreak.
+
+- to jailbreak using odyssey just open the app and click jailbreak when that finish and reboot just reboot it and boot into the second ios again. when you come back to the second ios open dualra1n-jailbreak and click rejailbreak
+
+- to jailbreka with dualra1n-loader just open the app and click jailbreak. each time that you reboot the device open it and click rejailbreak 
 
 
 # How do I delete the dualbooted iOS?
