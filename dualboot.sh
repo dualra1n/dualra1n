@@ -60,14 +60,14 @@ print_help() {
     cat << EOF
 Usage: $0 [options] [ subcommand | iOS version that you're on ]
 You must have around 10 GB of free storage, and the .iPSW file of the iOS which you wish to downgrade to in dualra1n/ipsw/.
-Currently, only iOS 14 and 15 are supported. Downgrading from or dualboot to iOS 16 is not and will likely never be supported.
+Currently, only iOS 14 and 15 are supported. Downgrading from or upgrading to iOS 16 is not and will likely never be supported.
 
 Options:
     --dualboot              Dualboot your iDevice.
     --jail-palera1n         Use this when you are already jailbroken with semi-tethered palera1n to avoid disk errors. 
     --jailbreak             Jailbreak dualbooted iOS with Pogo. Usage :  ./dualboot.sh --jailbreak 14.3
     --taurine               Jailbreak dualbooted iOS with Taurine. (currently ***NOT RECOMMENDED***). Usage: ./dualboot.sh --jailbreak 14.3 --taurine 
-    --fixHard               Fixes microphone, girocopes, camera, audio, touchscreen, etc. (the Home button is not fixed yet)
+    --fixHard               Fixes microphone, girocopes, camera, audio, touchscreen, etc.
     --help                  Print this help.
     --get-ipsw              Automatically downloads .iPSW of the iOS version that you want to dualboot. Don't forget to specify iOS version. (currently ***DOES NOT WORK***)
     --dfuhelper             A helper to help you enter DFU if you are struggling to do it manually.
@@ -295,7 +295,7 @@ _dfuhelper() {
         echo "[*] Device entered DFU!"
     else
         echo "[-] Device did not enter DFU mode, rerun the script and try again"
-       exit;
+       return -1
     fi
 }
 
@@ -420,7 +420,7 @@ chmod +x "$dir"/*
 # Start
 # ============
 
-echo "dualboot | Version: your mother is cute"
+echo "dualboot | Version: 4.0"
 echo "Created by edwin :) | Some code of palera1n, thanks Nathan because the ramdisks | thanks MatthewPierson, Ralph0045, and all people creator of path file boot"
 echo ""
 
@@ -933,11 +933,17 @@ if [ true ]; then
             cp "$extractedIpsw$(awk "/""${model}""/{x=1}x&&/adc/{print;exit}" work/BuildManifest.plist | grep '<string>' |cut -d\> -f2 |cut -d\< -f1)" "work/"
             "$dir"/img4 -i work/"$(awk "/""${model}""/{x=1}x&&/adc/{print;exit}" work/BuildManifest.plist | grep '<string>' |cut -d\> -f2 |cut -d\< -f1 | sed 's/Firmware[/]isp_bni[/]//')" -o work/ISP.img4 -M work/IM4M
         fi
-        remote_cp work/*.img4 root@localhost:/mnt4/"$active"/usr/standalone/firmware/FUD/
-        if [ "$(rm work/*.img4)" ]; then
-            echo "Finished Fixing firmwares"
+
+        if [ ! "$(remote_cp work/*.img4 root@localhost:/mnt4/"$active"/usr/standalone/firmware/FUD/ )" ]; then
+            echo "there is not any firmware img4"
+        fi
+
+        if [ "$(remote_cmd "ls /mnt4/$active/usr/standalone/firmware/FUD/*.img4")" ]; then
+            echo "Fixed firmware suscessfully"
+            rm work/*.img4
         else
             echo "error fixing firmware, skipping ..."
+            fixHard=0
         fi   
         
         echo "rebooting"
