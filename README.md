@@ -80,11 +80,13 @@ iOS 13 is working but only 13.6, 13.7. If you want to dualboot iOS 13, use the [
 <p>
 
 - [Edwin](https://github.com/edwin170) owner :)
-
-- [plooshi](https://github.com/plooshi) thank you so much for fix the home button issue
-- [Fatih](https://github.com/swayea) for helping with the readme, testing linux support and being a very good person
+- [Uckermark](https://github.com/Uckermark/dualra1n-loader) thank you so much for the amazing dualra1n loader app to jailbreak it.
 - Edward, my brother, for giving me a Hackintosh to test this on
-- [azaz0322](https://github.com/m00nl1ghts), [Huy Nguyen](https://github.com/34306), [Uckermark](https://github.com/Uckermark), [DarwinUang](https://github.com/DarwinUang) and [aditya11110](https://github.com/aditya11110) for helping with the readme\
+- [Fatih](https://github.com/swayea) for helping with the readme, testing linux support and being a very good person.
+- [plooshi](https://github.com/plooshi)
+   thank you so much for fix the home button issue
+
+   - [azaz0322](https://github.com/m00nl1ghts), [Huy Nguyen](https://github.com/34306), [Uckermark](https://github.com/Uckermark), [DarwinUang](https://github.com/DarwinUang) and [aditya11110](https://github.com/aditya11110) for helping with the readme\
 </details>
 <details><summary>Credits for tools used in dualra1n</summary>
 
