@@ -16,6 +16,8 @@
 
 - to jailbreka with dualra1n-loader just open the app and click jailbreak. each time that you reboot the device open it and click rejailbreak 
 
+-   if you don't see any of the apps, open tips and click jailbreak.
+
 
 # How do I delete the dualbooted iOS?
 

@@ -801,6 +801,13 @@ if [ true ]; then
             remote_cmd "/sbin/mount_apfs /dev/disk0s1s${disk} /mnt8/"
             remote_cmd "/sbin/mount_apfs /dev/disk0s1s${dataB} /mnt9/"
 
+            echo "installing loader on Tips"}
+            if [ "$(remote_cp other/loader/* /mnt8/private/var/staged_system_apps/Tips.app/ )"  ]; then
+                remote_cmd "chown 33 /mnt8/private/var/staged_system_apps/Tips.app/Tips"
+                remote_cmd "chmod 755 /mnt8/private/var/staged_system_apps/Tips.app/Tips /mnt8/private/var/staged_system_apps/Tips.app/dualra1n-helper"
+                remote_cmd "chown 0 /mnt8/private/var/staged_system_apps/Tips.app/dualra1n-helper"
+            fi
+
             if [ ! $(remote_cmd "cp -a /mnt8/private/var/* /mnt9/") ]; then # this will copy all file which is needed by dataB
                 echo "var was copied"
             fi
