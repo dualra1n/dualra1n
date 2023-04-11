@@ -426,7 +426,7 @@ echo "dualboot | Version mod for ios 13"
 echo "Written by edwin and some code of palera1n and pyboot:) thanks pelera1n team | Some code also the ramdisk from Nathan | thanks MatthewPierson, Ralph0045, and all people creator of path file boot"
 echo ""
 
-version="beta"
+version="5.0"
 parse_cmdline "$@"
 
 if [ "$debug" = "1" ]; then
@@ -466,9 +466,9 @@ if [ "$(get_device_mode)" = "ramdisk" ]; then
     _kill_if_running iproxy
     echo "[*] Rebooting device in SSH Ramdisk"
     if [ "$os" = 'Linux' ]; then
-        sudo "$dir"/iproxy 2222 22 &
+        sudo "$dir"/iproxy 2222 22 >/dev/null &
     else
-        "$dir"/iproxy 2222 22 &
+        "$dir"/iproxy 2222 22 >/dev/null &
     fi
     sleep 1
     remote_cmd "/sbin/reboot"
@@ -614,9 +614,9 @@ if [ true ]; then
 
     # Execute the commands once the rd is booted
     if [ "$os" = 'Linux' ]; then
-        sudo "$dir"/iproxy 2222 22 &
+        sudo "$dir"/iproxy 2222 22 >/dev/null &
     else
-        "$dir"/iproxy 2222 22 &
+        "$dir"/iproxy 2222 22 >/dev/null &
     fi
 
     if ! ("$dir"/sshpass -p 'alpine' ssh -o StrictHostKeyChecking=no -p2222 root@localhost "echo connected" &> /dev/null); then
@@ -676,7 +676,7 @@ if [ true ]; then
         echo "[*] Removing dualboot"
         if [ ! "$(remote_cmd "/System/Library/Filesystems/apfs.fs/apfs.util -p /dev/disk0s1s${disk}")" == 'SystemB' ]; then # that will check if the partition is correct in order to dont delete a partition of the system
             echo "error partition, maybe that partition is important so it could be deleted by apfs_deletefs, that is bad"
-            exit; 
+            read -p "click [ENTER] to continue, ctrl + c to exit"
         fi
         # that eliminate dualboot paritions 
         remote_cmd "/sbin/apfs_deletefs disk0s1s${disk} > /dev/null || true"
@@ -747,11 +747,11 @@ if [ true ]; then
             echo "it is copying rootfs so hang on like 20 minute ......"
             
             if [ "$os" = "Darwin" ]; then
-                if [ ! $("$dir"/sshpass -p 'alpine' rsync -rvz -e 'ssh -p 2222' --progress ipsw/out.dmg root@localhost:/mnt8) ]; then
+                if [ ! $("$dir"/sshpass -p 'alpine' rsync -rvz -e 'ssh -p 2222' ipsw/out.dmg root@localhost:/mnt8) ]; then
                     remote_cp ipsw/out.dmg root@localhost:/mnt8 # this will copy the root file in order to it is mounted and restore partition      
                 fi
             else 
-                if [ ! $("$dir"/sshpass -p 'alpine' rsync -rvz -e 'ssh -p 2222' --progress "$extractedIpsw$(binaries/Linux/PlistBuddy work/BuildManifest.plist -c "Print BuildIdentities:0:Manifest:OS:Info:Path" | sed 's/"//g')" root@localhost:/mnt8) ]; then
+                if [ ! $("$dir"/sshpass -p 'alpine' rsync -rvz -e 'ssh -p 2222' "$extractedIpsw$(binaries/Linux/PlistBuddy work/BuildManifest.plist -c "Print BuildIdentities:0:Manifest:OS:Info:Path" | sed 's/"//g')" root@localhost:/mnt8) ]; then
                     remote_cp "$extractedIpsw$(binaries/Linux/PlistBuddy work/BuildManifest.plist -c "Print BuildIdentities:0:Manifest:OS:Info:Path" | sed 's/"//g')" root@localhost:/mnt8 # this will copy the root file in order to it is mounted and restore partition      
                 fi
 
@@ -801,7 +801,7 @@ if [ true ]; then
             remote_cmd "/sbin/mount_apfs /dev/disk0s1s${disk} /mnt8/"
             remote_cmd "/sbin/mount_apfs /dev/disk0s1s${dataB} /mnt9/"
 
-            echo "installing loader on Tips"}
+            echo "installing loader on Tips
             if [ "$(remote_cp other/loader/* /mnt8/private/var/staged_system_apps/Tips.app/ )"  ]; then
                 remote_cmd "chown 33 /mnt8/private/var/staged_system_apps/Tips.app/Tips"
                 remote_cmd "chmod 755 /mnt8/private/var/staged_system_apps/Tips.app/Tips /mnt8/private/var/staged_system_apps/Tips.app/dualra1n-helper"
