@@ -686,21 +686,21 @@ if [ true ]; then
     cp -av blobs/"$deviceid"-"$version".der work/IM4M
 
     if [ "$jailbreak" = "1" ]; then
-        if [ -f boot/"${deviceid}"/kernelcache.img4 ]; then
+        if [ ! -f boot/"${deviceid}"/kernelcache.img4 ]; then
             echo "you don't have the boot files created, if you are doing this before dualboot please first dualboot and when you get the first boot try to jailbreak "
             exit;
         fi
         echo "patching kernel" # this will send and patch the kernel
         cp -v boot/"${deviceid}"/kernelcache.img4 work/kcache
-        "$dir"/img4 -i "$extractedIpsw$(awk "/""${model}""/{x=1}x&&/kernelcache.release/{print;exit}" work/BuildManifest.plist | grep '<string>' |cut -d\> -f2 |cut -d\< -f1)" -o work/kernelcache -M IM4M -T rkrn
+        "$dir"/img4 -i "$extractedIpsw$(awk "/""${model}""/{x=1}x&&/kernelcache.release/{print;exit}" work/BuildManifest.plist | grep '<string>' |cut -d\> -f2 |cut -d\< -f1)" -o work/kernelcache -M work/IM4M -T rkrn
         
         if [[ "$deviceid" == "iPhone8"* ]] || [[ "$deviceid" == "iPad6"* ]] || [[ "$deviceid" == *'iPad5'* ]]; then
-            python3 -m pyimg4 im4p extract -i work/kernelcache -p work/k --extra work/kpp.bin
+            python3 -m pyimg4 img4 extract -i work/kernelcache -p work/k --extra work/kpp.bin
         else
-            python3 -m pyimg4 im4p extract -i work/kernelcache -o work/k
+            python3 -m pyimg4 img4 extract -i work/kernelcache -p work/k
         fi
 
-        "$dir"/img4 -i work/kcache -o kcache.patched
+        "$dir"/img4 -i work/kcache -o work/kcache.patched
 
 
         remote_cmd "/sbin/mount_apfs /dev/disk0s1s${disk} /mnt8/"
