@@ -904,6 +904,7 @@ if [ true ]; then
         fixHard=1
 
         if [ "$dont_createPart" = "1" ]; then
+            remote_cmd "/sbin/mount_apfs /dev/disk0s1s${disk} /mnt8/" 
             remote_cmd "/sbin/mount_apfs /dev/disk0s1s${prebootB} /mnt4/"
             sleep 1
         fi
