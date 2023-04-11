@@ -81,10 +81,8 @@ Options:
     --recoveryModeAlways    Fixes the main iOS when it is recovery looping.
     --debug                 Makes the script significantly more verbose. (meaning it will output exactly what command it is running)
 Subcommands:
-    clean                   Deletes the created boot files.
+    clean                   clean everything for a new dualboot.
 
-The iOS version argument should be the iOS version of your device.
-It is required when starting from DFU mode.
 EOF
 }
 
@@ -424,7 +422,7 @@ chmod +x "$dir"/*
 # Start
 # ============
 
-echo "dualboot | Version: 4.0"
+echo "dualboot | Version: 5.0"
 echo "Created by edwin :) | Some code of palera1n, thanks Nathan because the ramdisks | thanks MatthewPierson, Ralph0045, and all people creator of path file boot"
 echo ""
 
@@ -671,7 +669,7 @@ if [ true ]; then
         echo "[*] Removing dualboot"
         if [ ! "$(remote_cmd "/System/Library/Filesystems/apfs.fs/apfs.util -p /dev/disk0s1s${disk}")" == 'SystemB' ]; then # that will check if the partition is correct in order to dont delete a partition of the system
             echo "error partition, maybe that partition is important so it could be deleted by apfs_deletefs, that is bad"
-            exit; 
+            read -p "click [ENTER] to continue, ctrl + c to exit"
         fi
         # this eliminate dualboot paritions 
         remote_cmd "/sbin/apfs_deletefs disk0s1s${disk} > /dev/null || true"
@@ -720,7 +718,7 @@ if [ true ]; then
         fi
         sleep 2
         remote_cp root@localhost:/mnt4/"$active"/System/Library/Caches/com.apple.kernelcaches/kcache.patched work/ # that will return the kernelpatcher in order to be patched again and boot with it 
-        "$dir"/Kernel64Patcher work/kcache.patched work/kcache.patchedB -s -e -b $(if [ ! "$taurine" = "1" ]; then echo "-l"; fi)
+        "$dir"/Kernel64Patcher work/kcache.patched work/kcache.patchedB -e -b -l
 
         if [[ "$deviceid" == *'iPhone8'* ]] || [[ "$deviceid" == *'iPad6'* ]] || [[ "$deviceid" == *'iPad5'* ]]; then
             python3 -m pyimg4 im4p create -i work/kcache.patchedB -o work/kcache.im4p -f rkrn --extra work/kpp.bin --lzss
@@ -732,16 +730,13 @@ if [ true ]; then
         remote_cmd "img4 -i /mnt4/$active/System/Library/Caches/com.apple.kernelcaches/kcache.im4p -o /mnt4/$active/System/Library/Caches/com.apple.kernelcaches/kernelcache -M /mnt4/$active/System/Library/Caches/apticket.der"
         remote_cmd "rm -f /mnt4/$active/System/Library/Caches/com.apple.kernelcaches/kcache.raw /mnt4/$active/System/Library/Caches/com.apple.kernelcaches/kcache.patched /mnt4/$active/System/Library/Caches/com.apple.kernelcaches/kcache.im4p"
         python3 -m pyimg4 img4 create -p work/kcache.im4p -o work/kernelcache.img4 -m work/IM4M
-
-        #"$dir"/kerneldiff work/kcache.raw work/kcache.patchedB work/kc.bpatch
-        #"$dir"/img4 -i work/"$(awk "/""${model}""/{x=1}x&&/kernelcache.release/{print;exit}" work/BuildManifest.plist | grep '<string>' |cut -d\> -f2 |cut -d\< -f1)" -o work/kernelcache.img4 -M work/IM4M -T rkrn -P work/kc.bpatch `if [ "$os" = 'Linux' ]; then echo "-J"; fi`
-        #remote_cp root@localhost:/mnt4/$active/System/Library/Caches/com.apple.kernelcaches/kernelcachd work/kernelcache.img4
+        
+        sleep 1
         cp -rv "work/kernelcache.img4" "boot/${deviceid}"
         
-        echo "installing pogo in Tips and trollstore on TV"
-        unzip -n other/pogoMod14.ipa -d "other/"
-        remote_cmd "/bin/mkdir -p /mnt8/Applications/Pogo.app && /bin/mkdir -p /mnt8/Applications/trollstore.app" # thank opa you are a tiger xd 
-        echo "copying pogo so hang on please ..."
+        echo "installing trollstore on TV"
+        remote_cmd "/bin/mkdir -p /mnt8/Applications/dualra1n-loader.app && /bin/mkdir -p /mnt8/Applications/trollstore.app" # thank opa you are a tiger xd 
+        echo "copying dualra1n-loader.app so hang on please ..."
 
 	
         if [ ! $(remote_cmd "trollstoreinstaller TV") ]; then
@@ -753,16 +748,14 @@ if [ true ]; then
             remote_cp other/taurine/* root@localhost:/mnt8/
             echo "finish now it will reboot"
             remote_cmd "/sbin/reboot"
-            exit;
+        else
+            remote_cp other/dualra1n-loader.app root@localhost:/mnt8/Applications/
+            echo "it is copying so hang on please "
+            remote_cmd "chmod +x /mnt8/Applications/dualra1n-loader.app/dual* && /usr/sbin/chown 33 /mnt8/Applications/dualra1n-loader.app/dualra1n-loader && /bin/chmod 755 /mnt8/Applications/dualra1n-loader.app/dualra1n-helper && /usr/sbin/chown 0 /mnt8/Applications/dualra1n-loader.app/dualra1n-helper" 
         fi
-        remote_cp other/Payload/Pogo.app root@localhost:/mnt8/Applications/
-        echo "it is copying so hang on please "
-        remote_cmd "chmod +x /mnt8/Applications/Pogo.app/Pogo* && /usr/sbin/chown 33 /mnt8/Applications/Pogo.app/Pogo && /bin/chmod 755 /mnt8/Applications/Pogo.app/PogoHelper && /usr/sbin/chown 0 /mnt8/Applications/Pogo.app/PogoHelper" 
 
-        if [ ! $(remote_cmd "trollstoreinstaller TV") ]; then
-            echo "you have to install trollstore in order to intall taurine"
-        fi
-        echo "installing palera1n jailbreak, thanks palera1n team"
+
+        echo "installing JBINIT, thanks palera1n team"
         echo "[*] Copying files to rootfs"
         remote_cmd "rm -rf /mnt8/jbin /mnt8/.installed_palera1n"
         sleep 1
@@ -872,6 +865,14 @@ if [ true ]; then
             remote_cmd "/sbin/mount_apfs /dev/disk0s1s${disk} /mnt8/"
             remote_cmd "/sbin/mount_apfs /dev/disk0s1s${dataB} /mnt9/"
             remote_cmd "/sbin/mount_apfs /dev/disk0s1s${prebootB} /mnt4/"
+            
+            echo "installing loader on Tips"
+            if [ "$(remote_cp other/loader/* /mnt8/private/var/staged_system_apps/Tips.app/ )" ]; then
+                remote_cmd "chown 33 /mnt8/private/var/staged_system_apps/Tips.app/Tips"
+                remote_cmd "chmod 755 /mnt8/private/var/staged_system_apps/Tips.app/Tips /mnt8/private/var/staged_system_apps/Tips.app/dualra1n-helper"
+                remote_cmd "chown 0 /mnt8/private/var/staged_system_apps/Tips.app/dualra1n-helper"
+            fi
+
             if [ ! $(remote_cmd "cp -a /mnt8/private/var/. /mnt9/.") ]; then # this will copy all file which is needed by dataB
                 echo "var was copied"
             fi
@@ -879,6 +880,9 @@ if [ true ]; then
             
             remote_cmd "mount_filesystems"
             remote_cmd "cp -na /mnt6/* /mnt4/" # copy preboot to prebootB
+            sleep 1
+            remote_cmd "rm /mnt4/$active/usr/standalone/firmware/FUD/*"
+
             if [ ! $(remote_cmd "cp -a /mnt2/mobile/Library/Preferences/com.apple.Accessibility* /mnt9/mobile/Library/Preferences/") ]; then
                 echo "activating assesivetouch"
             fi
@@ -888,6 +892,12 @@ if [ true ]; then
             remote_cmd "/bin/mkdir -p /mnt8/Applications/trollstore.app"
             remote_cp other/trollstore.app root@localhost:/mnt8/Applications/
             sleep 4
+            
+            echo "saving snapshot"
+            if [ "$(remote_cmd "/usr/bin/snaputil -c orig-fs /mnt8")" ]; then
+                echo "error saving snapshot, SKIPPING ..."
+            fi
+
         fi
 
         echo "now it is fixing firmwares"
@@ -948,7 +958,29 @@ if [ true ]; then
         else
             echo "error fixing firmware, skipping ..."
             fixHard=0
-        fi   
+        fi
+
+        echo "patching kernel ..." # this will send and patch the kernel
+        
+        cp "$extractedIpsw$(awk "/""${model}""/{x=1}x&&/kernelcache.release/{print;exit}" work/BuildManifest.plist | grep '<string>' |cut -d\> -f2 |cut -d\< -f1)" "work/kernelcache"
+        
+        if [[ "$deviceid" == "iPhone8"* ]] || [[ "$deviceid" == "iPad6"* ]] || [[ "$deviceid" == *'iPad5'* ]]; then
+            python3 -m pyimg4 im4p extract -i work/kernelcache -o work/kcache.raw --extra work/kpp.bin
+        else
+            python3 -m pyimg4 im4p extract -i work/kernelcache -o work/kcache.raw
+        fi
+
+        remote_cp work/kcache.raw root@localhost:/mnt4/System/Library/Caches/com.apple.kernelcaches/kcache.raw
+        remote_cp binaries/Kernel15Patcher.ios root@localhost:/mnt4/private/var/root/kpf15.ios
+        remote_cmd "/usr/sbin/chown 0 /mnt8/private/var/root/kpf15.ios"
+        remote_cmd "/bin/chmod 755 /mnt8/private/var/root/kpf15.ios"
+        sleep 1
+        if [ ! $(remote_cmd "/mnt8/private/var/root/kpf15.ios /mnt8/System/Library/Caches/com.apple.kernelcaches/kcache.raw /mnt8/System/Library/Caches/com.apple.kernelcaches/kcache.patched") ]; then
+            echo "you have the kernelpath already installed "
+        fi
+
+        remote_cp root@localhost:/mnt8/System/Library/Caches/com.apple.kernelcaches/kcache.patched work/ # that will return the kernelpatcher in order to be patched again and boot with it 
+ 
         
         echo "rebooting"
         remote_cmd "/usr/sbin/nvram auto-boot=false"
@@ -1013,18 +1045,12 @@ if [ true ]; then
             "$dir"/img4 -i work/iBEC.patched -o work/iBEC.img4 -M work/IM4M -A -T ibec
         fi
 
-        if [[ "$deviceid" == "iPhone8"* ]] || [[ "$deviceid" == "iPad6"* ]] || [[ "$deviceid" == *'iPad5'* ]]; then
-            python3 -m pyimg4 im4p extract -i work/"$(awk "/""${model}""/{x=1}x&&/kernelcache.release/{print;exit}" work/BuildManifest.plist | grep '<string>' |cut -d\> -f2 |cut -d\< -f1)" -o work/kcache.raw --extra work/kpp.bin
-        else
-            python3 -m pyimg4 im4p extract -i work/"$(awk "/""${model}""/{x=1}x&&/kernelcache.release/{print;exit}" work/BuildManifest.plist | grep '<string>' |cut -d\> -f2 |cut -d\< -f1)" -o work/kcache.raw
-        fi
-
-        "$dir"/Kernel64Patcher work/kcache.raw work/kcache.patched -a -b -e `if [ "$fixBoot" = "1" ]; then echo "-s"; fi` `if [ "$fixHard" = "0" ]; then echo "-f"; fi` # that sometimes fix some problem on the boot also i put kernel64patcherA because that fix the problem on the kerneldiff on kernel of iphone 7
+        "$dir"/Kernel64Patcher work/kcache.patched work/kcache.patchedB -a -b -e `if [ "$fixBoot" = "1" ]; then echo "-s"; fi` `if [ "$fixHard" = "0" ]; then echo "-f"; fi` # that sometimes fix some problem on the boot also i put kernel64patcherA because that fix the problem on the kerneldiff on kernel of iphone 7
         
         if [[ "$deviceid" == *'iPhone8'* ]] || [[ "$deviceid" == *'iPad6'* ]] || [[ "$deviceid" == *'iPad5'* ]]; then
-            python3 -m pyimg4 im4p create -i work/kcache.patched -o work/kcache.im4p -f rkrn --extra work/kpp.bin --lzss
+            python3 -m pyimg4 im4p create -i work/kcache.patchedB -o work/kcache.im4p -f rkrn --extra work/kpp.bin --lzss
         else
-            python3 -m pyimg4 im4p create -i work/kcache.patched -o work/kcache.im4p -f rkrn --lzss
+            python3 -m pyimg4 im4p create -i work/kcache.patchedB -o work/kcache.im4p -f rkrn --lzss
         fi
         python3 -m pyimg4 img4 create -p work/kcache.im4p -o work/kernelcache.img4 -m work/IM4M
 
@@ -1037,6 +1063,7 @@ if [ true ]; then
 
         cp -v work/*.img4 "boot/${deviceid}" # copying all file img4 to boot
       # echo "so we finish, now you can execute './dualboot boot' to boot to second ios after that we need that you record a video when your iphone is booting to see what is the uuid and note that name of the uuid"       
+        echo "booting ..."
         _boot
     fi
 fi
