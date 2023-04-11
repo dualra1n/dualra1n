@@ -969,18 +969,19 @@ if [ true ]; then
         else
             python3 -m pyimg4 im4p extract -i work/kernelcache -o work/kcache.raw
         fi
-
-        remote_cp work/kcache.raw root@localhost:/mnt4/System/Library/Caches/com.apple.kernelcaches/kcache.raw
-        remote_cp binaries/Kernel15Patcher.ios root@localhost:/mnt4/private/var/root/kpf15.ios
-        remote_cmd "/usr/sbin/chown 0 /mnt8/private/var/root/kpf15.ios"
-        remote_cmd "/bin/chmod 755 /mnt8/private/var/root/kpf15.ios"
+        remote_cmd "mkdir /mnt8/private/var/root/work"
+        remote_cp "work/kcache.raw root@localhost:/mnt4/$active/System/Library/Caches/com.apple.kernelcaches/kcache.raw"
+        remote_cp "binaries/Kernel15Patcher.ios root@localhost:/mnt8/private/var/root/work/kpf15.ios"
+        remote_cmd "/usr/sbin/chown 0 /mnt8/private/var/root/work/kpf15.ios"
+        remote_cmd "/bin/chmod 755 /mnt8/private/var/root/work/kpf15.ios"
         sleep 1
-        if [ ! $(remote_cmd "/mnt8/private/var/root/kpf15.ios /mnt8/System/Library/Caches/com.apple.kernelcaches/kcache.raw /mnt8/System/Library/Caches/com.apple.kernelcaches/kcache.patched") ]; then
+        if [ ! "$(remote_cmd "/mnt8/private/var/root/work/kpf15.ios /mnt4/$active/System/Library/Caches/com.apple.kernelcaches/kcache.raw /mnt4/$active/System/Library/Caches/com.apple.kernelcaches/kcache.patched")" ]; then
             echo "you have the kernelpath already installed "
         fi
 
-        remote_cp root@localhost:/mnt8/System/Library/Caches/com.apple.kernelcaches/kcache.patched work/ # that will return the kernelpatcher in order to be patched again and boot with it 
- 
+        remote_cp "root@localhost:/mnt8/$active/System/Library/Caches/com.apple.kernelcaches/kcache.patched work/" # that will return the kernelpatcher in order to be patched again and boot with it 
+        echo "finish patching the kernel"
+        remote_cmd "rm -r /mnt8/private/var/root/work"
         
         echo "rebooting"
         remote_cmd "/usr/sbin/nvram auto-boot=false"
