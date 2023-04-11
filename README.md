@@ -13,7 +13,7 @@ Options:
 
 `--jail-palera1n`     Use this when you are already jailbroken with semi-tethered palera1n to avoid disk errors. 
 
-`--jailbreak`         Jailbreak dualbooted iOS with [Pogo](https://github.com/elihwyma/Pogo). Usage :  `./dualboot.sh --jailbreak 14.3`
+`--jailbreak`         Jailbreak dualbooted iOS with [dualra1n-loader](https://github.com/Uckermark/dualra1n-loader). Usage :  `./dualboot.sh --jailbreak 14.3`
 
 `--taurine`           Jailbreak dualbooted iOS with [Taurine](https://taurine.app). Usage: `./dualboot.sh --jailbreak 14.3 --taurine` (currently ***NOT RECOMMENDED***)
    

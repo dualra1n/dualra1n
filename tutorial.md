@@ -10,9 +10,9 @@
 
 # How do I jailbreak the dualbooted iOS?
 
-1. Run `./dualboot.sh --jailbreak 14.2` When this finishes, open Pogo and tap Install, then Do All. If you reboot your device, you will only need to tap Do All in Pogo. (it is ***highly recommended*** to use this over Taurine)
+1. Run `./dualboot.sh --jailbreak 14.2` When this finishes, open dualra1n-loader and click jailbreak. If you reboot your device, you will only need to tap re-jailbreak. (it is ***highly recommended*** to use this over Taurine)
 
-2. Jailbreak with Taurine: <code>./dualboot.sh --jailbreak 14.3 --taurine </code> (not recommended, don't use this unless you are a professional jailbreaker). When this finishes, install TrollStore from the Apple TV app and refresh icon using TrollStore, open Taurine and click Jailbreak.
+2. Jailbreak with Taurine: <code>./dualboot.sh --jailbreak 14.3 --taurine </code> (not recommended, don't use this unless you are a professional jailbreaker). When this finishes, open Taurine and click Jailbreak, when the device get in a screen blue try force reboot, after that boot again into the second ios and if you don't see the sileo app try to rejailbreak with taurine and if you see sileo that means that the jailbreak was complete so open dualra1n-loader and click re-jailbreak to activate the tweaks. 
 
 # How do I delete the dualbooted iOS?
 
