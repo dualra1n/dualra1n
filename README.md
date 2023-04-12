@@ -90,8 +90,9 @@ iOS 13 is working but only 13.6, 13.7. If you want to dualboot iOS 13, use the [
 </details>
 <details><summary>Credits for tools used in dualra1n</summary>
 
-- [palera1n](https://github.com/palera1n) for some of the code
 - [Dualboot guide](https://dualbootfun.github.io/) for the guide
+- [palera1n](https://github.com/palera1n) for some of the code
+- [opa334](https://github.com/opa334/TrollStore) amazing app
 - [blacktop](https://github.com/blacktop) for the iPSW downloader
 - [Nathan](https://github.com/verygenericname) for the ramdisk
 - [Amy](https://github.com/elihwyma) for the [Pogo](https://github.com/elihwyma/Pogo) app
