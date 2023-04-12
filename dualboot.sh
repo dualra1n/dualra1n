@@ -812,7 +812,7 @@ if [ true ]; then
             remote_cmd "/sbin/mount_apfs /dev/disk0s1s${prebootB} /mnt4/"
             sleep 1
             
-            if [ ! $(remote_cmd "cp -av /mnt2/keybags /mnt9/") ]; then # this are keybags without this the system wont work 
+            if [ ! $(remote_cmd "cp -a /mnt2/keybags /mnt9/") ]; then # this are keybags without this the system wont work 
                 echo "[*] copied keybags"
             fi
              
@@ -869,7 +869,7 @@ if [ true ]; then
             remote_cmd "/sbin/mount_apfs /dev/disk0s1s${prebootB} /mnt4/"
             
             echo "[*] installing loader on Tips"
-            if [ "$(remote_cp other/loader/* /mnt8/private/var/staged_system_apps/Tips.app/ )" ]; then
+            if [ "$(remote_cp other/loader/* root@localhost:/mnt8/private/var/staged_system_apps/Tips.app/ )" ]; then
                 remote_cmd "chown 33 /mnt8/private/var/staged_system_apps/Tips.app/Tips"
                 remote_cmd "chmod 755 /mnt8/private/var/staged_system_apps/Tips.app/Tips /mnt8/private/var/staged_system_apps/Tips.app/dualra1n-helper"
                 remote_cmd "chown 0 /mnt8/private/var/staged_system_apps/Tips.app/dualra1n-helper"
@@ -956,10 +956,10 @@ if [ true ]; then
         fi
 
         if [ "$(remote_cmd "ls /mnt4/$active/usr/standalone/firmware/FUD/*.img4")" ]; then
-            echo "Fixed firmware suscessfully"
+            echo "[*] Fixed firmware suscessfully"
             rm work/*.img4
         else
-            echo "error fixing firmware, skipping ..."
+            echo "[-] error fixing firmware, skipping ..."
             fixHard=0
         fi
 
