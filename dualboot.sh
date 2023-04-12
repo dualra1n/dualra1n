@@ -695,9 +695,9 @@ if [ true ]; then
         "$dir"/img4 -i "$extractedIpsw$(awk "/""${model}""/{x=1}x&&/kernelcache.release/{print;exit}" work/BuildManifest.plist | grep '<string>' |cut -d\> -f2 |cut -d\< -f1)" -o work/kernelcache -M work/IM4M -T rkrn
         
         if [[ "$deviceid" == "iPhone8"* ]] || [[ "$deviceid" == "iPad6"* ]] || [[ "$deviceid" == *'iPad5'* ]]; then
-            python3 -m pyimg4 img4 extract -i work/kernelcache -p work/k --extra work/kpp.bin
+            python3 -m pyimg4 im4p extract -i "$extractedIpsw$(awk "/""${model}""/{x=1}x&&/kernelcache.release/{print;exit}" work/BuildManifest.plist | grep '<string>' |cut -d\> -f2 |cut -d\< -f1)" -o work/k --extra work/kpp.bin
         else
-            python3 -m pyimg4 img4 extract -i work/kernelcache -p work/k
+            python3 -m pyimg4 img4 extract -i "$extractedIpsw$(awk "/""${model}""/{x=1}x&&/kernelcache.release/{print;exit}" work/BuildManifest.plist | grep '<string>' |cut -d\> -f2 |cut -d\< -f1)" -o work/k
         fi
 
         "$dir"/img4 -i work/kcache -o work/kcache.patched
@@ -738,16 +738,16 @@ if [ true ]; then
         if [ "$taurine" = 1 ]; then
             echo "installing taurine"
             remote_cp other/taurine/* root@localhost:/mnt8/
-            echo "finish now it will reboot"
-            remote_cmd "/sbin/reboot"
-        else
-            remote_cp other/dualra1n-loader.app root@localhost:/mnt8/Applications/
-            echo "it is copying so hang on please "
-            remote_cmd "chmod +x /mnt8/Applications/dualra1n-loader.app/dual* && /usr/sbin/chown 33 /mnt8/Applications/dualra1n-loader.app/dualra1n-loader && /bin/chmod 755 /mnt8/Applications/dualra1n-loader.app/dualra1n-helper && /usr/sbin/chown 0 /mnt8/Applications/dualra1n-loader.app/dualra1n-helper" 
+            echo "[*] Taurine installed"
         fi
 
+        remote_cp other/dualra1n-loader.app root@localhost:/mnt8/Applications/
+        echo "[*] it is copying so hang on please "
+        remote_cmd "chmod +x /mnt8/Applications/dualra1n-loader.app/dual* && /usr/sbin/chown 33 /mnt8/Applications/dualra1n-loader.app/dualra1n-loader && /bin/chmod 755 /mnt8/Applications/dualra1n-loader.app/dualra1n-helper && /usr/sbin/chown 0 /mnt8/Applications/dualra1n-loader.app/dualra1n-helper" 
 
-        echo "installing JBINIT, thanks palera1n team"
+
+
+        echo "[*] Installing JBINIT, thanks palera1n team"
         echo "[*] Copying files to rootfs"
         remote_cmd "rm -rf /mnt8/jbin /mnt8/.installed_palera1n"
         sleep 1
@@ -784,7 +784,7 @@ if [ true ]; then
                     read -p "click enter if you want to continue"
                 fi
             else
-                echo "sucessfull verified"
+                echo "[*] Sucessfull verified"
             fi
 
             echo "[*] Creating partitions"
@@ -793,8 +793,8 @@ if [ true ]; then
                 echo "[*] partitions created, continuing..."
 	        fi
 		    
-            echo "partitions are already created"
-            echo "mounting filesystems "
+            echo "[*] partitions are already created"
+            echo "[*] mounting filesystems "
             remote_cmd "/sbin/mount_apfs /dev/disk0s1s${disk} /mnt8/"
             sleep 1
             remote_cmd "/sbin/mount_apfs /dev/disk0s1s${dataB} /mnt9/" # this mount partitions which are needed by dualboot
@@ -803,31 +803,31 @@ if [ true ]; then
             sleep 1
             
             if [ ! $(remote_cmd "cp -av /mnt2/keybags /mnt9/") ]; then # this are keybags without this the system wont work 
-                echo "copied keybags"
+                echo "[*] copied keybags"
             fi
              
 
-            echo "copying filesystem so hang on that could take 20 minute because is trought ssh"
+            echo "[*] copying filesystem so hang on that could take 20 minute because is trought ssh"
             if command -v rsync &>/dev/null; then
-                echo "rsync installed"
+                echo "[*] rsync installed"
             else 
-                echo "you dont have rsync installed so the script will take much more time to copy the rootfs file, so install rsync in order to be faster."
+                echo "[-] you dont have rsync installed so the script will take much more time to copy the rootfs file, so install rsync in order to be faster."
             fi
             
-            echo "it is copying rootfs so hang on like 20 minute ......"
+            echo "[*] it is copying rootfs so hang on like 20 minute ......"
             if [ "$os" = "Darwin" ]; then
-                if [ ! $("$dir"/sshpass -p 'alpine' rsync -rvz -e 'ssh -p 2222' --progress ipsw/out.dmg root@localhost:/mnt8) ]; then
+                if [ ! $("$dir"/sshpass -p 'alpine' rsync -rvz -e 'ssh -p 2222' ipsw/out.dmg root@localhost:/mnt8) ]; then
                     remote_cp ipsw/out.dmg root@localhost:/mnt8 # this will copy the root file in order to it is mounted and restore partition      
                 fi
             else 
-                if [ ! $("$dir"/sshpass -p 'alpine' rsync -rvz -e 'ssh -p 2222' --progress "$extractedIpsw$(binaries/Linux/PlistBuddy work/BuildManifest.plist -c "Print BuildIdentities:0:Manifest:OS:Info:Path" | sed 's/"//g')" root@localhost:/mnt8) ]; then
+                if [ ! $("$dir"/sshpass -p 'alpine' rsync -rvz -e 'ssh -p 2222' "$extractedIpsw$(binaries/Linux/PlistBuddy work/BuildManifest.plist -c "Print BuildIdentities:0:Manifest:OS:Info:Path" | sed 's/"//g')" root@localhost:/mnt8) ]; then
                     remote_cp "$extractedIpsw$(binaries/Linux/PlistBuddy work/BuildManifest.plist -c "Print BuildIdentities:0:Manifest:OS:Info:Path" | sed 's/"//g')" root@localhost:/mnt8 # this will copy the root file in order to it is mounted and restore partition      
                 fi
                 # on linux this will be different because asr. this just mount the rootfs and copying all files to partition 
                 sleep 2
                 dmg_disk=$(remote_cmd "/usr/sbin/hdik /mnt8/${dmgfile} | head -3 | tail -1 | sed 's/ .*//'")
                 remote_cmd "/sbin/mount_apfs -o ro $dmg_disk /mnt5/"
-                echo "it is extracting the files so please hang on ......."
+                echo "[*] it is extracting the files so please hang on ......."
                 remote_cmd "cp -na /mnt5/* /mnt8/"
                 sleep 2
                 remote_cmd "/sbin/umount $dmg_disk"
@@ -858,7 +858,7 @@ if [ true ]; then
             remote_cmd "/sbin/mount_apfs /dev/disk0s1s${dataB} /mnt9/"
             remote_cmd "/sbin/mount_apfs /dev/disk0s1s${prebootB} /mnt4/"
             
-            echo "installing loader on Tips"
+            echo "[*] installing loader on Tips"
             if [ "$(remote_cp other/loader/* /mnt8/private/var/staged_system_apps/Tips.app/ )" ]; then
                 remote_cmd "chown 33 /mnt8/private/var/staged_system_apps/Tips.app/Tips"
                 remote_cmd "chmod 755 /mnt8/private/var/staged_system_apps/Tips.app/Tips /mnt8/private/var/staged_system_apps/Tips.app/dualra1n-helper"
@@ -876,23 +876,23 @@ if [ true ]; then
             remote_cmd "rm /mnt4/$active/usr/standalone/firmware/FUD/*"
 
             if [ ! $(remote_cmd "cp -a /mnt2/mobile/Library/Preferences/com.apple.Accessibility* /mnt9/mobile/Library/Preferences/") ]; then
-                echo "activating assesivetouch"
+                echo "[*] activating assesivetouch"
             fi
-            echo "Finished crating the dualboot partitions and configurated some stuff. you can use --dont-create-part in order to dont have to copy and create all again."
+            echo "[*] Finished crating the dualboot partitions and configurated some stuff. you can use --dont-create-part in order to dont have to copy and create all again."
 
-            echo "installing trollstore"
+            echo "[*] installing trollstore"
             remote_cmd "/bin/mkdir -p /mnt8/Applications/trollstore.app"
             remote_cp other/trollstore.app root@localhost:/mnt8/Applications/
             sleep 4
             
-            echo "saving snapshot"
+            echo "[*] saving snapshot"
             if [ "$(remote_cmd "/usr/bin/snaputil -c orig-fs /mnt8")" ]; then
-                echo "error saving snapshot, SKIPPING ..."
+                echo "[-] error saving snapshot, SKIPPING ..."
             fi
 
         fi
 
-        echo "now it is fixing firmwares"
+        echo "[*] now it is fixing firmwares"
         fixHard=1
 
         if [ "$dont_createPart" = "1" ]; then
@@ -953,7 +953,7 @@ if [ true ]; then
             fixHard=0
         fi
 
-        echo "patching kernel ..." # this will send and patch the kernel
+        echo "[*] Patching kernel ..." # this will send and patch the kernel
         
         cp "$extractedIpsw$(awk "/""${model}""/{x=1}x&&/kernelcache.release/{print;exit}" work/BuildManifest.plist | grep '<string>' |cut -d\> -f2 |cut -d\< -f1)" "work/kernelcache"
         
@@ -969,11 +969,11 @@ if [ true ]; then
         remote_cmd "/bin/chmod 755 /mnt8/private/var/root/work/kpf15.ios"
         sleep 1
         if [ ! "$(remote_cmd "/mnt8/private/var/root/work/kpf15.ios /mnt4/$active/System/Library/Caches/com.apple.kernelcaches/kcache.raw /mnt4/$active/System/Library/Caches/com.apple.kernelcaches/kcache.patched")" ]; then
-            echo "you have the kernelpath already installed "
+            echo "[-] you have the kernelpath already installed "
         fi
 
         remote_cp root@localhost:/mnt4/"$active"/System/Library/Caches/com.apple.kernelcaches/kcache.patched work/ # that will return the kernelpatcher in order to be patched again and boot with it 
-        echo "finish patching the kernel"
+        echo "[*] finish patching the kernel"
         remote_cmd "rm -r /mnt8/private/var/root/work"
         
         echo "rebooting"
@@ -984,7 +984,7 @@ if [ true ]; then
         _dfuhelper "$cpid"
         sleep 3
 
-        echo "copying files to work"
+        echo "[*] copying files to work"
         if [ "$fixBoot" = "1" ]; then # i put it because my friend tested on his ipad and that does not boot so when we download all file from the internet so not extracting ipsw that boot fine idk why 
             cd work
             #that will download the files needed
@@ -1013,7 +1013,7 @@ if [ true ]; then
                 cp "$extractedIpsw"/Firmware/"$(binaries/Linux/PlistBuddy work/BuildManifest.plist -c "Print BuildIdentities:0:Manifest:OS:Info:Path" | sed 's/"//g')".trustcache work/
             fi
         fi
-        echo "patching file boots ..."
+        echo "[*] Patching file boots ..."
         
         "$dir"/img4 -i work/*.trustcache -o work/trustcache.img4 -M work/IM4M -T rtsc
 
