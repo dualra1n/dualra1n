@@ -667,10 +667,14 @@ if [ true ]; then
 
     if [ "$restorerootfs" = "1" ]; then
         echo "[*] Removing dualboot"
-        if [ ! "$(remote_cmd "/System/Library/Filesystems/apfs.fs/apfs.util -p /dev/disk0s1s${disk}")" == 'SystemB' ]; then # that will check if the partition is correct in order to dont delete a partition of the system
-            echo "error partition, maybe that partition is important so it could be deleted by apfs_deletefs, that is bad"
-            read -p "click [ENTER] to continue, ctrl + c to exit"
+        
+        partition_type="$(remote_cmd "/System/Library/Filesystems/apfs.fs/apfs.util -p /dev/disk0s1s${disk}")"
+        if [ ! "$partition_type" == 'SystemB' ]; then
+            # Print an error message and prompt the user to continue or exit
+            echo "Error: Partition may be important and could be deleted by apfs_deletefs."
+            read -p "Press [ENTER] to continue, or [CTRL]+[C] to exit."
         fi
+
         # this eliminate dualboot paritions 
         remote_cmd "/sbin/apfs_deletefs disk0s1s${disk} > /dev/null || true"
         remote_cmd "/sbin/apfs_deletefs disk0s1s${dataB} > /dev/null || true"
