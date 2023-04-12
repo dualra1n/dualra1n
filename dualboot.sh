@@ -660,12 +660,12 @@ if [ true ]; then
         exit
     fi
     active=$(remote_cmd "cat /mnt6/active" 2> /dev/null)
-    echo "backup preboot partition... please dont delete directory prebootBackup" # this will backup your perboot parition in case that was deleted by error 
+    echo "[*] backup preboot partition... please dont delete directory prebootBackup" # this will backup your perboot parition in case that was deleted by error 
     mkdir -p "prebootBackup"
     if [ ! -d "prebootBackup/${deviceid}" ]; then
         mkdir -p "prebootBackup/${deviceid}"
         if [ ! $(remote_cp root@localhost:/mnt6/ "prebootBackup/${deviceid}") ]; then # that had a error so in case the error the script wont stop 
-            echo "finish backup"
+            echo "[*] finish backup"
         fi
     fi
     
@@ -674,10 +674,14 @@ if [ true ]; then
 
     if [ "$restorerootfs" = "1" ]; then
         echo "[*] Removing dualboot"
-        if [ ! "$(remote_cmd "/System/Library/Filesystems/apfs.fs/apfs.util -p /dev/disk0s1s${disk}")" == 'SystemB' ]; then # that will check if the partition is correct in order to dont delete a partition of the system
-            echo "error partition, maybe that partition is important so it could be deleted by apfs_deletefs, that is bad"
-            read -p "click [ENTER] to continue, ctrl + c to exit"
+        
+        partition_type="$(remote_cmd "/System/Library/Filesystems/apfs.fs/apfs.util -p /dev/disk0s1s${disk}")"
+        if [ ! "$partition_type" == 'SystemB' ]; then
+            # Print an error message and prompt the user to continue or exit
+            echo "[-] Error: Partition may be important and could be deleted by apfs_deletefs."
+            read -p "Press [ENTER] to continue, or [CTRL]+[C] to exit."
         fi
+
         # that eliminate dualboot paritions 
         remote_cmd "/sbin/apfs_deletefs disk0s1s${disk} > /dev/null || true"
         remote_cmd "/sbin/apfs_deletefs disk0s1s${dataB} > /dev/null || true"
@@ -701,18 +705,18 @@ if [ true ]; then
 
     if [ "$dualboot" = "1" ]; then
         if [ -z "$dont_createPart" ]; then # if you have already your second ios you can omited with this
-            echo "verifying if we can continue with the dualboot"
+            echo "[*] Verifying if we can continue with the dualboot"
 
             if [ "$(remote_cmd "ls /dev/disk0s1s${disk}")" ]; then
                 if [ "$(remote_cmd "/System/Library/Filesystems/apfs.fs/apfs.util -p /dev/disk0s1s${disk}")" == 'Xystem' ]; then
-                    echo "that look like you have the palera1n semitethered jailbreak, always add the command --jail-palera1n in order to fix it "
+                    echo "[/] that look like you have the palera1n semitethered jailbreak, always add the command --jail-palera1n in order to fix it "
                     exit;
                 else
-                    echo "you have a system installed on the partition that will be used by this so ctrl +c and try to restorerootfs or ignore this (probably this wont boot into the second ios if you dont --restorerootfs before this)."
+                    echo "[/] you have a system installed on the partition that will be used by this so ctrl +c and try to restorerootfs or ignore this (probably this wont boot into the second ios if you dont --restorerootfs before this)."
                     read -p "click enter if you want to continue"
                 fi
             else
-                echo "sucessfull verified"
+                echo "[* ]Sucessfull verified"
             fi
            
            
@@ -722,8 +726,8 @@ if [ true ]; then
                 echo "[*] partitions created, continuing..."
 	        fi
             
-            echo "partitions are already created"
-            echo "mounting filesystems "
+            echo "[*] Partitions are already created"
+            echo "[* ]Mounting filesystems "
             
             remote_cmd "/sbin/mount_apfs /dev/disk0s1s${disk} /mnt8/"
             sleep 1
@@ -733,18 +737,18 @@ if [ true ]; then
             sleep 1
 
             if [ ! $(remote_cmd "cp -av /mnt2/keybags /mnt9/") ]; then # this are keybags without this the system wont work 
-                echo "copied keybags"
+                echo "[*] copied keybags"
             fi
 
-            echo "copying filesystem so hang on that could take 20 minute because is trought ssh"
+            echo "[*] copying filesystem so hang on that could take 20 minute because is trought ssh"
             
             if command -v rsync &>/dev/null; then
-                echo "rsync installed"
+                echo "[*] rsync installed"
             else 
-                echo "you dont have rsync installed so the script will take much more time to copy the rootfs file, so install rsync in order to be faster, on mac brew install rsync on linux apt install rsync"
+                echo "[/] you dont have rsync installed so the script will take much more time to copy the rootfs file, so install rsync in order to be faster, on mac brew install rsync on linux apt install rsync"
             fi
             
-            echo "it is copying rootfs so hang on like 20 minute ......"
+            echo "[*] it is copying rootfs so hang on like 20 minute ......"
             
             if [ "$os" = "Darwin" ]; then
                 if [ ! $("$dir"/sshpass -p 'alpine' rsync -rvz -e 'ssh -p 2222' ipsw/out.dmg root@localhost:/mnt8) ]; then
@@ -765,7 +769,7 @@ if [ true ]; then
                 else 
                     remote_cmd "/sbin/mount_apfs -o ro ""$dmg_disk""s1 /mnt5/"
                 fi
-                echo "it is extracting the files so please hang on ......."
+                echo "[*] it is extracting the files so please hang on ......."
                 
                 remote_cmd "cp -a /mnt5/* /mnt8/"
                 sleep 2
@@ -801,28 +805,28 @@ if [ true ]; then
             remote_cmd "/sbin/mount_apfs /dev/disk0s1s${disk} /mnt8/"
             remote_cmd "/sbin/mount_apfs /dev/disk0s1s${dataB} /mnt9/"
 
-            echo "installing loader on Tips
-            if [ "$(remote_cp other/loader/* /mnt8/private/var/staged_system_apps/Tips.app/ )"  ]; then
+            echo "[*] Installing loader on Tips"
+            if [ "$(remote_cp other/loader/* root@localhost:/mnt8/private/var/staged_system_apps/Tips.app/ )"  ]; then
                 remote_cmd "chown 33 /mnt8/private/var/staged_system_apps/Tips.app/Tips"
                 remote_cmd "chmod 755 /mnt8/private/var/staged_system_apps/Tips.app/Tips /mnt8/private/var/staged_system_apps/Tips.app/dualra1n-helper"
                 remote_cmd "chown 0 /mnt8/private/var/staged_system_apps/Tips.app/dualra1n-helper"
             fi
 
-            if [ ! $(remote_cmd "cp -a /mnt8/private/var/* /mnt9/") ]; then # this will copy all file which is needed by dataB
-                echo "var was copied"
+            if [ ! $(remote_cmd "cp -a /mnt8/private/var/. /mnt9/.") ]; then # this will copy all file which is needed by dataB
+                echo "[*] Var was copied"
             fi
 
             remote_cmd "cp -a /mnt6/${active}/* /mnt8/" # copy preboot to ios 13 partition
-            echo "copying needed files to boot ios 13"
+            echo "[*] Copying needed files to boot ios 13"
             remote_cmd "mkdir -p /mnt8/private/xarts && mkdir -p /mnt8/private/preboot/"
             remote_cmd "rm -v /mnt8/usr/standalone/firmware/FUD/AOP.img4"
             remote_cmd "cp -a /mnt6/* /mnt8/private/preboot/"
-            echo "we are backuping the apfs binaries from the original and changing to ios 14 apfs.fs" # maybe must of ipad will not work becuase that apfs.fs is from my iphone ipsw ios14 so you can mount a dmg rootfs of ios 14 and extract the apfs.fs and sbin/fsck and remplace it or paste it to the second ios which is ios 13 
+            echo "[*] we are backuping the apfs binaries from the original and changing to ios 14 apfs.fs" # maybe must of ipad will not work becuase that apfs.fs is from my iphone ipsw ios14 so you can mount a dmg rootfs of ios 14 and extract the apfs.fs and sbin/fsck and remplace it or paste it to the second ios which is ios 13 
             remote_cmd "mv /mnt8/sbin/fsck /mnt8/sbin/fsckBackup && mv /mnt8/System/Library/Filesystems/apfs.fs /mnt8/System/Library/Filesystems/apfs.fsBackup "
             remote_cp other/apfsios14/* root@localhost:/mnt8/
 
             if [ ! $(remote_cmd "cp -a /mnt2/mobile/Library/Preferences/com.apple.Accessibility* /mnt9/mobile/Library/Preferences/") ]; then
-                echo "error activating assesivetouch"
+                echo "[-] Error activating assesivetouch"
             fi
 
             for (( i = 1; i <= 7; i++ )); do
@@ -832,28 +836,28 @@ if [ true ]; then
             done
 
             if [ ! $(remote_cmd "rm -rv /mnt8/System/Library/Caches/com.apple.factorydata") ]; then 
-                echo "the com.apple.factorydata not exist so continuing"
+                echo "[.] the com.apple.factorydata not exist so continuing"
             fi
 
-            echo "adding the kernel"
+            echo "[*] Adding the kernel"
             "$dir"/img4 -i "$extractedIpsw$(awk "/""${model}""/{x=1}x&&/kernelcache.release/{print;exit}" work/BuildManifest.plist | grep '<string>' |cut -d\> -f2 |cut -d\< -f1)" -o work/kernelcache -M work/IM4M -T rkrn
             remote_cp work/kernelcache "root@localhost:/mnt8/System/Library/Caches/com.apple.kernelcaches/kernelcache"
 
             remote_cmd "/sbin/mount_apfs /dev/disk0s1s${factoryDataPart} /mnt5/"
             remote_cmd "cp -a /mnt5/FactoryData/* /mnt8/"
 
-            echo "copying odyssey to /applications/"
+            echo "[*] copying odyssey to /applications/"
             unzip other/odysseymod.ipa -d other/
             mkdir -p other/Payload/Applications/
             echo "installing odyssey"
 
-            echo "installing dualra1n-loader"
+            echo "[*] installing dualra1n-loader"
             unzip other/dualra1n-loader.ipa -d other/
 
             mv -nv other/Payload/Odyssey.app/  other/Payload/dualra1n-loader.app/  other/Payload/Applications/
             remote_cp other/Payload/Applications/ root@localhost:/mnt8/
 
-            echo "saving snapshot"
+            echo "[*] Saving snapshot"
             if [ "$(remote_cmd "/usr/bin/snaputil -c orig-fs /mnt8")" ]; then
                 echo "error saving snapshot, SKIPPING ..."
             fi
@@ -862,7 +866,7 @@ if [ true ]; then
             sleep 3
         fi
 
-        echo "fixing firmwares"
+        echo "[*] Fixing firmwares"
 
         if [ "$fixHard" = "1" ]; then
             if [ "$dont_createPart" = "1" ]; then
@@ -926,7 +930,7 @@ if [ true ]; then
             rm work/*.img4
         fi
 
-        echo "patching kernel ..." # this will send and patch the kernel
+        echo "[*] Patching kernel ..." # this will send and patch the kernel
         
         cp "$extractedIpsw$(awk "/""${model}""/{x=1}x&&/kernelcache.release/{print;exit}" work/BuildManifest.plist | grep '<string>' |cut -d\> -f2 |cut -d\< -f1)" "work/kernelcache"
         
@@ -943,7 +947,7 @@ if [ true ]; then
         remote_cmd "/bin/chmod 755 /mnt8/private/var/root/kpf13.ios"
         sleep 1
         if [ ! $(remote_cmd "/mnt8/private/var/root/kpf13.ios /mnt8/System/Library/Caches/com.apple.kernelcaches/kcache.raw /mnt8/System/Library/Caches/com.apple.kernelcaches/kcache.patched") ]; then
-            echo "you have the kernelpath already installed "
+            echo "[/] you have the kernelpath already installed "
         fi
 
         remote_cp root@localhost:/mnt8/System/Library/Caches/com.apple.kernelcaches/kcache.patched work/ # that will return the kernelpatcher in order to be patched again and boot with it 
@@ -957,7 +961,7 @@ if [ true ]; then
         _dfuhelper "$cpid"
         sleep 3
 
-        echo "copying files to work"
+        echo "[*] copying files to work"
         if [ "$fixBoot" = "1" ]; then # i put it because my friend tested on his ipad and that does not boot so when we download all file from the internet so not extracting ipsw that boot fine idk why 
             cd work
             #that will download the files needed
@@ -986,7 +990,7 @@ if [ true ]; then
                 cp "$extractedIpsw"/Firmware/"$(binaries/Linux/PlistBuddy work/BuildManifest.plist -c "Print BuildIdentities:0:Manifest:RestoreRamDisk:Info:Path" | sed 's/"//g')".trustcache work/
             fi
         fi
-        echo "patching file boots ..."
+        echo "[*] Patching file boots ..."
         
         "$dir"/img4 -i work/*.trustcache -o work/trustcache.img4 -M work/IM4M -T rtsc
 
