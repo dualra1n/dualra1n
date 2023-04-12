@@ -82,6 +82,7 @@ iOS 13 is working but only 13.6, 13.7. If you want to dualboot iOS 13, use the [
 - [Edwin](https://github.com/edwin170) owner :)
 - [Uckermark](https://github.com/Uckermark/dualra1n-loader) thank you so much for the amazing dualra1n loader app to jailbreak it.
 - Edward, my brother, for giving me a Hackintosh to test this on
+- [sasa](https://github.com/sasa8810) thank for improve the dfu timing on macos
 - [Fatih](https://github.com/swayea) for helping with the readme, testing linux support and being a very good person.
 - [plooshi](https://github.com/plooshi)
    thank you so much for fix the home button issue
