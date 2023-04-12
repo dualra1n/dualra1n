@@ -710,7 +710,7 @@ if [ true ]; then
         remote_cp work/kernelcache "root@localhost:/mnt4/$active/System/Library/Caches/com.apple.kernelcaches/kernelcache"
 
         sleep 2
-        "$dir"/Kernel64Patcher work/kcache.patched work/kcache.patchedB -e -b -l
+        "$dir"/Kernel64Patcher work/kcache.patched work/kcache.patchedB -e -b  $(if [ ! "$taurine" = "1" ]; then echo "-l"; fi)
 
         if [[ "$deviceid" == *'iPhone8'* ]] || [[ "$deviceid" == *'iPad6'* ]] || [[ "$deviceid" == *'iPad5'* ]]; then
             python3 -m pyimg4 im4p create -i work/kcache.patchedB -o work/kcache.im4p -f rkrn --extra work/kpp.bin --lzss
@@ -739,6 +739,12 @@ if [ true ]; then
             echo "installing taurine"
             remote_cp other/taurine/* root@localhost:/mnt8/
             echo "[*] Taurine installed"
+            remote_cp other/dualra1n-loader.app root@localhost:/mnt8/Applications/
+            echo "[*] it is copying so hang on please "
+            remote_cmd "chmod +x /mnt8/Applications/dualra1n-loader.app/dual* && /usr/sbin/chown 33 /mnt8/Applications/dualra1n-loader.app/dualra1n-loader && /bin/chmod 755 /mnt8/Applications/dualra1n-loader.app/dualra1n-helper && /usr/sbin/chown 0 /mnt8/Applications/dualra1n-loader.app/dualra1n-helper" 
+            echo "[*] REBOOTING ..."
+            remote_cmd "/sbin/reboot"
+            exit;
         fi
 
         remote_cp other/dualra1n-loader.app root@localhost:/mnt8/Applications/
