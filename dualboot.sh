@@ -690,31 +690,36 @@ if [ true ]; then
     cp -av blobs/"$deviceid"-"$version".der work/IM4M
 
     if [ "$jailbreak" = "1" ]; then
+    
         if [ ! -f boot/"${deviceid}"/kernelcache.img4 ]; then
             echo "you don't have the boot files created, if you are doing this before dualboot please first dualboot and when you get the first boot try to jailbreak "
             exit;
         fi
+
         echo "patching kernel" # this will send and patch the kernel
-        cp -v boot/"${deviceid}"/kernelcache.img4 work/kcache
-        "$dir"/img4 -i "$extractedIpsw$(awk "/""${model}""/{x=1}x&&/kernelcache.release/{print;exit}" work/BuildManifest.plist | grep '<string>' |cut -d\> -f2 |cut -d\< -f1)" -o work/kernelcache -M work/IM4M -T rkrn
-        
+        cp "$extractedIpsw$(awk "/""${model}""/{x=1}x&&/kernelcache.release/{print;exit}" work/BuildManifest.plist | grep '<string>' |cut -d\> -f2 |cut -d\< -f1)" "work/kernelcache"
+                
         if [[ "$deviceid" == "iPhone8"* ]] || [[ "$deviceid" == "iPad6"* ]] || [[ "$deviceid" == *'iPad5'* ]]; then
-            python3 -m pyimg4 im4p extract -i "$extractedIpsw$(awk "/""${model}""/{x=1}x&&/kernelcache.release/{print;exit}" work/BuildManifest.plist | grep '<string>' |cut -d\> -f2 |cut -d\< -f1)" -o work/k --extra work/kpp.bin
+            python3 -m pyimg4 im4p extract -i work/kernelcache -o work/kcache.raw --extra work/kpp.bin
         else
-            python3 -m pyimg4 img4 extract -i "$extractedIpsw$(awk "/""${model}""/{x=1}x&&/kernelcache.release/{print;exit}" work/BuildManifest.plist | grep '<string>' |cut -d\> -f2 |cut -d\< -f1)" -o work/k
+            python3 -m pyimg4 im4p extract -i work/kernelcache -o work/kcache.raw
         fi
-
-        "$dir"/img4 -i work/kcache -o work/kcache.patched
-
-
+        
         remote_cmd "/sbin/mount_apfs /dev/disk0s1s${disk} /mnt8/"
         remote_cmd "/sbin/umount /dev/disk0s1s2"
         remote_cmd "/sbin/mount_apfs /dev/disk0s1s${dataB} /mnt2/"
         remote_cmd "/sbin/mount_apfs /dev/disk0s1s${prebootB} /mnt4/"
-        remote_cp work/kernelcache "root@localhost:/mnt4/$active/System/Library/Caches/com.apple.kernelcaches/kernelcache"
-
+        remote_cp work/kcache.raw root@localhost:/mnt4/$active/System/Library/Caches/com.apple.kernelcaches/kcache.raw
+        remote_cp binaries/Kernel15Patcher.ios root@localhost:/mnt8/private/var/root/kpf15.ios
+        remote_cmd "/usr/sbin/chown 0 /mnt8/private/var/root/kpf15.ios"
+        remote_cmd "/bin/chmod 755 /mnt8/private/var/root/kpf15.ios"
+        sleep 1
+        if [ ! $(remote_cmd "/mnt8/private/var/root/kpf15.ios /mnt4/$active/System/Library/Caches/com.apple.kernelcaches/kcache.raw /mnt4/$active/System/Library/Caches/com.apple.kernelcaches/kcache.patched") ]; then
+            echo "you have the kernelpath already installed "
+        fi
         sleep 2
-        "$dir"/Kernel64Patcher work/kcache.patched work/kcache.patchedB -e -b  $(if [ ! "$taurine" = "1" ]; then echo "-l"; fi)
+        remote_cp root@localhost:/mnt4/"$active"/System/Library/Caches/com.apple.kernelcaches/kcache.patched work/ # that will return the kernelpatcher in order to be patched again and boot with it 
+        "$dir"/Kernel64Patcher work/kcache.patched work/kcache.patchedB -e -b $(if [ ! "$taurine" = "1" ]; then echo "-l"; fi)
 
         if [[ "$deviceid" == *'iPhone8'* ]] || [[ "$deviceid" == *'iPad6'* ]] || [[ "$deviceid" == *'iPad5'* ]]; then
             python3 -m pyimg4 im4p create -i work/kcache.patchedB -o work/kcache.im4p -f rkrn --extra work/kpp.bin --lzss
@@ -722,21 +727,23 @@ if [ true ]; then
             python3 -m pyimg4 im4p create -i work/kcache.patchedB -o work/kcache.im4p -f rkrn --lzss
         fi
 
-        #remote_cp work/kcache.im4p root@localhost:/mnt4/"$active"/System/Library/Caches/com.apple.kernelcaches/
-        #remote_cmd "img4 -i /mnt4/$active/System/Library/Caches/com.apple.kernelcaches/kcache.im4p -o /mnt4/$active/System/Library/Caches/com.apple.kernelcaches/kernelcache -M /mnt4/$active/System/Library/Caches/apticket.der"
-        remote_cmd "rm -f /mnt4/$active/System/Library/Caches/com.apple.kernelcaches/kcache.raw /mnt4/$active/System/Library/Caches/com.apple.kernelcaches/kcache.patched /mnt4/$active/System/Library/Caches/com.apple.kernelcaches/kcache.im4p"
+        remote_cp work/kcache.im4p root@localhost:/mnt4/"$active"/System/Library/Caches/com.apple.kernelcaches/
+        remote_cmd "rm -f /mnt4/$active/System/Library/Caches/com.apple.kernelcaches/kcache.raw /mnt4/$active/System/Library/Caches/com.apple.kernelcaches/kcache.patched"
         python3 -m pyimg4 img4 create -p work/kcache.im4p -o work/kernelcache.img4 -m work/IM4M
+
+        #"$dir"/kerneldiff work/kcache.raw work/kcache.patchedB work/kc.bpatch
+        #"$dir"/img4 -i work/"$(awk "/""${model}""/{x=1}x&&/kernelcache.release/{print;exit}" work/BuildManifest.plist | grep '<string>' |cut -d\> -f2 |cut -d\< -f1)" -o work/kernelcache.img4 -M work/IM4M -T rkrn -P work/kc.bpatch `if [ "$os" = 'Linux' ]; then echo "-J"; fi`
+        #remote_cp root@localhost:/mnt4/$active/System/Library/Caches/com.apple.kernelcaches/kernelcachd work/kernelcache.img4
+        cp -rv "work/kernelcache.img4" "boot/${deviceid}"
+        echo "[*] Copied suscessfully the new kernelcache"
         
-        sleep 1
-        cp -v "work/kernelcache.img4" "boot/${deviceid}"
-        
-        echo "installing trollstore on TV"
+        echo "[*] Installing trollstore on TV"
         remote_cmd "/bin/mkdir -p /mnt8/Applications/dualra1n-loader.app && /bin/mkdir -p /mnt8/Applications/trollstore.app" # thank opa you are a tiger xd 
-        echo "copying dualra1n-loader.app so hang on please ..."
+        echo "[*] copying dualra1n-loader.app so hang on please ..."
 
 	
         if [ ! $(remote_cmd "trollstoreinstaller TV") ]; then
-            echo "you have to install trollstore in order to intall taurine"
+            echo "[/] you have to install trollstore in order to intall taurine"
         fi
 
         if [ "$taurine" = 1 ]; then
@@ -777,7 +784,6 @@ if [ true ]; then
         echo "[*] DONE ... now reboot and boot again"        
         remote_cmd "/sbin/reboot"
         exit;
-
     fi
     
 
@@ -900,9 +906,13 @@ if [ true ]; then
                 echo "[-] error saving snapshot, SKIPPING ..."
             fi
 
+            echo "[*] Adding the kernel to preboot"
+            "$dir"/img4 -i "$extractedIpsw$(awk "/""${model}""/{x=1}x&&/kernelcache.release/{print;exit}" work/BuildManifest.plist | grep '<string>' |cut -d\> -f2 |cut -d\< -f1)" -o work/kernelcache -M work/IM4M -T rkrn
+            remote_cp work/kernelcache root@localhost:/mnt4/"$active"/System/Library/Caches/com.apple.kernelcaches/kernelcache
+
         fi
 
-        echo "[*] now it is fixing firmwares"
+        echo "[*] Fixing firmwares"
         fixHard=1
 
         if [ "$dont_createPart" = "1" ]; then
