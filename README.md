@@ -17,7 +17,7 @@ Options:
 
 `--taurine`           Jailbreak dualbooted iOS with [Taurine](https://taurine.app). Usage: `./dualboot.sh --jailbreak 14.3 --taurine` (currently ***NOT RECOMMENDED***)
    
-`--fixHard`           Fixes microphone, girocopes, camera, audio, touchscreen, etc.
+`--fixHard`           Fixes microphone, gyrocopes, camera, audio, touchscreen, etc.
 
 `--help`              Print this help.
        
