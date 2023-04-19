@@ -2,7 +2,7 @@
 
 1. <code>git clone --recursive https://github.com/dualra1n/dualra1n</code>
 
-2. Download the .iPSW file for the iOS version which you want to dualboot with and put it in the [ipsw/](https://github.com/dualra1n/dualra1n/tree/main/ipsw) directory. You can download those from [ipsw.me](https://ipsw.me). (Remember, only iOS 14.0 to iOS 14.8.1 are supported. iOS 13.7 is supported too, but requires using the [ios13](https://github.com/dualra1n/dualra1n/tree/ios13) branch)
+2. Download the .iPSW file for the iOS version which you want to dualboot with and put it in the [ipsw/](https://github.com/dualra1n/dualra1n/tree/main/ipsw) directory. You can download those from [ipsw.me](https://ipsw.me). (Remember, only iOS 14.0 to iOS 15.7.2 are supported. iOS 13.6 upper is supported too, but requires using the [ios13](https://github.com/dualra1n/dualra1n/tree/ios13) branch)
 
 3. Run `./dualboot.sh --dualboot (iOSver)`, replacing "(iOSver)" with the iOS version you wish to dualboot.
 
@@ -18,9 +18,14 @@
 
 1. <code>./dualboot.sh --restorerootfs 14.2 </code> (if you have palera1n semi-tethered you must add <code>--jail-palera1n</code>)
 
+2. in case that you want to delete just the jailbreak, you can use the restorerootfs option in the dualra1n-loader so when you tap reboot it and --boot, if the device doesn't boot and you'd had the --jailbreak you must do jailbreak again in order to get the second ios boot.
+
 # Issues 
 
-1. Problem when installing something in Sileo whilst jailbroken with Taurine. You can solve this problem by removing Substrate.
+1. "Deep sleep", the iDevice not "waking up" when it's supposed to. Installing [Fiona](https://www.ios-repo-updates.com/repository/julioverne-s-repo/package/com.julioverne.fiona/) will fix this.
 
+# commang cobination for person who don't understand very well :_
 
-2. "Deep sleep", the iDevice not "waking up" when it's supposed to. Installing [Fiona](https://www.ios-repo-updates.com/repository/julioverne-s-repo/package/com.julioverne.fiona/) will fix this.
+- --dualboot (vers) --dont-create-part = this will create the boot files instead install the second ios again.
+
+-- dualboot (vers) --jail-palera1n, use --jail-palera1n always when you have the palera1n semitethered jailbreak.

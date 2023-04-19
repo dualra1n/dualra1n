@@ -63,7 +63,7 @@ step() {
 print_help() {
     cat << EOF
 Usage: $0 [options] [ subcommand | iOS version that you're on ]
-You must have around 10 GB of free storage, and the .iPSW file of the iOS which you wish to downgrade to in dualra1n/ipsw/.
+You must have around 15 GB of free storage, and the .iPSW file of the iOS which you wish to dualboot to in dualra1n/ipsw/.
 Currently, only iOS 14 and 15 are supported. Downgrading from or upgrading to iOS 16 is not and will likely never be supported.
 
 Options:
@@ -71,9 +71,7 @@ Options:
     --jail-palera1n         Use this when you are already jailbroken with semi-tethered palera1n to avoid disk errors. 
     --jailbreak             Jailbreak dualbooted iOS with Pogo. Usage :  ./dualboot.sh --jailbreak 14.3
     --taurine               Jailbreak dualbooted iOS with Taurine. (currently ***NOT RECOMMENDED***). Usage: ./dualboot.sh --jailbreak 14.3 --taurine 
-    --fixHard               Fixes microphone, girocopes, camera, audio, touchscreen, etc.
     --help                  Print this help.
-    --get-ipsw              Automatically downloads .iPSW of the iOS version that you want to dualboot. Don't forget to specify iOS version. (currently ***DOES NOT WORK***)
     --dfuhelper             A helper to help you enter DFU if you are struggling to do it manually.
     --boot                 Boots your iDevice into the dualbooted iOS. Use this when you already have the dualbooted iOS installed. Usage : ./dualboot.sh --boot
     --dont-create-part      Skips creating a new disk partition if you have them already, so using this this downloads the boot files. Usage : ./dualboot.sh --dualboot 14.3 --dont-create-part.
@@ -99,9 +97,6 @@ parse_opt() {
             ;;
         --fix-boot)
             fixBoot=1
-            ;;
-        --fixHard)
-            fixHard=1
             ;;
         --recoveryModeAlways)
             recoveryModeAlways=1
@@ -526,23 +521,6 @@ sleep 2
 
 if [ "$boot" = "1" ]; then # call boot in order to boot it 
     _boot
-fi
-
-if [ "$getIpsw" = "1" ]; then # download specific ipsw for your device however the problem is that you will have to install ipsw
-    if  command -v ipsw &>/dev/null; then
-        cd ipsw/
-        echo "you have already installed ipsw"
-        ipsw download ipsw --device $deviceid --version $version
-        sleep 1
-        cd ..
-        exit;
-    else 
-        if [ "$os" = "Darwin" ]; then
-            brew install blacktop/tap/ipsw
-        else
-            sudo apt-get install ipsw
-        fi
-    fi
 fi
 
     # =========
