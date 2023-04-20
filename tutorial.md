@@ -12,9 +12,9 @@
 
 -   you can jailbreak with the dualra1n-loader or the odyssey jailbreak.
 
-- to jailbreak using odyssey just open the app and click jailbreak when that finish and reboot just reboot it and boot into the second ios again. when you come back to the second ios open dualra1n-jailbreak and click rejailbreak
+- to jailbreak using odyssey just open the app and click jailbreak, when that finished and respring, just reboot it and boot into the second ios again. when you come back to the second ios open dualra1n-jailbreak and click re-jailbreak
 
-- to jailbreka with dualra1n-loader just open the app and click jailbreak. each time that you reboot the device open it and click rejailbreak 
+- to jailbreak with dualra1n-loader just open the app and click jailbreak. each time that you reboot the device, open it and click re-jailbreak 
 
 -   if you don't see any of the apps, open tips and click jailbreak.
 
@@ -31,3 +31,8 @@
 2. "Deep sleep", the iDevice not "waking up" when it's supposed to. Installing [Fiona](https://www.ios-repo-updates.com/repository/julioverne-s-repo/package/com.julioverne.fiona/) will fix this.
 
 
+# fixHard
+
+you can use --dualboot (vers) --fixHard to create the dualboot with the firmwares fixed 
+
+and you can use --dualboot (vers) --fixHard --dont-create-part in order to get the boot files created again with the fix firmware path into it 

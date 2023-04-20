@@ -10,16 +10,10 @@ Example: `./dualboot.sh --dualboot 13.7`
 `--dualboot`          Dualboot your iDevice.
 
 `--jail-palera1n`     Use this when you are already jailbroken with semi-tethered palera1n to avoid disk errors. 
-
-`--jailbreak`         Jailbreak dualbooted iOS with [Pogo](https://github.com/elihwyma/Pogo). Usage :  `./dualboot.sh --jailbreak 13.7`
-
-`--taurine`           Jailbreak dualbooted iOS with [Taurine](https://taurine.app). Usage: `./dualboot.sh --jailbreak 13.7 --taurine` (currently ***NOT RECOMMENDED***)
    
 `--fixHard`           Fixes microphone, girocopes, camera, audio, touch, etc. (the Home button is not fixed yet)
 
 `--help`              Print this help.
-       
-`--get-ipsw`          Automatically downloads .iPSW of the iOS version that you want to dualboot. Don't forget to specify iOS version. (currently ***DOES NOT WORK***)
 
 `--dfuhelper`         A helper to help you enter DFU if you are struggling to do it manually.
 
@@ -46,13 +40,16 @@ Example: `./dualboot.sh --dualboot 13.7`
  **If your device is stuck in recovery, please run one of the following:**
    - futurerestore --exit-recovery
    - irecovery -n
+   - ./dualboot.sh --recoveryModeAlways
 
-# Ideal Dualboot Versions
+# Ideal Dualboot Versions and some informations
 iOS 13 is working but only 13.6, 13.7. If you want to dualboot iOS 13, use the [ios13](https://github.com/dualra1n/dualra1n/tree/ios13) branch.
 
-# Common Issues
+- on ios 13 booting take like 15 minutes on a9 devices and probably on a10 as well.
 
-- A9 : Everything works except.
+# Common Issues, use fixHard to fix the most of the firmwares, you can find more information on a full tutorial here below
+
+- A9 : Everything works except touch id.
 
 - A10/11/X: Home button is not working. You can, however, use tweaks like GesturesXV to simulate iPhone X gestures. You can also activate Assistive Touch on the main iOS and have it also enabled on the dualbooted iOS.
 

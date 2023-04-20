@@ -44,10 +44,15 @@ remote_cp() {
 }
 
 step() {
+    rm -f .entered_dfu
     for i in $(seq "$1" -1 0); do
-        if [ "$(get_device_mode)" = "dfu" ]; then
+        if [[ -e .entered_dfu ]]; then
+            rm -f .entered_dfu
             break
         fi
+        if [[ $(get_device_mode) == "dfu" || ($1 == "10" && $(get_device_mode) != "none") ]]; then
+            touch .entered_dfu
+        fi &
         printf '\r\e[K\e[1;36m%s (%d)' "$2" "$i"
         sleep 1
     done
@@ -100,14 +105,8 @@ parse_opt() {
         --fixBoot)
             fixBoot=1
             ;;
-        --fixHard)
-            fixHard=1
-            ;;
         --recoveryModeAlways)
             recoveryModeAlways=1
-            ;;
-        --get-ipsw)
-            getIpsw=1
             ;;
         --jail-palera1n)
             jail_palera1n=1
@@ -193,7 +192,8 @@ _reset() {
 
 get_device_mode() {
     if [ "$os" = "Darwin" ]; then
-        apples="$(system_profiler SPUSBDataType 2> /dev/null | grep -B1 'Vendor ID: 0x05ac' | grep 'Product ID:' | cut -dx -f2 | cut -d' ' -f1 | tail -r)"
+        sp="$(system_profiler SPUSBDataType 2> /dev/null)"
+        apples="$(printf '%s' "$sp" | grep -B1 'Vendor ID: 0x05ac' | grep 'Product ID:' | cut -dx -f2 | cut -d' ' -f1 | tail -r)"
     elif [ "$os" = "Linux" ]; then
         apples="$(lsusb | cut -d' ' -f6 | grep '05ac:' | cut -d: -f2)"
     fi
@@ -237,8 +237,9 @@ get_device_mode() {
     if [ "$os" = "Linux" ]; then
         usbserials=$(cat /sys/bus/usb/devices/*/serial)
     elif [ "$os" = "Darwin" ]; then
-        usbserials=$(system_profiler SPUSBDataType 2> /dev/null | grep 'Serial Number' | cut -d: -f2- | sed 's/ //')
+        usbserials=$(printf '%s' "$sp" | grep 'Serial Number' | cut -d: -f2- | sed 's/ //')
     fi
+
     if grep -qE '(ramdisk tool|SSHRD_Script) (Jan|Feb|Mar|Apr|May|Jun|Jul|Aug|Sep|Oct|Nov|Dec) [0-9]{1,2} [0-9]{4} [0-9]{2}:[0-9]{2}:[0-9]{2}' <<< "$usbserials"; then
         device_mode=ramdisk
     fi
@@ -533,23 +534,6 @@ if [ "$boot" = "1" ]; then # call boot in order to boot it
     _boot
 fi
 
-if [ "$getIpsw" = "1" ]; then # download specific ipsw for your device however the problem is that you will have to install ipsw
-    if  command -v ipsw &>/dev/null; then
-        cd ipsw/
-        echo "you have already installed ipsw"
-        ipsw download ipsw --device $deviceid --version $version
-        sleep 1
-        cd ..
-        exit;
-    else 
-        if [ "$os" = "Darwin" ]; then
-            brew install blacktop/tap/ipsw
-        else
-            sudo apt-get install ipsw
-        fi
-    fi
-fi
-
     # =========
     # extract ipsw 
     # =========
@@ -623,8 +607,19 @@ if [ true ]; then
         echo "[*] Waiting for the ramdisk to finish booting"
     fi
 
+    i=1
     while ! ("$dir"/sshpass -p 'alpine' ssh -o StrictHostKeyChecking=no -p2222 root@localhost "echo connected" &> /dev/null); do
         sleep 1
+        i=$((i+1))
+        if [ "$i" == 15 ]; then
+            if [ "$os" = 'Linux' ]; then
+                echo -e "as a sudo user or your user, you should execute in another terminal:  \e[1;37mssh-keygen -f /root/.ssh/known_hosts -R \"[localhost]:2222\"\e[0m"
+                read -p "Press [ENTER] to continue"
+            else
+                echo "mmm that looks like that ssh it's not working try to reboot your computer or send the log file trough discord"
+                read -p "Press [ENTER] to continue"
+            fi
+        fi
     done
 
     echo $disk
@@ -685,9 +680,19 @@ if [ true ]; then
         # that eliminate dualboot paritions 
         remote_cmd "/sbin/apfs_deletefs disk0s1s${disk} > /dev/null || true"
         remote_cmd "/sbin/apfs_deletefs disk0s1s${dataB} > /dev/null || true"
-        #remote_cmd "/sbin/apfs_deletefs disk0s1s${prebootB} > /dev/null || true"
+        echo "[*] the dualboot was removed"
+        echo "[*] Checking if there is more partition and removing them"
+        i=$(($dataB + 1))
+
+        while [ "$(remote_cmd "ls /dev/disk0s1s$i")" ]; do
+            echo "Found /dev/disk0s1s$i deleting ..."
+            cmd="/sbin/apfs_deletefs disk0s1s$i &>/dev/null || true"
+            remote_cmd "$cmd"
+            i=$((i + 1))
+        done
+        
         remote_cmd "/usr/sbin/nvram auto-boot=true"
-        echo "[*] Done! Rebooting your device"
+        echo "[*] Sucess! Rebooting your device"
         remote_cmd "/sbin/reboot"
         exit;
     fi
