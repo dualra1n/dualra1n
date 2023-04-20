@@ -595,8 +595,19 @@ if [ true ]; then
         echo "[*] Waiting for the ramdisk to finish booting"
     fi
 
+    i=1
     while ! ("$dir"/sshpass -p 'alpine' ssh -o StrictHostKeyChecking=no -p2222 root@localhost "echo connected" &> /dev/null); do
         sleep 1
+        i=$((i+1))
+        if [ "$i" == 15 ]; then
+            if [ "$os" = 'Linux' ]; then
+                echo -e "as a sudo user or your user, you should execute in another terminal:  \e[1;37mssh-keygen -f /root/.ssh/known_hosts -R \"[localhost]:2222\"\e[0m"
+                read -p "Press [ENTER] to continue"
+            else
+                echo "mmm that looks like that ssh it's not working try to reboot your computer or send the log file trough discord"
+                read -p "Press [ENTER] to continue"
+            fi
+        fi
     done
 
     echo $disk
@@ -657,12 +668,22 @@ if [ true ]; then
         remote_cmd "/sbin/apfs_deletefs disk0s1s${disk} > /dev/null || true"
         remote_cmd "/sbin/apfs_deletefs disk0s1s${dataB} > /dev/null || true"
         remote_cmd "/sbin/apfs_deletefs disk0s1s${prebootB} > /dev/null || true"
+        echo "[*] the dualboot was removed"
+        echo "[*] Checking if there is more partition and removing them"
+        i=$(($prebootB + 1))
+
+        while [ "$(remote_cmd "ls /dev/disk0s1s$i")" ]; do
+            echo "Found /dev/disk0s1s$i deleting ..."
+            cmd="/sbin/apfs_deletefs disk0s1s$i &>/dev/null || true"
+            remote_cmd "$cmd"
+            i=$((i + 1))
+        done
+        
         remote_cmd "/usr/sbin/nvram auto-boot=true"
-        echo "[*] Done! Rebooting your device"
+        echo "[*] Sucess! Rebooting your device"
         remote_cmd "/sbin/reboot"
         exit;
     fi
-
 
     remote_cp root@localhost:/mnt6/"$active"/System/Library/Caches/apticket.der blobs/"$deviceid"-"$version".der
     cp -av blobs/"$deviceid"-"$version".der work/IM4M
