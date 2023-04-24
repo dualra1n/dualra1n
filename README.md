@@ -46,7 +46,7 @@ iOS 13 is working but only 13.6, 13.7. If you want to dualboot iOS 13, use the [
 
 - on ios 13 booting take like 15 minutes on a9 devices and probably on a10 as well.
 
-# Common Issues, use fixHard to fix the most of the firmwares, you can find more information on a full tutorial here below
+# Common Issues, use --fixHard to fix the most of the firmwares, you can find more information on a full tutorial here below
 
 - A9 : Everything works except touch id.
 

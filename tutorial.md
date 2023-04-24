@@ -33,6 +33,8 @@
 
 # fixHard
 
-you can use --dualboot (vers) --fixHard to create the dualboot with the firmwares fixed 
+- remeber that using fixHard, the iphones will take more time to boot on ios 13.
 
-and you can use --dualboot (vers) --fixHard --dont-create-part in order to get the boot files created again with the fix firmware path into it 
+- you can use --dualboot (vers) --fixHard to create the dualboot with the firmwares fixed 
+
+- and you can use --dualboot (vers) --fixHard --dont-create-part in order to get the boot files created again with the fix firmware path into it 
