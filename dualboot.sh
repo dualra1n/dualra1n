@@ -105,6 +105,9 @@ parse_opt() {
         --fixBoot)
             fixBoot=1
             ;;
+        --fixHard)
+            fixHard=1
+            ;;
         --recoveryModeAlways)
             recoveryModeAlways=1
             ;;
@@ -445,6 +448,11 @@ if [ "$clean" = "1" ]; then
     exit
 fi
 
+if [[ "$version" = "14."* ]]; then
+    echo -e "YOU CAN'T DUALBOOT IOS 14-15 USING THIS BRANCH. USE THIS COMMAND TO CHAMGE to THE main BRANCH: \033[0;37mgit checkout main\033[0m"
+    exit
+fi
+
 # Get device's iOS version from ideviceinfo if in normal mode
 echo "[*] Waiting for devices"
 while [ "$(get_device_mode)" = "none" ]; do
@@ -529,8 +537,10 @@ if [ "$(get_device_mode)" != "dfu" ]; then
 fi
 sleep 2
 
-
-if [ "$boot" = "1" ]; then # call boot in order to boot it 
+if [ "$boot" = "1" ]; then # call boot in order to boot it
+    if [ ! -e boot/"$deviceid"/iBEC.img4 ]; then
+        echo "[-] you don't have the boot files created, Please try to dualboot or if you are already dualbooted try to --dualboot (VERS) --dont-create-part that's will create only the boot files."
+    fi
     _boot
 fi
 
@@ -710,6 +720,7 @@ if [ true ]; then
 
     if [ "$dualboot" = "1" ]; then
         if [ -z "$dont_createPart" ]; then # if you have already your second ios you can omited with this
+            echo "[*] Starting step 1"
             echo "[*] Verifying if we can continue with the dualboot"
 
             if [ "$(remote_cmd "ls /dev/disk0s1s${disk}")" ]; then
@@ -867,10 +878,11 @@ if [ true ]; then
                 echo "error saving snapshot, SKIPPING ..."
             fi
 
-            echo "finish to copy partition so if you will create the boot files again put --dont-create-part in order to dont have to copy the filesystem again"
+            echo "[*] Finished step 1. you can use --dont-create-part in order to dont have to copy and create all again if you needed."
             sleep 3
         fi
 
+        echo "[*] Starting step 2"
         echo "[*] Fixing firmwares"
 
         if [ "$fixHard" = "1" ]; then
@@ -1037,6 +1049,7 @@ if [ true ]; then
 
 
         cp -v work/*.img4 "boot/${deviceid}" # copying all file img4 to boot
+        echo "Finished step 2"
       # echo "so we finish, now you can execute './dualboot boot' to boot to second ios after that we need that you record a video when your iphone is booting to see what is the uuid and note that name of the uuid"       
         _boot
     fi

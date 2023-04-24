@@ -12,9 +12,9 @@
 
 -   you can jailbreak with the dualra1n-loader or the odyssey jailbreak.
 
-- to jailbreak using odyssey just open the app and click jailbreak, when that finished and respring, just reboot it and boot into the second ios again. when you come back to the second ios open dualra1n-jailbreak and click re-jailbreak
+- to jailbreak using odyssey just open the app and click jailbreak, when that finished and respring, just reboot it and boot into the second ios again. when you come back to the second ios open dualra1n-jailbreak and click re-jailbreak.
 
-- to jailbreak with dualra1n-loader just open the app and click jailbreak. each time that you reboot the device, open it and click re-jailbreak 
+- to jailbreak with dualra1n-loader just open the app and click jailbreak. each time that you reboot the device, open it and click re-jailbreak.
 
 -   if you don't see any of the apps, open tips and click jailbreak.
 

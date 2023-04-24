@@ -2,7 +2,7 @@
 
 A script that lets you dualboot iOS 13.7 (semi-tethered) on [checkm8](https://www.theiphonewiki.com/wiki/Checkm8_Exploit)-vulnerable devices.
 
-
+- WARNING, in this branch both jailbreak is automatically installed so the --jailbreak so you mustn't use in this branch.
 # Usage
 
 Example: `./dualboot.sh --dualboot 13.7`
@@ -31,7 +31,6 @@ Example: `./dualboot.sh --dualboot 13.7`
 
 # Dependencies
 - A deactivated passcode on A10-A11 
-- unzip, python3, libimobiledevice-utils, libusbmuxd-tools
 - An .iPSW file for iOS 13.7 
 - Around 15 gigabytes of free storage
 - A computer with macOS or Linux (if you have neither, you can temporarily "install" a Linux distro to RAM)
@@ -62,12 +61,14 @@ iOS 13 is working but only 13.6, 13.7. If you want to dualboot iOS 13, use the [
 
 # If there are any other issues, please contact me on the [dualra1n Discord server](https://discord.gg/E6jj48hzd5)
 
+I have wanted create a jailbreak since i was 10 years old, and look at now i am 18 and now i created a tool to dualboot "how life takes unexpected turns sometimes" xd :).  
+
 # Buy me a coffee?
 
 [My Paypal](https://www.paypal.me/EdwinNunez2004)
 
 <details><summary>Why did I decide to put a donate me?</summary>
-"dualra1n" is not a team, it is just a name for this tool, this means that I created this script, therefore you can support me with whatever you have. This is important for me because right now, I don't have any source of income. I would be glad to receive something for creating this tool. If you can't donate, no problem, just enjoy dualbooting.
+ I created this script with love for the jailbreak comunity, however you can support me with whatever you have. This is important for me because right now, I don't have any source of income. I would be glad to receive something for creating this tool. If you can't donate, no problem, just enjoy dualbooting.
 </details>
 
 # Credits
@@ -76,18 +77,23 @@ iOS 13 is working but only 13.6, 13.7. If you want to dualboot iOS 13, use the [
 <p>
 
 - [Edwin](https://github.com/edwin170) owner :)
-
-- [Fatih](https://github.com/swayea) for helping with the readme, testing linux support and being a very good person
+- [Uckermark](https://github.com/Uckermark/dualra1n-loader) thank you so much for the amazing dualra1n loader app to jailbreak it.
 - Edward, my brother, for giving me a Hackintosh to test this on
-- [azaz0322](https://github.com/m00nl1ghts), [Huy Nguyen](https://github.com/34306), [Uckermark](https://github.com/Uckermark), [DarwinUang](https://github.com/DarwinUang) and [aditya11110](https://github.com/aditya11110) for helping with the readme\
+- [sasa](https://github.com/sasa8810) thank for improve the dfu timing on macos
+- [Fatih](https://github.com/swayea) for helping with the readme, testing linux support and being a very good person.
+- [plooshi](https://github.com/plooshi) thank you so much for help to fix the home button issue.
+
+   - [azaz0322](https://github.com/m00nl1ghts), [Huy Nguyen](https://github.com/34306), [DarwinUang](https://github.com/DarwinUang) and [aditya11110](https://github.com/aditya11110) for helping with the readme\
 </details>
 <details><summary>Credits for tools used in dualra1n</summary>
 
-- [palera1n](https://github.com/palera1n) for some of the code
 - [Dualboot guide](https://dualbootfun.github.io/) for the guide
+- [palera1n](https://github.com/palera1n) for some of the code
+- [opa334](https://github.com/opa334/TrollStore) amazing app
 - [blacktop](https://github.com/blacktop) for the iPSW downloader
 - [Nathan](https://github.com/verygenericname) for the ramdisk
 - [Amy](https://github.com/elihwyma) for the [Pogo](https://github.com/elihwyma/Pogo) app
+- [Mineek](https://github.com/mineek) thank you for the Kernel15patcher which is a kpf midfied to use with bootx.
 - [checkra1n](https://github.com/checkra1n) for the base of the kpf
 - [m1sta](https://github.com/m1stadev) for [pyimg4](https://github.com/m1stadev/PyIMG4)
 - [tihmstar](https://github.com/tihmstar) for [pzb](https://github.com/tihmstar/partialZipBrowser)/original [iBoot64Patcher](https://github.com/tihmstar/iBoot64Patcher)/original [liboffsetfinder64](https://github.com/tihmstar/liboffsetfinder64)/[img4tool](https://github.com/tihmstar/img4tool)
@@ -97,5 +103,6 @@ iOS 13 is working but only 13.6, 13.7. If you want to dualboot iOS 13, use the [
 - [Sam Bingner](https://github.com/sbingner) for [Substitute](https://github.com/sbingner/substitute)
 - [CoolStar](https://github.com/coolstar) for [Libhooker](https://libhooker.com/docs/index.html)
 - [Ralp0045](https://github.com/Ralph0045) for [dtree_patcher](https://github.com/Ralph0045/dtree_patcher) and [Kernel64Patcher](https://github.com/Ralph0045/Kernel64Patcher)
+- [0x7ff](https://github.com/0x7ff/gaster) thank you so much for the gaster tool.
 </details>
 </p>
