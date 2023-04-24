@@ -10,8 +10,7 @@ A script that lets you dualboot iOS 14-15 (semi-tethered) on [checkm8](https://w
 - [Video tutorial from burhanrana](https://www.youtube.com/watch?v=4iCZv7Ox5AA)
 
 # Dependencies
-- A deactivated passcode on A10-A11 
-- unzip, python3, libimobiledevice-utils, libusbmuxd-tools
+- A deactivated passcode on A10-A11
 - An .iPSW file for iOS 14-15 
 - Around 15 gigabytes of free storage
 - A computer with macOS or Linux (if you have neither, you can temporarily "install" a Linux distro to RAM)
@@ -23,13 +22,13 @@ A script that lets you dualboot iOS 14-15 (semi-tethered) on [checkm8](https://w
    - irecovery -n
 
 # Ideal Dualboot Versions
-on devices with A11 SoCs, dualbooting belower 14.2- will not boot so on those devices, use 14.3 upper instead.
+on devices with A11 SoCs, dualbooting 14.2- or earlier will not boot so on those devices, use 14.3 upper instead.
 
-iOS 13 is working but only 13.6, 13.7. If you want to dualboot iOS 13, use the [ios13](https://github.com/dualra1n/dualra1n/tree/ios13) branch.
+iOS 13 is working but only 13.6, 13.7. If you want to dualboot iOS 13, use the [ios13](https://github.com/dualra1n/dualra1n/tree/ios13) branch, use this command to change the branch: git checkout ios13. to come back to the normal branch use git checkout main.
 
 # Common Issues
 
-- iPhone and iPads may have issues with "Deep Sleep" (iOS not "waking up" after the display going to sleep). Installing the tweak [Fiona](https://www.ios-repo-updates.com/repository/julioverne-s-repo/package/com.julioverne.fiona/) may fix this.
+- iPhone and iPads may have issues with "Deep Sleep" (iOS not "waking up" after the display going to sleep). Installing the tweak [Fiona](https://www.ios-repo-updates.com/repository/julioverne-s-repo/package/com.julioverne.fiona/) or go to dualra1n-loader and click to fixdeepsleep option, may fix this. 
 
 
 # If there are any other issues, please contact me on the [dualra1n Discord server](https://discord.gg/E6jj48hzd5)
@@ -46,7 +45,7 @@ iOS 13 is working but only 13.6, 13.7. If you want to dualboot iOS 13, use the [
 - [Fatih](https://github.com/swayea) for helping with the readme, testing linux support and being a very good person.
 - [plooshi](https://github.com/plooshi) thank you so much for help to fix the home button issue.
 
-   - [azaz0322](https://github.com/m00nl1ghts), [Huy Nguyen](https://github.com/34306), [Uckermark](https://github.com/Uckermark), [DarwinUang](https://github.com/DarwinUang) and [aditya11110](https://github.com/aditya11110) for helping with the readme\
+   - [azaz0322](https://github.com/m00nl1ghts), [Huy Nguyen](https://github.com/34306), [DarwinUang](https://github.com/DarwinUang) and [aditya11110](https://github.com/aditya11110) for helping with the readme\
 </details>
 <details><summary>Credits for tools used in dualra1n</summary>
 

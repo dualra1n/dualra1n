@@ -101,8 +101,8 @@ parse_opt() {
         --recoveryModeAlways)
             recoveryModeAlways=1
             ;;
-        --get-ipsw)
-            getIpsw=1
+        --fixHard)
+            fixHard=1
             ;;
         --jail-palera1n)
             jail_palera1n=1
@@ -382,7 +382,7 @@ if [ "$os" = 'Linux' ]; then
     linux_cmds='lsusb'
 fi
 
-for cmd in curl unzip python3 git ssh scp killall sudo grep pgrep ${linux_cmds}; do
+for cmd in unzip python3 git ssh scp killall sudo grep pgrep ${linux_cmds}; do
     if ! command -v "${cmd}" > /dev/null; then
         echo "[-] Command '${cmd}' not installed, please install it!";
         cmd_not_found=1
@@ -433,6 +433,10 @@ if [ "$clean" = "1" ]; then
     exit
 fi
 
+if [[ "$version" = "13."* ]]; then
+    echo -e "YOU CAN'T DUALBOOT IOS 13.6-13.7 USING THIS BRANCH. USE THIS COMMAND TO CHAMGE to THE ios13 BRANCH: \033[0;37mgit checkout ios13\033[0m"
+    exit
+fi
 
 # Get device's iOS version from ideviceinfo if in normal mode
 echo "[*] Waiting for devices"
@@ -519,7 +523,10 @@ fi
 sleep 2
 
 
-if [ "$boot" = "1" ]; then # call boot in order to boot it 
+if [ "$boot" = "1" ]; then # call boot in order to boot it
+    if [ ! -e boot/"$deviceid"/iBEC.img4 ]; then
+        echo "[-] you don't have the boot files created, Please try to dualboot or if you are already dualbooted try to --dualboot (VERS) --dont-create-part that's will create only the boot files."
+    fi
     _boot
 fi
 
@@ -788,7 +795,8 @@ if [ true ]; then
 
     if [ "$dualboot" = "1" ]; then
         if [ -z "$dont_createPart" ]; then # if you have already your second ios you can omited with this
-            echo "verifying if we can continue with the dualboot"
+            echo "[*] Starting step 1"
+            echo "[*] Verifying if we can continue with the dualboot"
 
             if [ "$(remote_cmd "ls /dev/disk0s1s${disk}")" ]; then
                 if [ "$(remote_cmd "/System/Library/Filesystems/apfs.fs/apfs.util -p /dev/disk0s1s${disk}")" == 'Xystem' ]; then
@@ -822,14 +830,13 @@ if [ true ]; then
             fi
              
 
-            echo "[*] copying filesystem so hang on that could take 20 minute because is trought ssh"
             if command -v rsync &>/dev/null; then
                 echo "[*] rsync installed"
             else 
                 echo "[-] you dont have rsync installed so the script will take much more time to copy the rootfs file, so install rsync in order to be faster."
             fi
             
-            echo "[*] it is copying rootfs so hang on like 20 minute ......"
+            echo "[*] copying rootfs filesystem so hang on, that could take 20 minute because is trought ssh"
             if [ "$os" = "Darwin" ]; then
                 if [ ! $("$dir"/sshpass -p 'alpine' rsync -rvz -e 'ssh -p 2222' ipsw/out.dmg root@localhost:/mnt8) ]; then
                     remote_cp ipsw/out.dmg root@localhost:/mnt8 # this will copy the root file in order to it is mounted and restore partition      
@@ -893,7 +900,6 @@ if [ true ]; then
             if [ ! $(remote_cmd "cp -a /mnt2/mobile/Library/Preferences/com.apple.Accessibility* /mnt9/mobile/Library/Preferences/") ]; then
                 echo "[*] activating assesivetouch"
             fi
-            echo "[*] Finished crating the dualboot partitions and configurated some stuff. you can use --dont-create-part in order to dont have to copy and create all again."
 
             echo "[*] installing trollstore"
             remote_cmd "/bin/mkdir -p /mnt8/Applications/trollstore.app"
@@ -908,9 +914,10 @@ if [ true ]; then
             echo "[*] Adding the kernel to preboot"
             "$dir"/img4 -i "$extractedIpsw$(awk "/""${model}""/{x=1}x&&/kernelcache.release/{print;exit}" work/BuildManifest.plist | grep '<string>' |cut -d\> -f2 |cut -d\< -f1)" -o work/kernelcache -M work/IM4M -T rkrn
             remote_cp work/kernelcache root@localhost:/mnt4/"$active"/System/Library/Caches/com.apple.kernelcaches/kernelcache
-
+            echo "[*] Finished step 1. you can use --dont-create-part in order to dont have to copy and create all again if you needed."
         fi
-
+        
+        echo "[*] Starting step 2"
         echo "[*] Fixing firmwares"
         fixHard=1
 
@@ -1075,7 +1082,8 @@ if [ true ]; then
         "$dir"/img4 -i work/dtree.patched -o work/devicetree.img4 -A -M work/IM4M -T rdtr
 
         cp -v work/*.img4 "boot/${deviceid}" # copying all file img4 to boot
-      # echo "so we finish, now you can execute './dualboot boot' to boot to second ios after that we need that you record a video when your iphone is booting to see what is the uuid and note that name of the uuid"       
+        echo "Finished step 2"
+        #echo "so we finish, now you can execute './dualboot.sh --boot' to boot to second ios after that we need that you record a video when your iphone is booting to see what is the uuid and note that name of the uuid"       
         echo "booting ..."
         _boot
     fi
