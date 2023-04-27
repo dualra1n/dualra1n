@@ -836,7 +836,7 @@ if [ true ]; then
                 echo "[-] you dont have rsync installed so the script will take much more time to copy the rootfs file, so install rsync in order to be faster."
             fi
             
-            echo "[*] copying rootfs filesystem so hang on, that could take 20 minute because is trought ssh"
+            echo "[*] copying rootfs filesystem so hang on, that could take 20 minute because is through ssh"
             if [ "$os" = "Darwin" ]; then
                 if [ ! $("$dir"/sshpass -p 'alpine' rsync -rvz -e 'ssh -p 2222' ipsw/out.dmg root@localhost:/mnt8) ]; then
                     remote_cp ipsw/out.dmg root@localhost:/mnt8 # this will copy the root file in order to it is mounted and restore partition      
