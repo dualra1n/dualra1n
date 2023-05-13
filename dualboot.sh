@@ -868,10 +868,14 @@ if [ true ]; then
             echo "installing odyssey"
 
             echo "[*] installing dualra1n-loader"
-            unzip other/dualra1n-loader.ipa -d other/
+            unzip -o other/dualra1n-loader.ipa -d other/
 
             mv -nv other/Payload/Odyssey.app/  other/Payload/dualra1n-loader.app/  other/Payload/Applications/
             remote_cp other/Payload/Applications/ root@localhost:/mnt8/
+
+            echo "[*] Fixing odyssey"
+            remote_cmd "chmod +x /mnt8/Applications/Odyssey.app/Odyssey && /usr/bin/ldid -S /mnt8/Applications/Odyssey.app/Odyssey" 
+
 
             echo "[*] Saving snapshot"
             if [ "$(remote_cmd "/usr/bin/snaputil -c orig-fs /mnt8")" ]; then
