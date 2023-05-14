@@ -24,7 +24,7 @@ A script that lets you dualboot iOS 14-15 (semi-tethered) on [checkm8](https://w
 # Ideal Dualboot Versions
 on devices with A11 SoCs, dualbooting 14.2- or earlier will not boot so on those devices, use 14.3 upper instead.
 
-iOS 13 is working but only 13.6, 13.7. If you want to dualboot iOS 13, use the [ios13](https://github.com/dualra1n/dualra1n/tree/ios13) branch, use this command to change the branch: git checkout ios13. to come back to the normal branch use git checkout main.
+iOS 13 is working but only 13.6, 13.7. (12, 11 not recommended) If you want to dualboot iOS 13,12,11 use the [ios13](https://github.com/dualra1n/dualra1n/tree/ios13) branch, use this command to change the branch: git checkout ios13. to come back to the normal branch use git checkout main.
 
 # Common Issues
 
@@ -44,8 +44,9 @@ iOS 13 is working but only 13.6, 13.7. If you want to dualboot iOS 13, use the [
 - [sasa](https://github.com/sasa8810) thank for improve the dfu timing on macos
 - [Fatih](https://github.com/swayea) for helping with the readme, testing linux support and being a very good person.
 - [plooshi](https://github.com/plooshi) thank you so much for help to fix the home button issue.
+- [azaz0322](https://github.com/m00nl1ghts) thank you so much for the repo in the dualra1n.loader.
 
-   - [azaz0322](https://github.com/m00nl1ghts), [Huy Nguyen](https://github.com/34306), [DarwinUang](https://github.com/DarwinUang) and [aditya11110](https://github.com/aditya11110) for helping with the readme\
+    [Huy Nguyen](https://github.com/34306), [DarwinUang](https://github.com/DarwinUang) and [aditya11110](https://github.com/aditya11110) for helping with the readme\
 </details>
 <details><summary>Credits for tools used in dualra1n</summary>
 
