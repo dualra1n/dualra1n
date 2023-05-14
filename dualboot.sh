@@ -17,7 +17,7 @@ echo "[*] Command ran:`if [ $EUID = 0 ]; then echo " sudo"; fi` ./dualboot.sh $@
 # Variables
 # ========= 
 ipsw="ipsw/*.ipsw" # put your ipsw 
-version="2.0"
+version="6.0"
 os=$(uname)
 dir="$(pwd)/binaries/$os"
 max_args=1
@@ -62,7 +62,7 @@ step() {
 print_help() {
     cat << EOF
 Usage: $0 [Options] [ subcommand | iOS version which are you] remember you need to have 10 gb free, no sean brurros y vean primero. (put your ipsw in the directory ipsw)
-iOS 15 - 14 Dualboot tool ./dualboot --dualboot 15.7 (the ios of your device) 
+iOS 13 - 11 Dualboot tool ./dualboot --dualboot 13.7 (the ios that you want dualboot) 
 put ipsw file of ios 13 into the ipsw directory, you must make sure that this is the correct ipsw for the iphone. only ios 13.7
 
 Options:
@@ -426,8 +426,8 @@ chmod +x "$dir"/*
 # Start
 # ============
 
-echo "dualboot | Version mod for ios 13"
-echo "Written by edwin and some code of palera1n and pyboot:) thanks pelera1n team | Some code also the ramdisk from Nathan | thanks MatthewPierson, Ralph0045, and all people creator of path file boot"
+echo "dualboot | Version mod for ios 13. and 12,11 beta"
+echo "Written by edwin and some code of palera1n and pyboot:) thanks pelera1n team and seprmvr | thanks for the ramdisk from Nathan | thanks MatthewPierson, Ralph0045, and all people creator of path file boot"
 echo ""
 
 version="5.0"
@@ -725,7 +725,7 @@ if [ true ]; then
 
             if [ "$(remote_cmd "ls /dev/disk0s1s${disk}")" ]; then
                 if [ "$(remote_cmd "/System/Library/Filesystems/apfs.fs/apfs.util -p /dev/disk0s1s${disk}")" == 'Xystem' ]; then
-                    echo "[/] that look like you have the palera1n semitethered jailbreak, always add the command --jail-palera1n in order to fix it "
+                    echo "[/] that look like you have the palera1n semitethered jailbreak, please remove the jailbreak or always execute this with the command --jail-palera1n in order to fix it "
                     exit;
                 else
                     echo "[/] you have a system installed on the partition that will be used by this so ctrl +c and try to restorerootfs or ignore this (probably this wont boot into the second ios if you dont --restorerootfs before this)."
@@ -741,7 +741,7 @@ if [ true ]; then
         	if [ ! $(remote_cmd "/sbin/newfs_apfs -o role=i -A -v SystemB /dev/disk0s1") ] && [ ! $(remote_cmd "/sbin/newfs_apfs -o role=0 -A -v DataX /dev/disk0s1") ]; then # i put this in case that resturn a error the script can continuing
                 echo "[*] partitions created, continuing..."
 	        fi
-            
+
             echo "[*] Partitions are already created"
             echo "[* ]Mounting filesystems "
             
@@ -758,12 +758,6 @@ if [ true ]; then
 
             echo "[*] copying filesystem so hang on that could take 20 minute because is trought ssh"
             
-            if command -v rsync &>/dev/null; then
-                echo "[*] rsync installed"
-            else 
-                echo "[/] you dont have rsync installed so the script will take much more time to copy the rootfs file, so install rsync in order to be faster, on mac brew install rsync on linux apt install rsync"
-            fi
-            
             echo "[*] it is copying rootfs so hang on like 20 minute ......"
             
             if [ "$os" = "Darwin" ]; then
@@ -779,22 +773,14 @@ if [ true ]; then
                 sleep 2
                 
                 dmg_disk=$(remote_cmd "/usr/sbin/hdik /mnt8/${dmgfile} | head -3 | tail -1 | sed 's/ .*//'")
+
+                remote_cmd "/sbin/mount_apfs -o ro ""$dmg_disk""s1 /mnt5/"
                 
-                if [[ ! "$version" = "13."* ]]; then
-                    remote_cmd "/sbin/mount_apfs -o ro $dmg_disk /mnt5/"
-                else 
-                    remote_cmd "/sbin/mount_apfs -o ro ""$dmg_disk""s1 /mnt5/"
-                fi
                 echo "[*] it is extracting the files so please hang on ......."
-                
-                remote_cmd "cp -a /mnt5/* /mnt8/"
+                remote_cmd "cp -a /mnt5/. /mnt8/."
                 sleep 2
-                
-                if [[ ! "$version" = "13."* ]]; then
-                    remote_cmd "/sbin/umount $dmg_disk"
-                else
-                    remote_cmd "/sbin/umount ""$dmg_disk""s1"
-                fi
+
+                remote_cmd "/sbin/umount ""$dmg_disk""s1"
                 remote_cmd "rm -rv /mnt8/${dmgfile}"
             fi
             # that reboot is strange because i can continue however when i want to use apfs_invert that never work so i have to reboot on linux is ineccessary but i have to let it to avoid problems 
@@ -828,7 +814,7 @@ if [ true ]; then
                 remote_cmd "chown 0 /mnt8/private/var/staged_system_apps/Tips.app/dualra1n-helper"
             fi
 
-            if [ ! $(remote_cmd "cp -a /mnt8/private/var/. /mnt9/.") ]; then # this will copy all file which is needed by dataB
+            if [ ! $(remote_cmd "mv /mnt8/private/var/. /mnt9/.") ]; then # this will copy all file which is needed by dataB
                 echo "[*] Var was copied"
             fi
 
@@ -848,6 +834,7 @@ if [ true ]; then
             for (( i = 1; i <= 7; i++ )); do
                 if [ "$(remote_cmd "/System/Library/Filesystems/apfs.fs/apfs.util -p /dev/disk0s1s${i}")" == 'Hardware' ]; then
                     factoryDataPart=$i
+                    echo "Factory partition FOUND"
                 fi
             done
 
@@ -862,24 +849,40 @@ if [ true ]; then
             remote_cmd "/sbin/mount_apfs /dev/disk0s1s${factoryDataPart} /mnt5/"
             remote_cmd "cp -a /mnt5/FactoryData/* /mnt8/"
 
-            echo "[*] copying odyssey to /applications/"
-            unzip other/odysseymod.ipa -d other/
-            mkdir -p other/Payload/Applications/
-            echo "installing odyssey"
-
+            if [[ "$version" = "13."* ]]; then
+                echo "[*] copying odyssey to /applications/"
+                unzip -o other/odysseymod.ipa -d other/
+                mkdir -p other/Payload/Applications/
+                mv -nv other/Payload/Odyssey.app/ other/Payload/Applications/
+                echo "installing odyssey"
+            fi
             echo "[*] installing dualra1n-loader"
             unzip -o other/dualra1n-loader.ipa -d other/
-
-            mv -nv other/Payload/Odyssey.app/  other/Payload/dualra1n-loader.app/  other/Payload/Applications/
+            mkdir -p other/Payload/Applications/
+            
+            mv -nv other/Payload/dualra1n-loader.app/  other/Payload/Applications/
             remote_cp other/Payload/Applications/ root@localhost:/mnt8/
 
-            echo "[*] Fixing odyssey"
-            remote_cmd "chmod +x /mnt8/Applications/Odyssey.app/Odyssey && /usr/bin/ldid -S /mnt8/Applications/Odyssey.app/Odyssey" 
+            if [[ "$version" = "13."* ]]; then
+                echo "[*] Fixing odyssey"
+                remote_cmd "chmod +x /mnt8/Applications/Odyssey.app/Odyssey && /usr/bin/ldid -S /mnt8/Applications/Odyssey.app/Odyssey"
 
+                echo "[*] Saving snapshot"
+                if [ "$(remote_cmd "/usr/bin/snaputil -c orig-fs /mnt8")" ]; then
+                    echo "error saving snapshot, SKIPPING ..."
+                fi
+            fi
 
-            echo "[*] Saving snapshot"
-            if [ "$(remote_cmd "/usr/bin/snaputil -c orig-fs /mnt8")" ]; then
-                echo "error saving snapshot, SKIPPING ..."
+            if [[ ! "$version" = "13."* ]]; then
+                echo "Fixing fstab"
+                remote_cmd "sed -i '' "s/disk0s1/disk0s1s$disk/g" /mnt8/private/etc/fstab"
+                remote_cmd "sed -i '' "s/disk0s2/disk0s1s$dataB/g" /mnt8/private/etc/fstab"
+                remote_cmd "sed -i '' 's/hfs/apfs/g' /mnt8/private/etc/fstab"
+            fi
+
+            if [[ ! "$version" = "13."* ]]; then
+                echo "Fixing main partition to avoid BOOTLOOP sometimes"
+                remote_cmd "cp -a /mnt5/* /mnt2/hardware"
             fi
 
             echo "[*] Finished step 1. you can use --dont-create-part in order to dont have to copy and create all again if you needed."
@@ -961,18 +964,20 @@ if [ true ]; then
             python3 -m pyimg4 im4p extract -i work/kernelcache -o work/kcache.raw
         fi
 
-        #remote_cmd "/sbin/mount_apfs /dev/disk0s1s${prebootB} /mnt4/"
-        remote_cp work/kcache.raw root@localhost:/mnt8/System/Library/Caches/com.apple.kernelcaches/kcache.raw
-        remote_cp binaries/Kernel13Patcher.ios root@localhost:/mnt8/private/var/root/kpf13.ios
-        remote_cmd "/usr/sbin/chown 0 /mnt8/private/var/root/kpf13.ios"
-        remote_cmd "/bin/chmod 755 /mnt8/private/var/root/kpf13.ios"
-        sleep 1
-        if [ ! $(remote_cmd "/mnt8/private/var/root/kpf13.ios /mnt8/System/Library/Caches/com.apple.kernelcaches/kcache.raw /mnt8/System/Library/Caches/com.apple.kernelcaches/kcache.patched") ]; then
-            echo "[/] you have the kernelpath already installed "
+        if [[ "$version" = "13."* ]]; then
+            #remote_cmd "/sbin/mount_apfs /dev/disk0s1s${prebootB} /mnt4/"
+            remote_cp work/kcache.raw root@localhost:/mnt8/System/Library/Caches/com.apple.kernelcaches/kcache.raw
+            remote_cp binaries/Kernel13Patcher.ios root@localhost:/mnt8/private/var/root/kpf13.ios
+            remote_cmd "/usr/sbin/chown 0 /mnt8/private/var/root/kpf13.ios"
+            remote_cmd "/bin/chmod 755 /mnt8/private/var/root/kpf13.ios"
+            sleep 1
+            if [ ! $(remote_cmd "/mnt8/private/var/root/kpf13.ios /mnt8/System/Library/Caches/com.apple.kernelcaches/kcache.raw /mnt8/System/Library/Caches/com.apple.kernelcaches/kcache.patched") ]; then
+                echo "[/] you have the kernelpath already installed "
+            fi
+            remote_cp root@localhost:/mnt8/System/Library/Caches/com.apple.kernelcaches/kcache.patched work/ # that will return the kernelpatcher in order to be patched again and boot with it 
+        else
+            cp work/kcache.raw work/kcache.patched
         fi
-
-        remote_cp root@localhost:/mnt8/System/Library/Caches/com.apple.kernelcaches/kcache.patched work/ # that will return the kernelpatcher in order to be patched again and boot with it 
-        
         remote_cmd "/usr/sbin/nvram auto-boot=false"
         sleep 2
         remote_cmd "/sbin/reboot"
@@ -1037,7 +1042,7 @@ if [ true ]; then
             "$dir"/img4 -i work/iBEC.patched -o work/iBEC.img4 -M work/IM4M -A -T ibec
         fi
 
-        "$dir"/Kernel64Patcher work/kcache.patched work/kcache.patchedB -a -b13 -e `if [ "$fixBoot" = "1" ]; then echo "-s"; fi` # that sometimes fix some problem on the boot also i put kernel64patcherA because that fix the problem on the kerneldiff on kernel of iphone 7
+        "$dir"/Kernel64Patcher work/kcache.patched work/kcache.patchedB -a -b13 -e `if [[ ! "$version" = "13."* ]]; then echo "-k"; fi` `if [ "$fixBoot" = "1" ]; then echo "-s"; fi` # that sometimes fix some problem on the boot also i put kernel64patcherA because that fix the problem on the kerneldiff on kernel of iphone 7
         
         if [[ "$deviceid" == *'iPhone8'* ]] || [[ "$deviceid" == *'iPad6'* ]] || [[ "$deviceid" == *'iPad5'* ]]; then
             python3 -m pyimg4 im4p create -i work/kcache.patchedB -o work/kcache.im4p -f rkrn --extra work/kpp.bin --lzss
@@ -1047,15 +1052,20 @@ if [ true ]; then
         
         python3 -m pyimg4 img4 create -p work/kcache.im4p -o work/kernelcache.img4 -m work/IM4M
 
-        "$dir"/img4 -i work/"$(awk "/""${model}""/{x=1}x&&/DeviceTree[.]/{print;exit}" work/BuildManifest.plist | grep '<string>' |cut -d\> -f2 |cut -d\< -f1 | sed 's/Firmware[/]all_flash[/]//')" -o work/dtree.raw
-        "$dir"/dtree_patcher work/dtree.raw work/dtree.patched -d
-        "$dir"/img4 -i work/dtree.patched -o work/devicetree.img4 -A -M work/IM4M -T rdtr
-
+        if [[ "$version" = "13."* ]]; then
+            "$dir"/img4 -i work/"$(awk "/""${model}""/{x=1}x&&/DeviceTree[.]/{print;exit}" work/BuildManifest.plist | grep '<string>' |cut -d\> -f2 |cut -d\< -f1 | sed 's/Firmware[/]all_flash[/]//')" -o work/dtree.raw
+            "$dir"/dtree_patcher work/dtree.raw work/dtree.patched -d
+            "$dir"/img4 -i work/dtree.patched -o work/devicetree.img4 -A -M work/IM4M -T rdtr
+        else
+            "$dir"/img4 -i work/"$(awk "/""${model}""/{x=1}x&&/DeviceTree[.]/{print;exit}" work/BuildManifest.plist | grep '<string>' |cut -d\> -f2 |cut -d\< -f1 | sed 's/Firmware[/]all_flash[/]//')" -o devicetree.img4 -M IM4M -T rdtr
+        fi
 
         cp -v work/*.img4 "boot/${deviceid}" # copying all file img4 to boot
         echo "Finished step 2"
       # echo "so we finish, now you can execute './dualboot boot' to boot to second ios after that we need that you record a video when your iphone is booting to see what is the uuid and note that name of the uuid"       
+        echo "step 3 BOOTING ..."
         _boot
+        echo "step 3 FINISHED, i'm edwin and I hope this worked well, if this didn't work you can enter to my discord and ask for help :)."
     fi
 fi
 

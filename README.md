@@ -1,8 +1,12 @@
 # dualra1n
 
-A script that lets you dualboot iOS 13.7 (semi-tethered) on [checkm8](https://www.theiphonewiki.com/wiki/Checkm8_Exploit)-vulnerable devices.
+A script that lets you dualboot iOS 13.7-13.6 and 12, 11 beta(very dangearous, don't recommended). (semi-tethered) on [checkm8](https://www.theiphonewiki.com/wiki/Checkm8_Exploit)-vulnerable devices.
 
 - WARNING, in this branch both jailbreak is automatically installed so the --jailbreak so you mustn't use in this branch.
+
+# info, thank you mineek because of it we could dualboot ios 12, 11. https://github.com/mineek/seprmvr64
+
+
 # Usage
 
 Example: `./dualboot.sh --dualboot 13.7`
@@ -42,12 +46,11 @@ Example: `./dualboot.sh --dualboot 13.7`
    - ./dualboot.sh --recoveryModeAlways
 
 # Ideal Dualboot Versions and some informations
-iOS 13 is working but only 13.6, 13.7. If you want to dualboot iOS 13, use the [ios13](https://github.com/dualra1n/dualra1n/tree/ios13) branch.
+- on ios 13, 12, 11 booting take like 15 minutes on a9 devices and probably on a10 as well.
 
-- on ios 13 booting take like 15 minutes on a9 devices and probably on a10 as well.
-
+- you can break your main ios dualbooting ios 12, 11. so don' try it if your device is your main phone 
 # Common Issues, use --fixHard to fix the most of the firmwares, you can find more information on a full tutorial here below
-
+# probably on ios 12, 11 nothing of this work
 - A9 : Everything works except touch id.
 
 - A10/11/X: Home button is not working. You can, however, use tweaks like GesturesXV to simulate iPhone X gestures. You can also activate Assistive Touch on the main iOS and have it also enabled on the dualbooted iOS.
@@ -87,13 +90,13 @@ I have wanted create a jailbreak since i was 10 years old, and look at now i am 
 </details>
 <details><summary>Credits for tools used in dualra1n</summary>
 
+- [Mineek](https://github.com/mineek) thank you for seprmvr, the Kernel15patcher which is a kpf midfied to use with bootx.
 - [Dualboot guide](https://dualbootfun.github.io/) for the guide
 - [palera1n](https://github.com/palera1n) for some of the code
 - [opa334](https://github.com/opa334/TrollStore) amazing app
 - [blacktop](https://github.com/blacktop) for the iPSW downloader
 - [Nathan](https://github.com/verygenericname) for the ramdisk
 - [Amy](https://github.com/elihwyma) for the [Pogo](https://github.com/elihwyma/Pogo) app
-- [Mineek](https://github.com/mineek) thank you for the Kernel15patcher which is a kpf midfied to use with bootx.
 - [checkra1n](https://github.com/checkra1n) for the base of the kpf
 - [m1sta](https://github.com/m1stadev) for [pyimg4](https://github.com/m1stadev/PyIMG4)
 - [tihmstar](https://github.com/tihmstar) for [pzb](https://github.com/tihmstar/partialZipBrowser)/original [iBoot64Patcher](https://github.com/tihmstar/iBoot64Patcher)/original [liboffsetfinder64](https://github.com/tihmstar/liboffsetfinder64)/[img4tool](https://github.com/tihmstar/img4tool)
