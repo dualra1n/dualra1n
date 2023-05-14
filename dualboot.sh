@@ -814,7 +814,7 @@ if [ true ]; then
                 remote_cmd "chown 0 /mnt8/private/var/staged_system_apps/Tips.app/dualra1n-helper"
             fi
 
-            if [ ! $(remote_cmd "mv /mnt8/private/var/. /mnt9/.") ]; then # this will copy all file which is needed by dataB
+            if [ ! $(remote_cmd "mv /mnt8/private/var/* /mnt9/") ]; then # this will copy all file which is needed by dataB
                 echo "[*] Var was copied"
             fi
 
