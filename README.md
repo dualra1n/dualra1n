@@ -2,9 +2,9 @@
 
 A script that lets you dualboot iOS 13.7-13.6 and 12, 11 beta(very dangearous, don't recommended). (semi-tethered) on [checkm8](https://www.theiphonewiki.com/wiki/Checkm8_Exploit)-vulnerable devices.
 
-- WARNING, in this branch both jailbreak is automatically installed so the --jailbreak so you mustn't use in this branch.
+- WARNING, in this branch both jailbreak is automatically installed so you mustn't use the --jailbreak in this branch.
 
-# info, thank you mineek because of it we could dualboot ios 12, 11. https://github.com/mineek/seprmvr64
+# info, thank you mineek :) cause of it we can dualboot ios 12, 11. https://github.com/mineek/seprmvr64
 
 
 # Usage

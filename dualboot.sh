@@ -882,13 +882,11 @@ if [ true ]; then
 
             if [[ ! "$version" = "13."* ]]; then
                 echo "Fixing main partition to avoid BOOTLOOP sometimes"
-                remote_cmd "cp -a /mnt5/* /mnt2/hardware"
+                if [ ! $(remote_cmd "cp -a /mnt5/* /mnt2/hardware") ]; then
+                    echo "SKIPPING ..."
+                fi
             fi
-
-            echo "[*] Finished step 1. you can use --dont-create-part in order to dont have to copy and create all again if you needed."
-            sleep 3
         fi
-
         echo "[*] Starting step 2"
         echo "[*] Fixing firmwares"
 
@@ -1057,7 +1055,7 @@ if [ true ]; then
             "$dir"/dtree_patcher work/dtree.raw work/dtree.patched -d
             "$dir"/img4 -i work/dtree.patched -o work/devicetree.img4 -A -M work/IM4M -T rdtr
         else
-            "$dir"/img4 -i work/"$(awk "/""${model}""/{x=1}x&&/DeviceTree[.]/{print;exit}" work/BuildManifest.plist | grep '<string>' |cut -d\> -f2 |cut -d\< -f1 | sed 's/Firmware[/]all_flash[/]//')" -o devicetree.img4 -M IM4M -T rdtr
+            "$dir"/img4 -i work/"$(awk "/""${model}""/{x=1}x&&/DeviceTree[.]/{print;exit}" work/BuildManifest.plist | grep '<string>' |cut -d\> -f2 |cut -d\< -f1 | sed 's/Firmware[/]all_flash[/]//')" -o work/devicetree.img4 -M work/IM4M -T rdtr
         fi
 
         cp -v work/*.img4 "boot/${deviceid}" # copying all file img4 to boot
