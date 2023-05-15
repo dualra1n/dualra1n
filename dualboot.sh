@@ -401,7 +401,7 @@ if ! python3 -c 'import pkgutil; exit(not pkgutil.find_loader("pyimg4"))'; then
     python3 -m pip install pyimg4
 fi
 
-# ============disk0s1s
+# ============
 # Prep
 # ============
 
@@ -665,15 +665,7 @@ if [ true ]; then
         exit
     fi
     active=$(remote_cmd "cat /mnt6/active" 2> /dev/null)
-    echo "[*] backup preboot partition... please dont delete directory prebootBackup" # this will backup your perboot parition in case that was deleted by error 
-    mkdir -p "prebootBackup"
-    if [ ! -d "prebootBackup/${deviceid}" ]; then
-        mkdir -p "prebootBackup/${deviceid}"
-        if [ ! $(remote_cp root@localhost:/mnt6/ "prebootBackup/${deviceid}") ]; then # that had a error so in case the error the script wont stop 
-            echo "[*] finish backup"
-        fi
-    fi
-    
+
     mkdir -p "boot/${deviceid}"
 
 
@@ -894,6 +886,7 @@ if [ true ]; then
         if [ "$fixHard" = "1" ]; then
             if [ "$dont_createPart" = "1" ]; then
             remote_cmd "/sbin/mount_apfs /dev/disk0s1s${disk} /mnt8/"
+            remote_cmd "/usr/bin/mount_filesystems"
             sleep 1
             fi
 
@@ -931,7 +924,7 @@ if [ true ]; then
             if [ "$(remote_cmd "ls /mnt6/$active/usr/standalone/firmware/FUD/AVE.img4")" ]; then
 
                 echo "AVE FOUND"
-                cp -v "prebootBackup/$deviceid/mnt6/$active/usr/standalone/firmware/FUD/AVE.img4" "work/"
+                cp -v "/mnt6/$active/usr/standalone/firmware/FUD/AVE.img4" "/mnt8/usr/standalone/firmware/FUD/AVE.img4"
             fi
             
             if [ "$(remote_cmd "ls /mnt6/$active/usr/standalone/firmware/FUD/AudioCodecFirmware.img4")" ]; then
