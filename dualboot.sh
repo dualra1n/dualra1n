@@ -886,6 +886,7 @@ if [ true ]; then
         if [ "$fixHard" = "1" ]; then
             if [ "$dont_createPart" = "1" ]; then
             remote_cmd "/sbin/mount_apfs /dev/disk0s1s${disk} /mnt8/"
+            remote_cmd "/sbin/mount_apfs /dev/disk0s1s${dataB} /mnt9/"
             remote_cmd "/usr/bin/mount_filesystems"
             sleep 1
             fi
@@ -959,11 +960,11 @@ if [ true ]; then
         if [[ "$version" = "13."* ]]; then
             #remote_cmd "/sbin/mount_apfs /dev/disk0s1s${prebootB} /mnt4/"
             remote_cp work/kcache.raw root@localhost:/mnt8/System/Library/Caches/com.apple.kernelcaches/kcache.raw
-            remote_cp binaries/Kernel13Patcher.ios root@localhost:/mnt8/private/var/root/kpf13.ios
-            remote_cmd "/usr/sbin/chown 0 /mnt8/private/var/root/kpf13.ios"
-            remote_cmd "/bin/chmod 755 /mnt8/private/var/root/kpf13.ios"
+            remote_cp binaries/Kernel13Patcher.ios root@localhost:/mnt9/root/kpf13.ios
+            remote_cmd "/usr/sbin/chown 0 /mnt9/root/kpf13.ios"
+            remote_cmd "/bin/chmod 755 /mnt9/root/kpf13.ios"
             sleep 1
-            if [ ! $(remote_cmd "/mnt8/private/var/root/kpf13.ios /mnt8/System/Library/Caches/com.apple.kernelcaches/kcache.raw /mnt8/System/Library/Caches/com.apple.kernelcaches/kcache.patched") ]; then
+            if [ ! $(remote_cmd "/mnt9/root/kpf13.ios /mnt8/System/Library/Caches/com.apple.kernelcaches/kcache.raw /mnt8/System/Library/Caches/com.apple.kernelcaches/kcache.patched") ]; then
                 echo "[/] you have the kernelpath already installed "
             fi
             remote_cp root@localhost:/mnt8/System/Library/Caches/com.apple.kernelcaches/kcache.patched work/ # that will return the kernelpatcher in order to be patched again and boot with it 
