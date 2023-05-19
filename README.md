@@ -46,7 +46,7 @@ iOS 13 is working but only 13.6, 13.7. (12, 11 not recommended) If you want to d
 - [plooshi](https://github.com/plooshi) thank you so much for help to fix the home button issue.
 - [azaz0322](https://github.com/m00nl1ghts) thank you so much for the repo in the dualra1n.loader.
 
-    [Huy Nguyen](https://github.com/34306), [DarwinUang](https://github.com/DarwinUang) and [aditya11110](https://github.com/aditya11110) for helping with the readme\
+    [Huy Nguyen](https://github.com/34306), [DarwinUang](https://github.com/DarwinUang) and [Aditya20110](https://github.com/Aditya20110) for helping with the readme\
 </details>
 <details><summary>Credits for tools used in dualra1n</summary>
 
