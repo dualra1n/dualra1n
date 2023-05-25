@@ -885,10 +885,9 @@ if [ true ]; then
 
         if [ "$fixHard" = "1" ]; then
             if [ "$dont_createPart" = "1" ]; then
-            remote_cmd "/sbin/mount_apfs /dev/disk0s1s${disk} /mnt8/"
-            remote_cmd "/sbin/mount_apfs /dev/disk0s1s${dataB} /mnt9/"
-            remote_cmd "/usr/bin/mount_filesystems"
-            sleep 1
+                remote_cmd "/sbin/mount_apfs /dev/disk0s1s${disk} /mnt8/"
+                remote_cmd "/sbin/mount_apfs /dev/disk0s1s${dataB} /mnt9/"
+                sleep 1
             fi
 
             if [ "$(remote_cmd "ls /mnt6/$active/usr/standalone/firmware/FUD/AOP.img4")" ]; then
