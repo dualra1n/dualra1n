@@ -1,11 +1,11 @@
 # dualra1n
 
-A script that lets you dualboot iOS 13.7-13.6 and 12, 11 beta(very dangearous, don't recommended). (semi-tethered) on [checkm8](https://www.theiphonewiki.com/wiki/Checkm8_Exploit)-vulnerable devices.
+A script that lets you dualboot iOS 13.7-13.6, 12, and 11 beta (very dangerous, don't recommended). (semi-tethered) on [checkm8](https://www.theiphonewiki.com/wiki/Checkm8_Exploit)-vulnerable devices.
 
-- ios 12, 11 got it thanks to mineek :)i just add to the script, cause of her/him? we can dualboot ios 12, 11. https://github.com/mineek/seprmvr64
-- WARNING, in this branch both jailbreak is automatically installed so you mustn't use the --jailbreak in this branch.
+- iOS 12 & 11 got it thanks to mineek :) I just add to the script, cause of her/him? we can dualboot iOS 12 & 11. https://github.com/mineek/seprmvr64
+- WARNING, in this branch the jailbreak is automatically installed so you shoudln't use the --jailbreak parameter in this branch.
 
-# why decided add support for ios 12,11 with the seprmvr ?
+# Why did I decide to add support for iOS 12 & 11 with the seprmvr script?
 
 in her memory, wanted to see ios 11 dualbooted :_ ![image](https://github.com/dualra1n/dualra1n/assets/85508740/8e3ee59b-438a-4a95-b0ce-bfddeae4f695)
 so i want my cookies.
@@ -37,23 +37,23 @@ Example: `./dualboot.sh --dualboot 13.7`
 `clean`               Deletes the created boot files.
 
 # Dependencies
-- A deactivated passcode on A10-A11 
-- An .iPSW file for iOS 13.7 
+- A disabled passcode on A10-A11 
+- An .ipsw file for iOS 13.7 
 - Around 15 gigabytes of free storage
-- A computer with macOS or Linux (if you have neither, you can temporarily "install" a Linux distro to RAM)
+- A computer with macOS or Linux (if you have neither, you can temporarily "install" a Linux distro to RAM, or you can live boot a distro on a usb)
 # Warnings
-- I am **NOT** responsible for any data loss. The user of this program accepts responsibility should something happen to their device.
+- I am **NOT responsible** for any data loss. The user of this program accepts responsibility should something happen to their device.
  **If your device is stuck in recovery, please run one of the following:**
    - futurerestore --exit-recovery
    - irecovery -n
    - ./dualboot.sh --recoveryModeAlways
 
 # Ideal Dualboot Versions and some informations
-- on ios 13, 12, 11 booting take like 15 minutes on a9 devices and probably on a10 as well.
+- On iOS 13, 12, and 11 booting takes about 15 minutes on A9 devices and probably on A10 devices as well.
 
-- you can break your main ios dualbooting ios 12, 11. so don' try it if your device is your main phone 
+- You can break your main ios while trying to dualboot iOS 12 & 11. so don't try it if your device is your main phone 
 # Common Issues, use --fixHard to fix the most of the firmwares, you can find more information on a full tutorial here below
-# probably on ios 12, 11 nothing of this work
+# On iOS 12 & 11 these will probably not work
 - A9 : Everything works except touch id.
 
 - A10/11/X: Home button is not working. You can, however, use tweaks like GesturesXV to simulate iPhone X gestures. You can also activate Assistive Touch on the main iOS and have it also enabled on the dualbooted iOS.
