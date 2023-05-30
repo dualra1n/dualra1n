@@ -945,7 +945,7 @@ if [ true ]; then
         fi
         if [ "$(remote_cmd "ls /mnt6/$active/usr/standalone/firmware/FUD/AVE.img4")" ]; then
             echo "AVE FOUND"
-            remote_cmd "cp -v /mnt6/$active/usr/standalone/firmware/FUD/AVE.img4" "/mnt4/$active/usr/standalone/firmware/FUD/AVE.img4"
+            remote_cmd "cp -v /mnt6/$active/usr/standalone/firmware/FUD/AVE.img4" "/mnt4/$active/usr/standalone/firmware/FUD/"
         fi
         
         if [ "$(remote_cmd "ls /mnt6/$active/usr/standalone/firmware/FUD/AudioCodecFirmware.img4")" ]; then
