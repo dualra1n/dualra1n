@@ -846,7 +846,6 @@ if [ true ]; then
                 sleep 2
                 remote_cmd "/sbin/umount $dmg_disk"
                 remote_cmd "rm -rv /mnt8/${dmgfile}"
-		remote_cmd "/sbin/umount /dev/disk0s1s${disk}"
   		sleep 3
             fi
             # that reboot is strange because i can continue however when i want to use apfs_invert that never work so i have to reboot on linux is ineccessary but i have to let it to avoid problems 
@@ -864,6 +863,7 @@ if [ true ]; then
                 sleep 1
             done
 
+  	    remote_cmd "ls /dev/disk0s1s*"
 	    remote_cmd "/usr/bin/echo '[*] Trying to mount the partitions'"
      
             if [ "$os" = "Darwin" ]; then
