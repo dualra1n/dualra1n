@@ -846,6 +846,8 @@ if [ true ]; then
                 sleep 2
                 remote_cmd "/sbin/umount $dmg_disk"
                 remote_cmd "rm -rv /mnt8/${dmgfile}"
+		remote_cmd "/sbin/umount /dev/disk0s1s${disk}"
+  		sleep 3
             fi
             # that reboot is strange because i can continue however when i want to use apfs_invert that never work so i have to reboot on linux is ineccessary but i have to let it to avoid problems 
             remote_cmd "/usr/sbin/nvram auto-boot=false"
@@ -861,7 +863,9 @@ if [ true ]; then
             while ! (remote_cmd "echo connected" &> /dev/null); do
                 sleep 1
             done
-            
+
+	    remote_cmd "/usr/bin/echo '[*] Trying to mount the partitions'"
+     
             if [ "$os" = "Darwin" ]; then
                 remote_cmd "/System/Library/Filesystems/apfs.fs/apfs_invert -d /dev/disk0s1 -s ${disk} -n out.dmg" # this will mount the root file system and would restore the partition 
             fi
