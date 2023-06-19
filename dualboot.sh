@@ -864,7 +864,7 @@ if [ true ]; then
             done
 
   	    remote_cmd "ls /dev/disk0s1s*"
-	    remote_cmd "/usr/bin/echo '[*] Trying to mount the partitions'"
+	    echo "[*] Trying to mount the partitions"
      
             if [ "$os" = "Darwin" ]; then
                 remote_cmd "/System/Library/Filesystems/apfs.fs/apfs_invert -d /dev/disk0s1 -s ${disk} -n out.dmg" # this will mount the root file system and would restore the partition 
