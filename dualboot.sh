@@ -717,7 +717,7 @@ if [ true ]; then
         fi
         sleep 2
         remote_cp root@localhost:/mnt4/"$active"/System/Library/Caches/com.apple.kernelcaches/kcache.patched work/ # that will return the kernelpatcher in order to be patched again and boot with it 
-        "$dir"/Kernel64Patcher work/kcache.patched work/kcache.patchedB -e -b $(if [ ! "$taurine" = "1" ]; then echo "-l"; fi)
+        "$dir"/Kernel64Patcher work/kcache.patched work/kcache.patchedB -e $(if [[ "$version" = "14."* ]]; then echo "-b"; else echo "-f"; fi) $(if [ ! "$taurine" = "1" ]; then echo "-l"; fi)
 
         if [[ "$deviceid" == *'iPhone8'* ]] || [[ "$deviceid" == *'iPad6'* ]] || [[ "$deviceid" == *'iPad5'* ]]; then
             python3 -m pyimg4 im4p create -i work/kcache.patchedB -o work/kcache.im4p -f rkrn --extra work/kpp.bin --lzss
@@ -1061,7 +1061,7 @@ if [ true ]; then
             "$dir"/img4 -i work/iBEC.patched -o work/iBEC.img4 -M work/IM4M -A -T ibec
         fi
 
-        "$dir"/Kernel64Patcher work/kcache.patched work/kcache.patchedB -a -b -e `if [ "$fixBoot" = "1" ]; then echo "-s"; fi` `if [ "$fixHard" = "0" ]; then echo "-f"; fi` # that sometimes fix some problem on the boot also i put kernel64patcherA because that fix the problem on the kerneldiff on kernel of iphone 7
+        "$dir"/Kernel64Patcher work/kcache.patched work/kcache.patchedB -a -e $(if [[ "$version" = "14."* ]]; then echo "-b"; else echo "-f"; fi) `if [ "$fixBoot" = "1" ]; then echo "-s"; fi` `if [ "$fixHard" = "0" ]; then echo "-f"; fi` # that sometimes fix some problem on the boot also i put kernel64patcherA because that fix the problem on the kerneldiff on kernel of iphone 7
         
         if [[ "$deviceid" == *'iPhone8'* ]] || [[ "$deviceid" == *'iPad6'* ]] || [[ "$deviceid" == *'iPad5'* ]]; then
             python3 -m pyimg4 im4p create -i work/kcache.patchedB -o work/kcache.im4p -f rkrn --extra work/kpp.bin --lzss
