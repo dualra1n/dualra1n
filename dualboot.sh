@@ -526,6 +526,7 @@ sleep 2
 if [ "$boot" = "1" ]; then # call boot in order to boot it
     if [ ! -e boot/"$deviceid"/iBEC.img4 ]; then
         echo "[-] you don't have the boot files created, Please try to dualboot or if you are already dualbooted try to --dualboot (VERS) --dont-create-part that's will create only the boot files."
+        exit;
     fi
     _boot
 fi

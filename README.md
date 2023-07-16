@@ -9,11 +9,11 @@ A script that lets you dualboot iOS 14-15 (semi-tethered) on [checkm8](https://w
 
 - [Video tutorial from burhanrana](https://www.youtube.com/watch?v=4iCZv7Ox5AA)
 
-# Dependencies
-- A deactivated passcode on A10-A11
-- An .iPSW file for iOS 14-15 
-- Around 15 gigabytes of free storage
-- A computer with macOS or Linux (if you have neither, you can temporarily "install" a Linux distro to RAM)
+# Prerequisites
+- An A10-A11 device with a deactivated passcode
+- An .iPSW file for iOS 14-15
+- Approximately 15GB of free storage
+- A macOS or Linux-based computer. If you don't have either, you can temporarily "install" a Linux distro to RAM.
 
 # Warnings
 - I am **NOT** responsible for any data loss. The user of this program accepts responsibility should something happen to their device.
@@ -21,10 +21,10 @@ A script that lets you dualboot iOS 14-15 (semi-tethered) on [checkm8](https://w
    - futurerestore --exit-recovery
    - irecovery -n
 
-# Ideal Dualboot Versions
-on devices with A11 SoCs, dualbooting 14.2- or earlier will not boot so on those devices, use 14.3 upper instead.
+# Recommended Dual-Boot Versions
+- For devices with A11 SoCs, versions 14.2 and earlier will not boot. Therefore, use 14.3 or later versions instead.
 
-iOS 13 is working but only 13.6, 13.7. (12, 11 not recommended) If you want to dualboot iOS 13,12,11 use the [ios13](https://github.com/dualra1n/dualra1n/tree/ios13) branch, use this command to change the branch: git checkout ios13. to come back to the normal branch use git checkout main.
+- iOS 13 (only 13.6, 13.7) is supported. To dual-boot ios 13, use the ios13 branch. Switch to this branch using git checkout ios13. To return to the main branch, use git checkout main. 
 
 # Common Issues
 
