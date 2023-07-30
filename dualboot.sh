@@ -909,7 +909,7 @@ if [ true ]; then
             fi
 
             echo "[*] Adding the kernel to preboot"
-            "$dir"/img4 -i "$extractedIpsw$(awk "/""${model}""/{x=1}x&&/kernelcache.release/{print;exit}" work/BuildManifest.plist | grep '<string>' |cut -d\> -f2 |cut -d\< -f1)" -o work/kernelcache -M work/IM4M -T rkrn
+            "$dir"/img4 -i "$extractedIpsw$(awk "/""${model}""/{x=1}x&&/kernelcache.release/{print;exit}" work/BuildManifest.plist | grep '<string>' |cut -d\> -f2 |cut -d\< -f1)" -o work/kernelcache -M work/IM4M -T krnl
             remote_cp work/kernelcache root@localhost:/mnt4/"$active"/System/Library/Caches/com.apple.kernelcaches/kernelcache
             echo "[*] Finished step 1. you can use --dont-create-part in order to dont have to copy and create all again if you needed."
         fi
@@ -1056,7 +1056,7 @@ if [ true ]; then
         
         "$dir"/iBoot64Patcher work/iBEC.dec work/iBEC.patched -b "-v `if [ ! $hb ]; then echo "rd=disk0s1s${disk}"; fi` wdt=-1 keepsyms=1 debug=0x2014e `if [ "$cpid" = '0x8960' ] || [ "$cpid" = '0x7000' ] || [ "$cpid" = '0x7001' ]; then echo "-restore"; fi`" -n 
         if [[ "$deviceid" == iPhone9,[1-4] ]] || [[ "$deviceid" == "iPhone10,"* ]]; then
-            "$dir"/kairos work/iBEC.patched work/iBEC.patchedB -d "8"
+            "$dir"/kairos work/iBEC.patched work/iBEC.patchedB -d "$disk"
             "$dir"/img4 -i work/iBEC.patchedB -o work/iBEC.img4 -M work/IM4M -A -T ibec
         else
             "$dir"/img4 -i work/iBEC.patched -o work/iBEC.img4 -M work/IM4M -A -T ibec
