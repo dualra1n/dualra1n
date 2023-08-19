@@ -26,6 +26,7 @@ disk=8
 extractedIpsw="ipsw/extracted/"
 
 if [ ! -d "ramdisk/" ]; then
+    echo "[*] Please wait patiently; it is currently cloning the ramdisk..."
     git clone https://github.com/dualra1n/ramdisk.git
 fi
 
