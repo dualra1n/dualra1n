@@ -1216,16 +1216,12 @@ if [ true ]; then
         # this will path the iboot in order to use the custom partition
         "$dir"/kairos work/iBEC.patched work/iBEC.patchedB -d "$disk" >/dev/null
 
-        if [[ "$deviceid" == iPhone9,[1-4] ]] || [[ "$deviceid" == "iPhone10,"* ]]; then
+        if [[ "$cpid" == *"0x801"* ]]; then
             "$dir"/img4 -i work/iBEC.patchedB -o work/iBEC.img4 -M work/IM4M -A -T ibss
         else
-            if [[ "$cpid" == *"0x801"* ]]; then
-                "$dir"/img4 -i work/iBEC.patchedB -o work/iBEC.img4 -M work/IM4M -A -T ibss
-            else
-                "$dir"/img4 -i work/iBEC.patchedB -o work/iBEC.img4 -M work/IM4M -A -T ibec
-            fi
-            
+            "$dir"/img4 -i work/iBEC.patchedB -o work/iBEC.img4 -M work/IM4M -A -T ibec
         fi
+            
 
         cp -v work/*.img4 "boot/${deviceid}" # Copying all file img4 to boot
         echo "Finished step 2"
