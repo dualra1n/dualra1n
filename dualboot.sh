@@ -17,7 +17,6 @@ echo "[*] Command ran:`if [ $EUID = 0 ]; then echo " sudo"; fi` ./dualboot.sh $@
 # Variables
 # ========= 
 ipsw="ipsw/*.ipsw" # put your ipsw 
-version="4.0"
 os=$(uname)
 dir="$(pwd)/binaries/$os"
 max_args=1
@@ -496,7 +495,7 @@ chmod +x "$dir"/*
 # Start
 # ============
 
-echo "dualboot | Version: 5.0"
+echo "dualboot | Version: 8.0"
 echo "Created by edwin :) | Some code of palera1n, thanks Nathan because the ramdisks | thanks MatthewPierson, Ralph0045, and all people creator of path file boot"
 echo ""
 
@@ -564,7 +563,7 @@ if [ "$boot" = "1" ]; then # call boot in order to boot it
         exit;
     fi
     if [ -e boot/"$deviceid"/kernelcache.img4 ] || [[ "$version" = "13."* ]]; then
-        echo "[*] seems like you have a ios 13 dualboot, so we are gonna use bootx boot process"
+        echo "[*] seems like you have bootx boot files dualboot, so we are gonna use bootx boot process"
         _bootx
     else
         echo "[*] so we are going to use localboot boot process"
@@ -1111,7 +1110,7 @@ if [ true ]; then
 
         echo "[*] Checking if a jailbreak is installed"
         
-        if [ $(remote_cmd "ls /mnt8/jbin/jbloader 2>/dev/null") ] || [ $(remote_cmd "ls /mnt8/.installed_odyssey 2>/dev/null") ] || [ $(remote_cmd "ls /mnt8/.installed_taurine 2>/dev/null") ]; then
+        if [ "$dont_createPart" = "1" ] && [ $(remote_cmd "ls /mnt8/jbin/jbloader 2>/dev/null") ] || [ $(remote_cmd "ls /mnt8/.installed_odyssey 2>/dev/null") ] || [ $(remote_cmd "ls /mnt8/.installed_taurine 2>/dev/null") ]; then
             echo "[*] Jailbreak detected"
             remote_cmd "mkdir -p /mnt8/private/var/root/work"
             remote_cp work/kcache.raw root@localhost:/mnt4/"$active"/System/Library/Caches/com.apple.kernelcaches/kcache.raw
