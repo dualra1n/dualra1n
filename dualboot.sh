@@ -511,6 +511,10 @@ if [ "$clean" = "1" ]; then
     exit
 fi
 
+if [[ -z "$version" ]]; then
+    echo "[-] ERROR, YOU DIDN'T SPECIFY THE VERSION WHICH YOU WANT TO DUALBOOT. PLEASE ADD THE VERSION, FOR EXAMPLE: ./dualboot.sh --dualboot 14.3"
+fi
+
 if [[ "$version" = "13."* ]]; then
     echo -e "YOU CAN'T DUALBOOT IOS 13.6-13.7 USING THIS BRANCH. USE THIS COMMAND TO CHAMGE to THE ios13 BRANCH: \033[0;37mgit checkout ios13\033[0m"
     exit
@@ -1188,11 +1192,8 @@ if [ true ]; then
 
         "$dir"/gaster decrypt work/"$(awk "/""${model}""/{x=1}x&&/iBoot[.]/{print;exit}" work/BuildManifest.plist | grep '<string>' |cut -d\> -f2 |cut -d\< -f1 | sed 's/Firmware[/]all_flash[/]//')" work/iBEC.dec
 
-        if [[ "$deviceid" == iPhone9,[1-4] ]] || [[ "$deviceid" == "iPhone10,"* ]]; then
-            hb=true
-        fi
         
-        "$dir"/iBoot64Patcher work/iBEC.dec work/iBEC.patched -b "-v `if [ ! $hb ]; then echo "rd=disk0s1s${disk}"; fi` wdt=-1 keepsyms=1 debug=0x2014e `if [ "$cpid" = '0x8960' ] || [ "$cpid" = '0x7000' ] || [ "$cpid" = '0x7001' ]; then echo "-restore"; fi`" -n $(if [[ ! "$version" = "13."* ]]; then echo "-l"; fi) >/dev/null
+        "$dir"/iBoot64Patcher work/iBEC.dec work/iBEC.patched -b "-v wdt=-1 keepsyms=1 debug=0x2014e `if [ "$cpid" = '0x8960' ] || [ "$cpid" = '0x7000' ] || [ "$cpid" = '0x7001' ]; then echo "-restore"; fi`" -n $(if [[ ! "$version" = "13."* ]]; then echo "-l"; fi) >/dev/null # `if [ ! $hb ]; then echo "rd=disk0s1s${disk}"; fi`
         # patching the string in the ibec in order to load different image
         echo "[*] Patching the string of images to load in the iboot..."
         if [ "$os" = 'Linux' ]; then
@@ -1212,14 +1213,16 @@ if [ true ]; then
         fi
         
         echo "[*] Appling path to the iboot"
+        # this will path the iboot in order to use the custom partition
+        "$dir"/kairos work/iBEC.patched work/iBEC.patchedB -d "$disk" >/dev/null
+
         if [[ "$deviceid" == iPhone9,[1-4] ]] || [[ "$deviceid" == "iPhone10,"* ]]; then
-            "$dir"/kairos work/iBEC.patched work/iBEC.patchedB -d "$disk" >/dev/null
             "$dir"/img4 -i work/iBEC.patchedB -o work/iBEC.img4 -M work/IM4M -A -T ibss
         else
             if [[ "$cpid" == *"0x801"* ]]; then
-                "$dir"/img4 -i work/iBEC.patched -o work/iBEC.img4 -M work/IM4M -A -T ibss
+                "$dir"/img4 -i work/iBEC.patchedB -o work/iBEC.img4 -M work/IM4M -A -T ibss
             else
-                "$dir"/img4 -i work/iBEC.patched -o work/iBEC.img4 -M work/IM4M -A -T ibec
+                "$dir"/img4 -i work/iBEC.patchedB -o work/iBEC.img4 -M work/IM4M -A -T ibec
             fi
             
         fi
