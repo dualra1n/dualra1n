@@ -76,6 +76,7 @@ Options:
     --dfuhelper             A helper to help you enter DFU if you are struggling to do it manually.
     --boot                 Boots your iDevice into the dualbooted iOS. Use this when you already have the dualbooted iOS installed. Usage : ./dualboot.sh --boot
     --dont-create-part      Skips creating a new disk partition if you have them already, so using this this downloads the boot files. Usage : ./dualboot.sh --dualboot 14.3 --dont-create-part.
+    --bootx                 this option will force to this script create and boot as bootx proccess.
     --restorerootfs         Deletes the dualbooted iOS. (also add --jail-palera1n if you are jailbroken semi-tethered with palera1n)
     --recoveryModeAlways    Fixes the main iOS when it is recovery looping.
     --debug                 Makes the script significantly more verbose. (meaning it will output exactly what command it is running)
@@ -119,6 +120,9 @@ parse_opt() {
             ;;
         --dont-create-part)
             dont_createPart=1
+            ;;
+        --bootx)
+            bootx=1
             ;;
         --restorerootfs)
             restorerootfs=1
@@ -516,7 +520,7 @@ if [[ -z "$version" ]]; then
 fi
 
 if [[ "$version" = "13."* ]]; then
-    echo -e "YOU CAN'T DUALBOOT IOS 13.6-13.7 USING THIS BRANCH. USE THIS COMMAND TO CHAMGE to THE ios13 BRANCH: \033[0;37mgit checkout ios13\033[0m"
+    echo -e "YOU CAN'T DUALBOOT IOS 13.6-13.7 USING THIS BRANCH YET. USE THIS COMMAND TO CHAMGE to THE ios13 BRANCH: \033[0;37mgit checkout ios13\033[0m"
     exit
 fi
 
@@ -566,7 +570,7 @@ if [ "$boot" = "1" ]; then # call boot in order to boot it
         echo "[-] you don't have the boot files created, Please try to dualboot or if you are already dualbooted try to --dualboot (VERS) --dont-create-part that's will create only the boot files."
         exit;
     fi
-    if [ -e boot/"$deviceid"/kernelcache.img4 ] || [[ "$version" = "13."* ]]; then
+    if [ -e boot/"$deviceid"/kernelcache.img4 ] || [[ "$version" = "13."* ]] || [ "$bootx" = "1" ]; then
         echo "[*] seems like you have bootx boot files dualboot, so we are gonna use bootx boot process"
         _bootx
     else
@@ -770,14 +774,14 @@ if [ true ]; then
         "$dir"/Kernel64Patcher work/kcache.patched work/kcache.patchedB -e -o $(if [[ "$version" = "15."* ]]; then echo "-b15 -r"; else echo "-b"; fi) $(if [ ! "$taurine" = "1" ]; then echo "-l"; fi) 2>/dev/null
 
         if [[ "$deviceid" == *'iPhone8'* ]] || [[ "$deviceid" == *'iPad6'* ]] || [[ "$deviceid" == *'iPad5'* ]]; then
-            python3 -m pyimg4 im4p create -i work/kcache.patchedB -o work/kcache.im4p -f $(if [[ "$version" = "13."* ]]; then echo "rkrn"; else echo "krnl"; fi)  --extra work/kpp.bin --lzss 2>/dev/null
+            python3 -m pyimg4 im4p create -i work/kcache.patchedB -o work/kcache.im4p -f $(if [[ "$version" = "13."* ]] || [ "$bootx" = "1" ]; then echo "rkrn"; else echo "krnl"; fi)  --extra work/kpp.bin --lzss 2>/dev/null
         else
-            python3 -m pyimg4 im4p create -i work/kcache.patchedB -o work/kcache.im4p -f $(if [[ "$version" = "13."* ]]; then echo "rkrn"; else echo "krnl"; fi)  --lzss 2>/dev/null
+            python3 -m pyimg4 im4p create -i work/kcache.patchedB -o work/kcache.im4p -f $(if [[ "$version" = "13."* ]] || [ "$bootx" = "1" ]; then echo "rkrn"; else echo "krnl"; fi)  --lzss 2>/dev/null
         fi
         
-        python3 -m pyimg4 img4 create -p work/kcache.im4p -o $(if [[ "$version" = "13."* ]]; then echo "work/kernelcache.img4"; else echo "work/kernelcachd"; fi) -m work/IM4M 2>/dev/null
+        python3 -m pyimg4 img4 create -p work/kcache.im4p -o $(if [[ "$version" = "13."* ]] || [ "$bootx" = "1" ]; then echo "work/kernelcache.img4"; else echo "work/kernelcachd"; fi) -m work/IM4M 2>/dev/null
         
-        if [[ "$version" = "13."* ]]; then
+        if [[ "$version" = "13."* ]] || [ "$bootx" = "1" ]; then
             cp -rv "work/kernelcache.img4" "boot/${deviceid}"
         fi
 
@@ -1054,7 +1058,7 @@ if [ true ]; then
             fixHard=0
         fi
 
-        if [[ ! "$version" = "13."* ]]; then
+        if [[ ! "$version" = "13."* ]] || [ ! "$bootx" = "1" ]; then
             echo "IOS 14 or 15 dualboot detected, we are gonna use localboot boot process" # localboot is the boot process that normaly is used when you power on your iphone, it means that can be more stable
         else
             echo "IOS 13 dualboot detected, we are gonna use bootx boot process" # bootx is the boot process which is normaly used when we want to boot a ramdisk to restore. we can't use localboot on ios 13.
@@ -1136,17 +1140,17 @@ if [ true ]; then
         # on ios 15 we can't use root_hash from another ios version idk why, so we need to use bootx.
         
         if [[ "$deviceid" == *'iPhone8'* ]] || [[ "$deviceid" == *'iPad6'* ]] || [[ "$deviceid" == *'iPad5'* ]]; then
-            python3 -m pyimg4 im4p create -i work/kcache.patchedB -o work/kcache.im4p -f $(if [[ "$version" = "13."* ]]; then echo "rkrn"; else echo "krnl"; fi) --extra work/kpp.bin --lzss >/dev/null
+            python3 -m pyimg4 im4p create -i work/kcache.patchedB -o work/kcache.im4p -f $(if [[ "$version" = "13."* ]] || [ "$bootx" = "1" ]; then echo "rkrn"; else echo "krnl"; fi) --extra work/kpp.bin --lzss >/dev/null
         else
-            python3 -m pyimg4 im4p create -i work/kcache.patchedB -o work/kcache.im4p -f $(if [[ "$version" = "13."* ]]; then echo "rkrn"; else echo "krnl"; fi) --lzss >/dev/null
+            python3 -m pyimg4 im4p create -i work/kcache.patchedB -o work/kcache.im4p -f $(if [[ "$version" = "13."* ]] || [ "$bootx" = "1" ]; then echo "rkrn"; else echo "krnl"; fi) --lzss >/dev/null
         fi
         
-        python3 -m pyimg4 img4 create -p work/kcache.im4p -o $(if [[ "$version" = "13."* ]]; then echo "work/kernelcache.img4"; else echo "work/kernelcachd"; fi) -m work/IM4M >/dev/null
+        python3 -m pyimg4 img4 create -p work/kcache.im4p -o $(if [[ "$version" = "13."* ]] || [ "$bootx" = "1" ]; then echo "work/kernelcache.img4"; else echo "work/kernelcachd"; fi) -m work/IM4M >/dev/null
         
         
         echo "[*] Finished adding the kernel"
 
-        if [[ ! "$version" = "13."* ]]; then
+        if [[ ! "$version" = "13."* ]] || [ ! "$bootx" = "1" ]; then
             echo "Adding StaticTrustCache"
             remote_cmd "cp -a /mnt4/$active/usr/standalone/firmware/FUD/StaticTrustCache.img4 /mnt6/$active/usr/standalone/firmware/FUD/StaticTrustCachd.img4"
 
@@ -1193,7 +1197,7 @@ if [ true ]; then
         "$dir"/gaster decrypt work/"$(awk "/""${model}""/{x=1}x&&/iBoot[.]/{print;exit}" work/BuildManifest.plist | grep '<string>' |cut -d\> -f2 |cut -d\< -f1 | sed 's/Firmware[/]all_flash[/]//')" work/iBEC.dec
 
         
-        "$dir"/iBoot64Patcher work/iBEC.dec work/iBEC.patched -b "-v wdt=-1 keepsyms=1 debug=0x2014e `if [ "$cpid" = '0x8960' ] || [ "$cpid" = '0x7000' ] || [ "$cpid" = '0x7001' ]; then echo "-restore"; fi`" -n $(if [[ ! "$version" = "13."* ]]; then echo "-l"; fi) >/dev/null # `if [ ! $hb ]; then echo "rd=disk0s1s${disk}"; fi`
+        "$dir"/iBoot64Patcher work/iBEC.dec work/iBEC.patched -b "-v wdt=-1 keepsyms=1 debug=0x2014e `if [ "$cpid" = '0x8960' ] || [ "$cpid" = '0x7000' ] || [ "$cpid" = '0x7001' ]; then echo "-restore"; fi`" -n $(if [[ ! "$version" = "13."* ]] || [ ! "$bootx" = "1" ]; then echo "-l"; fi) >/dev/null # `if [ ! $hb ]; then echo "rd=disk0s1s${disk}"; fi`
         # patching the string in the ibec in order to load different image
         echo "[*] Patching the string of images to load in the iboot..."
         if [ "$os" = 'Linux' ]; then
@@ -1228,7 +1232,7 @@ if [ true ]; then
         #echo "so we finish, now you can execute './dualboot.sh --boot' to boot to second ios after that we need that you record a video when your iphone is booting to see what is the uuid and note that name of the uuid"       
         echo "Booting ..."
 
-        if [[ "$version" = "13."* ]]; then
+        if [[ "$version" = "13."* ]] || [ "$bootx" = "1" ]; then
             echo "IOS 13 DETECTED, booting using bootx method"
             _bootx
         else
@@ -1239,4 +1243,3 @@ if [ true ]; then
 fi
 
 } 2>&1 | tee logs/${log}
-
