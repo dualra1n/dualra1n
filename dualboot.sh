@@ -1058,10 +1058,10 @@ if [ true ]; then
             fixHard=0
         fi
 
-        if [[ ! "$version" = "13."* ]] || [ ! "$bootx" = "1" ]; then
-            echo "IOS 14 or 15 dualboot detected, we are gonna use localboot boot process" # localboot is the boot process that normaly is used when you power on your iphone, it means that can be more stable
+        if [[ "$version" = "13."* ]] || [ "$bootx" = "1" ]; then
+            echo "IOS 13 dualboot or bootx option detected, we are gonna use bootx boot process" # bootx is the boot process which is normaly used when we want to boot a ramdisk to restore. we can't use localboot on ios 13.
         else
-            echo "IOS 13 dualboot detected, we are gonna use bootx boot process" # bootx is the boot process which is normaly used when we want to boot a ramdisk to restore. we can't use localboot on ios 13.
+            echo "IOS 14 or 15 dualboot detected, we are gonna use localboot boot process" # localboot is the boot process that normaly is used when you power on your iphone, it means that can be more stable
         fi
         
         echo "[*] Adding new boot images: kernelcache, root_hash, StaticTrustCache, devicetree... "
@@ -1150,7 +1150,16 @@ if [ true ]; then
         
         echo "[*] Finished adding the kernel"
 
-        if [[ ! "$version" = "13."* ]] || [ ! "$bootx" = "1" ]; then
+        if [[ "$version" = "13."* ]] || [ "$bootx" = "1" ]; then
+            echo "Adding StaticTrustCache"
+
+            "$dir"/img4 -i work/*.trustcache -o work/trustcache.img4 -M work/IM4M -T rtsc
+
+            echo "Adding devicetree"
+            sleep 1
+            "$dir"/dtree_patcher work/dtree.raw work/dtree.patched -d -p >/dev/null
+            "$dir"/img4 -i work/dtree.patched -o work/devicetree.img4 -A -M work/IM4M -T rdtr
+        else
             echo "Adding StaticTrustCache"
             remote_cmd "cp -a /mnt4/$active/usr/standalone/firmware/FUD/StaticTrustCache.img4 /mnt6/$active/usr/standalone/firmware/FUD/StaticTrustCachd.img4"
 
@@ -1167,15 +1176,6 @@ if [ true ]; then
             echo "[*] Sending boot images to device"
             remote_cp work/kernelcachd root@localhost:/mnt6/"$active"/System/Library/Caches/com.apple.kernelcaches/kernelcachd
             remote_cp work/devicetred.img4 work/root_hasd.img4 root@localhost:/mnt6/"$active"/usr/standalone/firmware
-        else
-            echo "Adding StaticTrustCache"
-
-            "$dir"/img4 -i work/*.trustcache -o work/trustcache.img4 -M work/IM4M -T rtsc
-
-            echo "Adding devicetree"
-            sleep 1
-            "$dir"/dtree_patcher work/dtree.raw work/dtree.patched -d -p >/dev/null
-            "$dir"/img4 -i work/dtree.patched -o work/devicetree.img4 -A -M work/IM4M -T rdtr
             
         fi
         
@@ -1197,7 +1197,7 @@ if [ true ]; then
         "$dir"/gaster decrypt work/"$(awk "/""${model}""/{x=1}x&&/iBoot[.]/{print;exit}" work/BuildManifest.plist | grep '<string>' |cut -d\> -f2 |cut -d\< -f1 | sed 's/Firmware[/]all_flash[/]//')" work/iBEC.dec
 
         
-        "$dir"/iBoot64Patcher work/iBEC.dec work/iBEC.patched -b "-v wdt=-1 keepsyms=1 debug=0x2014e `if [ "$cpid" = '0x8960' ] || [ "$cpid" = '0x7000' ] || [ "$cpid" = '0x7001' ]; then echo "-restore"; fi`" -n $(if [[ ! "$version" = "13."* ]] || [ ! "$bootx" = "1" ]; then echo "-l"; fi) >/dev/null # `if [ ! $hb ]; then echo "rd=disk0s1s${disk}"; fi`
+        "$dir"/iBoot64Patcher work/iBEC.dec work/iBEC.patched -b "-v wdt=-1 keepsyms=1 debug=0x2014e `if [ "$cpid" = '0x8960' ] || [ "$cpid" = '0x7000' ] || [ "$cpid" = '0x7001' ]; then echo "-restore"; fi`" -n $(if [[ "$version" = "13."* ]] || [ "$bootx" = "1" ]; then echo ""; else echo "-l"; fi) >/dev/null # `if [ ! $hb ]; then echo "rd=disk0s1s${disk}"; fi`
         # patching the string in the ibec in order to load different image
         echo "[*] Patching the string of images to load in the iboot..."
         if [ "$os" = 'Linux' ]; then
@@ -1233,7 +1233,7 @@ if [ true ]; then
         echo "Booting ..."
 
         if [[ "$version" = "13."* ]] || [ "$bootx" = "1" ]; then
-            echo "IOS 13 DETECTED, booting using bootx method"
+            echo "IOS 13 or bootx option DETECTED, booting using bootx method"
             _bootx
         else
             echo "IOS 14,15 DETECTED, booting using localboot method"
