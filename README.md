@@ -1,7 +1,8 @@
 # dualra1n
 
-A script that lets you dualboot iOS 14-15 (semi-tethered) on [checkm8](https://www.theiphonewiki.com/wiki/Checkm8_Exploit)-vulnerable devices. This is not a downgrade, however you can use [downr1n](https://github.com/edwin170/downr1n) which works fine on MACOS and Linux. not ios 16. 
+A script that lets you dualboot iOS 14-15 (semi-tethered) on [checkm8](https://www.theiphonewiki.com/wiki/Checkm8_Exploit)-vulnerable devices. This is not a downgrade, however you can use [downr1n](https://github.com/edwin170/downr1n) instead.
 
+Does not work on iOS 16.
 
 # How would I dualboot?
 
@@ -13,7 +14,7 @@ A script that lets you dualboot iOS 14-15 (semi-tethered) on [checkm8](https://w
 - An A10-A11 device with a deactivated passcode
 - An .iPSW file for iOS 14-15
 - Approximately 15GB of free storage
-- A macOS or Linux-based computer. If you don't have either, you can temporarily "install" a Linux distro to RAM.
+- A computer with macOS or any Linux distro installed (Windows Subsystem on Linux is not supported). Live CDs are also acceptable.
 
 # Warnings
 - I am **NOT** responsible for any data loss. The user of this program accepts responsibility should something happen to their device.
@@ -21,14 +22,13 @@ A script that lets you dualboot iOS 14-15 (semi-tethered) on [checkm8](https://w
    - futurerestore --exit-recovery
    - irecovery -n
 
-# Recommended Dual-Boot Versions
+# Recommended Dualboot Versions
 - For devices with A11 SoCs, versions 14.2 and earlier will not boot. Therefore, use 14.3 or later versions instead.
-
-- iOS 13 (only 13.6, 13.7) is supported. To dual-boot ios 13, use the ios13 branch. Switch to this branch using git checkout ios13. To return to the main branch, use git checkout main. 
+- iOS 13 (only 13.6, 13.7) is supported. To dualboot iOS 13, use the ios13 branch. Switch to this branch using `git checkout ios13`. To return to the main branch, use `git checkout main`. 
 
 # Common Issues
 
-- iPhone and iPads may have issues with "Deep Sleep" (iOS not "waking up" after the display going to sleep). Installing the tweak [Fiona](https://www.ios-repo-updates.com/repository/julioverne-s-repo/package/com.julioverne.fiona/) or go to dualra1n-loader and click to fixdeepsleep option, may fix this. 
+- iPhone and iPads may have issues with "Deep Sleep" (iOS not "waking up" after the display going to sleep). Installing the tweak [Fiona](https://www.ios-repo-updates.com/repository/julioverne-s-repo/package/com.julioverne.fiona/) or going to dualra1n-loader and clicking the "fixdeepsleep" option may fix this. 
 
 
 # If there are any other issues, please contact me on the [dualra1n Discord server](https://discord.gg/E6jj48hzd5)
@@ -45,8 +45,7 @@ A script that lets you dualboot iOS 14-15 (semi-tethered) on [checkm8](https://w
 - [Fatih](https://github.com/swayea) for helping with the readme, testing linux support and being a very good person.
 - [plooshi](https://github.com/plooshi) thank you so much for help to fix the home button issue.
 - [azaz0322](https://github.com/m00nl1ghts) thank you so much for the repo in the dualra1n.loader.
-
-    [Huy Nguyen](https://github.com/34306), [DarwinUang](https://github.com/DarwinUang) and [aditya11110](https://github.com/aditya11110) for helping with the readme\
+- [Huy Nguyen](https://github.com/34306), [DarwinUang](https://github.com/DarwinUang) and [aditya11110](https://github.com/aditya11110) for helping with the readme\
 </details>
 <details><summary>Credits for tools used in dualra1n</summary>
 
@@ -55,8 +54,8 @@ A script that lets you dualboot iOS 14-15 (semi-tethered) on [checkm8](https://w
 - [opa334](https://github.com/opa334/TrollStore) amazing app
 - [blacktop](https://github.com/blacktop) for the iPSW downloader
 - [Nathan](https://github.com/verygenericname) for the ramdisk
-- [Amy](https://github.com/elihwyma) for the [Pogo](https://github.com/elihwyma/Pogo) app
-- [Mineek](https://github.com/mineek) thank you for the Kernel15patcher which is a kpf midfied to use with bootx.
+- [Amy](https://github.com/elihwyma) for [Pogo](https://github.com/elihwyma/Pogo) app
+- [Mineek](https://github.com/mineek) thank you for the Kernel15patcher which is a kpf modified to use with bootx.
 - [checkra1n](https://github.com/checkra1n) for the base of the kpf
 - [m1sta](https://github.com/m1stadev) for [pyimg4](https://github.com/m1stadev/PyIMG4)
 - [tihmstar](https://github.com/tihmstar) for [pzb](https://github.com/tihmstar/partialZipBrowser)/original [iBoot64Patcher](https://github.com/tihmstar/iBoot64Patcher)/original [liboffsetfinder64](https://github.com/tihmstar/liboffsetfinder64)/[img4tool](https://github.com/tihmstar/img4tool)
@@ -64,7 +63,7 @@ A script that lets you dualboot iOS 14-15 (semi-tethered) on [checkm8](https://w
 - [libimobiledevice](https://github.com/libimobiledevice) for several tools used in this project (irecovery, ideviceenterrecovery etc), and [nikias](https://github.com/nikias) for keeping it up to date
 - [Dora](https://github.com/dora2-iOS) for kpf
 - [Sam Bingner](https://github.com/sbingner) for [Substitute](https://github.com/sbingner/substitute)
-- [CoolStar](https://github.com/coolstar) for [Libhooker](https://libhooker.com/docs/index.html)
+- [CoolStar](https://github.com/coolstar) for [Libhooker](https://github.com/coolstar/libhooker)
 - [Ralp0045](https://github.com/Ralph0045) for [dtree_patcher](https://github.com/Ralph0045/dtree_patcher) and [Kernel64Patcher](https://github.com/Ralph0045/Kernel64Patcher)
 - [0x7ff](https://github.com/0x7ff/gaster) thank you so much for the gaster tool.
 </details>
