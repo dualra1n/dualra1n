@@ -475,11 +475,14 @@ if [ "$cmd_not_found" = "1" ]; then
 fi
 
 # Check for pyimg4
-if ! python3 -c 'import pkgutil; exit(not pkgutil.find_loader("pyimg4"))'; then
-    echo '[-] pyimg4 not installed. Press any key to install it, or press ctrl + c to cancel'
-    read -n 1 -s
-    python3 -m pip install pyimg4
-fi
+packages=("pyimg4" "pyliblzfse" "lzss")
+for package in "${packages[@]}"; do
+    if ! python3 -c "import pkgutil; exit(not pkgutil.find_loader('$package'))"; then
+        echo "[-] $package not installed. Press any key to install it, or press ctrl + c to cancel"
+        read -n 1 -s
+        python3 -m pip install -U "$package"
+    fi
+done
 
 # Update submodules
 #git submodule update --init --recursive 
