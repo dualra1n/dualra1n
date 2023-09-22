@@ -383,7 +383,7 @@ _boot() {
     fi
 
     "$dir"/irecovery -f "boot/${deviceid}/iBEC.img4"
-    echo "[*] the device should show some line of words, it means that it is booting, if it doesn't finish booting, doesn't show apple logo or it enter recoverymode please try --boot again, if it is still please report this issue in my discord server."
+    echo "[*] the device should show some line of words, it means that it is booting, if it doesn't finish booting, doesn't show apple logo or it enter recoverymode please try --boot again, if it is still please report this issue in my discord server. please press 'ctrl + c' in orther to exit of this"
     exit;
 }
 
@@ -751,44 +751,50 @@ if [ true ]; then
             exit;
         fi
 
-        echo "patching kernel" # this will send and patch the kernel
+        echo "[*] Patching kernel" # this will send and patch the kernel
         cp "$extractedIpsw$(awk "/""${model}""/{x=1}x&&/kernelcache.release/{print;exit}" work/BuildManifest.plist | grep '<string>' |cut -d\> -f2 |cut -d\< -f1)" "work/kernelcache"
                 
         if [[ "$deviceid" == "iPhone8"* ]] || [[ "$deviceid" == "iPad6"* ]] || [[ "$deviceid" == *'iPad5'* ]]; then
-            python3 -m pyimg4 im4p extract -i work/kernelcache -o work/kcache.raw --extra work/kpp.bin
+            python3 -m pyimg4 im4p extract -i work/kernelcache -o work/kcache.raw --extra work/kpp.bin >/dev/null
         else
-            python3 -m pyimg4 im4p extract -i work/kernelcache -o work/kcache.raw
+            python3 -m pyimg4 im4p extract -i work/kernelcache -o work/kcache.raw >/dev/null
         fi
         
         remote_cmd "/sbin/mount_apfs /dev/disk0s1s${disk} /mnt8/"
         remote_cmd "/sbin/umount /dev/disk0s1s2"
         remote_cmd "/sbin/mount_apfs /dev/disk0s1s${dataB} /mnt2/"
         remote_cmd "/sbin/mount_apfs /dev/disk0s1s${prebootB} /mnt4/"
-        remote_cp work/kcache.raw root@localhost:/mnt4/$active/System/Library/Caches/com.apple.kernelcaches/kcache.raw
-        remote_cp binaries/Kernel15Patcher.ios root@localhost:/mnt8/private/var/root/kpf15.ios
-        remote_cmd "/usr/sbin/chown 0 /mnt8/private/var/root/kpf15.ios"
-        remote_cmd "/bin/chmod 755 /mnt8/private/var/root/kpf15.ios"
-        sleep 1
-        if [ ! $(remote_cmd "/mnt8/private/var/root/kpf15.ios /mnt4/$active/System/Library/Caches/com.apple.kernelcaches/kcache.raw /mnt4/$active/System/Library/Caches/com.apple.kernelcaches/kcache.patched 2>/dev/null") ]; then
-            echo "you have the kernelpath already installed "
-        fi
-        sleep 2
-        remote_cp root@localhost:/mnt4/"$active"/System/Library/Caches/com.apple.kernelcaches/kcache.patched work/ # that will return the kernelpatcher in order to be patched again and boot with it 
-        "$dir"/Kernel64Patcher work/kcache.patched work/kcache.patchedB -e -o $(if [[ "$version" = "15."* ]]; then echo "-b15 -r"; else echo "-b"; fi) $(if [ ! "$taurine" = "1" ]; then echo "-l"; fi) 2>/dev/null
 
-        if [[ "$deviceid" == *'iPhone8'* ]] || [[ "$deviceid" == *'iPad6'* ]] || [[ "$deviceid" == *'iPad5'* ]]; then
-            python3 -m pyimg4 im4p create -i work/kcache.patchedB -o work/kcache.im4p -f $(if [[ "$version" = "13."* ]] || [ "$bootx" = "1" ]; then echo "rkrn"; else echo "krnl"; fi)  --extra work/kpp.bin --lzss 2>/dev/null
-        else
-            python3 -m pyimg4 im4p create -i work/kcache.patchedB -o work/kcache.im4p -f $(if [[ "$version" = "13."* ]] || [ "$bootx" = "1" ]; then echo "rkrn"; else echo "krnl"; fi)  --lzss 2>/dev/null
+        if [ ! "$taurine" = "1" ]; then
+            remote_cp work/kcache.raw root@localhost:/mnt4/$active/System/Library/Caches/com.apple.kernelcaches/kcache.raw
+            remote_cp binaries/Kernel15Patcher.ios root@localhost:/mnt8/private/var/root/kpf15.ios
+            remote_cmd "/usr/sbin/chown 0 /mnt8/private/var/root/kpf15.ios"
+            remote_cmd "/bin/chmod 755 /mnt8/private/var/root/kpf15.ios"
+            sleep 1
+
+            if [ ! $(remote_cmd "/mnt8/private/var/root/kpf15.ios /mnt4/$active/System/Library/Caches/com.apple.kernelcaches/kcache.raw /mnt4/$active/System/Library/Caches/com.apple.kernelcaches/kcache.patched 2>/dev/null") ]; then
+                echo "you have the kernelpath already installed "
+            fi
+            sleep 2
+            remote_cp root@localhost:/mnt4/"$active"/System/Library/Caches/com.apple.kernelcaches/kcache.patched work/ # that will return the kernelpatcher in order to be patched again and boot with it 
+            "$dir"/Kernel64Patcher work/kcache.patched work/kcache.patchedB -l  $(if [[ "$version" = "15."* ]]; then echo "-e -o -r -b15"; fi) $(if [[ "$version" = "14."* ]]; then echo "-b"; fi) >/dev/null
+            
+            if [[ "$deviceid" == *'iPhone8'* ]] || [[ "$deviceid" == *'iPad6'* ]] || [[ "$deviceid" == *'iPad5'* ]]; then
+                python3 -m pyimg4 im4p create -i work/kcache.patchedB -o work/kcache.im4p -f $(if [[ "$version" = "13."* ]] || [ "$bootx" = "1" ]; then echo "rkrn"; else echo "krnl"; fi)  --extra work/kpp.bin --lzss >/dev/null
+            else
+                python3 -m pyimg4 im4p create -i work/kcache.patchedB -o work/kcache.im4p -f $(if [[ "$version" = "13."* ]] || [ "$bootx" = "1" ]; then echo "rkrn"; else echo "krnl"; fi)  --lzss >/dev/null
+            fi
+        
+            python3 -m pyimg4 img4 create -p work/kcache.im4p -o $(if [[ "$version" = "13."* ]] || [ "$bootx" = "1" ]; then echo "work/kernelcache.img4"; else echo "work/kernelcachd"; fi) -m work/IM4M >/dev/null
+            remote_cp work/kernelcachd root@localhost:/mnt6/"$active"/System/Library/Caches/com.apple.kernelcaches/kernelcachd
         fi
-        
-        python3 -m pyimg4 img4 create -p work/kcache.im4p -o $(if [[ "$version" = "13."* ]] || [ "$bootx" = "1" ]; then echo "work/kernelcache.img4"; else echo "work/kernelcachd"; fi) -m work/IM4M 2>/dev/null
-        
+
+
+
         if [[ "$version" = "13."* ]] || [ "$bootx" = "1" ]; then
             cp -rv "work/kernelcache.img4" "boot/${deviceid}"
         fi
 
-        remote_cp work/kernelcachd root@localhost:/mnt6/"$active"/System/Library/Caches/com.apple.kernelcaches/kernelcachd
         remote_cmd "rm -f /mnt4/$active/System/Library/Caches/com.apple.kernelcaches/kcache.raw /mnt4/$active/System/Library/Caches/com.apple.kernelcaches/kcache.patched"
         
         #"$dir"/kerneldiff work/kcache.raw work/kcache.patchedB work/kc.bpatch
@@ -806,13 +812,22 @@ if [ true ]; then
         fi
 
         if [ "$taurine" = 1 ]; then
-            echo "installing taurine"
+            echo "[*] Patching the partition on the taurine binary"
+
+            if [ "$os" = "Linux" ]; then
+                sed -i "s#\/dev/disk0s1s1#\/dev/disk0s1s$disk#g" other/taurine/Applications/Taurine.app/Taurine
+            else
+                LC_ALL=C sed -i.bak -e "s/\/\/dev/disk0s1s1/\/\/dev/disk0s1s$disk/g" other/taurine/Applications/Taurine.app/Taurine
+            fi
+
+
+            echo "[*] installing taurine"
             remote_cp other/taurine/* root@localhost:/mnt8/
             echo "[*] Taurine installed"
             remote_cp other/dualra1n-loader.app root@localhost:/mnt8/Applications/
             echo "[*] it is copying so hang on please "
             remote_cmd "chmod +x /mnt8/Applications/dualra1n-loader.app/dual* && /usr/sbin/chown 33 /mnt8/Applications/dualra1n-loader.app/dualra1n-loader && /bin/chmod 755 /mnt8/Applications/dualra1n-loader.app/dualra1n-helper && /usr/sbin/chown 0 /mnt8/Applications/dualra1n-loader.app/dualra1n-helper" 
-            echo "[*] REBOOTING ..."
+            echo "[*] Done, please install trollstore on the TV app if you don't see it on the screen, and then click on settings and after that click on 'Rebuild icon cache' so taurine should be showed on the screen"
             remote_cmd "/sbin/reboot"
             exit;
         fi
@@ -857,7 +872,7 @@ if [ true ]; then
                     exit;
                 else
                     echo "you have a system installed on the partition that will be used by this, so ctrl+c and try to restorerootfs or ignore this by pressing [enter]. (probably dualboot wont boot into the second ios if you dont --restorerootfs before this)."
-                    read -p "click enter if you want to continue"
+                    read -p "click enter if you want to c>/dev/nullontinue"
                 fi
             else
                 echo "[*] Sucessfull verified"
@@ -1121,7 +1136,7 @@ if [ true ]; then
 
         echo "[*] Checking if a jailbreak is installed"
         
-        if [ "$dont_createPart" = "1" ] && [ $(remote_cmd "ls /mnt8/jbin/jbloader 2>/dev/null") ] || [ $(remote_cmd "ls /mnt8/.installed_odyssey 2>/dev/null") ] || [ $(remote_cmd "ls /mnt8/.installed_taurine 2>/dev/null") ]; then
+        if [ "$dont_createPart" = "1" ] && [ $(remote_cmd "ls /mnt8/jbin/jbloader 2>/dev/null") ]; then
             echo "[*] Jailbreak detected"
             remote_cmd "mkdir -p /mnt8/private/var/root/work"
             remote_cp work/kcache.raw root@localhost:/mnt4/"$active"/System/Library/Caches/com.apple.kernelcaches/kcache.raw

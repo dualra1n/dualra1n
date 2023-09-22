@@ -63,7 +63,8 @@ Does not work on iOS 16.
 - [libimobiledevice](https://github.com/libimobiledevice) for several tools used in this project (irecovery, ideviceenterrecovery etc), and [nikias](https://github.com/nikias) for keeping it up to date
 - [Dora](https://github.com/dora2-iOS) for kpf
 - [Sam Bingner](https://github.com/sbingner) for [Substitute](https://github.com/sbingner/substitute)
-- [CoolStar](https://github.com/coolstar) for [Libhooker](https://github.com/coolstar/libhooker)
+- [CoolStar](https://github.com/coolstar) for [Libhooker](https://github.com/coolstar/libhooker) 
+- [Taurine](https://github.com/Odyssey-Team/Taurine) for taurine jailbreak
 - [Ralp0045](https://github.com/Ralph0045) for [dtree_patcher](https://github.com/Ralph0045/dtree_patcher) and [Kernel64Patcher](https://github.com/Ralph0045/Kernel64Patcher)
 - [0x7ff](https://github.com/0x7ff/gaster) thank you so much for the gaster tool.
 </details>
