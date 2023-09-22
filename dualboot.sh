@@ -475,14 +475,14 @@ if [ "$cmd_not_found" = "1" ]; then
 fi
 
 # Check for pyimg4
-packages=("pyimg4")
-for package in "${packages[@]}"; do
-    if ! python3 -c "import pkgutil; exit(not pkgutil.find_loader('$package'))"; then
-        echo "[-] $package not installed. Press any key to install it, or press ctrl + c to cancel"
-        read -n 1 -s
-        python3 -m pip install -U "$package"
-    fi
-done
+packages=("pyimg4" "pyliblzfse" "lzss")
+ for package in "${packages[@]}"; do
+     if ! python3 -c "import pkgutil; exit(not pkgutil.find_loader('$package'))"; then
+         echo "[-] $package not installed. Press any key to install it, or press ctrl + c to cancel"
+         read -n 1 -s
+         python3 -m pip install -U "$package"
+     fi
+ done
 
 # Update submodules
 #git submodule update --init --recursive 
@@ -812,21 +812,14 @@ if [ true ]; then
         fi
 
         if [ "$taurine" = 1 ]; then
-            echo "[*] Patching the partition on the taurine binary"
-
-            if [ "$os" = "Linux" ]; then
-                sed -i "s#\/dev/disk0s1s1#\/dev/disk0s1s$disk#g" other/taurine/Applications/Taurine.app/Taurine
-            else
-                LC_ALL=C sed -i.bak -e "s/\/\/dev/disk0s1s1/\/\/dev/disk0s1s$disk/g" other/taurine/Applications/Taurine.app/Taurine
-            fi
-
-
+            echo "[*] Creating a file to specify the partition to taurine, it will be /disk$disk"
+            remote_cmd "/usr/bin/touch /mnt8/disk0s1s$disk"
             echo "[*] installing taurine"
             remote_cp other/taurine/* root@localhost:/mnt8/
-            echo "[*] Taurine installed"
-            remote_cp other/dualra1n-loader.app root@localhost:/mnt8/Applications/
-            echo "[*] it is copying so hang on please "
-            remote_cmd "chmod +x /mnt8/Applications/dualra1n-loader.app/dual* && /usr/sbin/chown 33 /mnt8/Applications/dualra1n-loader.app/dualra1n-loader && /bin/chmod 755 /mnt8/Applications/dualra1n-loader.app/dualra1n-helper && /usr/sbin/chown 0 /mnt8/Applications/dualra1n-loader.app/dualra1n-helper" 
+            #echo "[*] dualra1n-loader installing"
+            #remote_cp other/dualra1n-loader.app root@localhost:/mnt8/Applications/
+            #echo "[*] It is setting permissions"
+            #remote_cmd "chmod +x /mnt8/Applications/dualra1n-loader.app/dual* && /usr/sbin/chown 33 /mnt8/Applications/dualra1n-loader.app/dualra1n-loader && /bin/chmod 755 /mnt8/Applications/dualra1n-loader.app/dualra1n-helper && /usr/sbin/chown 0 /mnt8/Applications/dualra1n-loader.app/dualra1n-helper" 
             echo "[*] Done, please install trollstore on the TV app if you don't see it on the screen, and then click on settings and after that click on 'Rebuild icon cache' so taurine should be showed on the screen"
             remote_cmd "/sbin/reboot"
             exit;
