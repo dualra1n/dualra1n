@@ -475,7 +475,7 @@ if [ "$cmd_not_found" = "1" ]; then
 fi
 
 # Check for pyimg4
-packages=("pyimg4" "pyliblzfse" "lzss")
+packages=("pyimg4" "lzss")
  for package in "${packages[@]}"; do
      if ! python3 -c "import pkgutil; exit(not pkgutil.find_loader('$package'))"; then
          echo "[-] $package not installed. Press any key to install it, or press ctrl + c to cancel"
