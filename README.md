@@ -1,6 +1,6 @@
 # dualra1n
 
-A script that lets you dualboot iOS 14-15 (semi-tethered) on [checkm8](https://www.theiphonewiki.com/wiki/Checkm8_Exploit)-vulnerable devices. This is not a downgrade, however you can use [downr1n](https://github.com/edwin170/downr1n) instead.
+A script that lets you dualboot iOS 15-14. and 13.6-7, (semi-tethered) on [checkm8](https://www.theiphonewiki.com/wiki/Checkm8_Exploit)-vulnerable devices. This is not a downgrade, however you can use [downr1n](https://github.com/edwin170/downr1n) instead.
 
 Does not work on iOS 16.
 
@@ -12,7 +12,7 @@ Does not work on iOS 16.
 
 # Prerequisites
 - An A10-A11 device with a deactivated passcode
-- An .iPSW file for iOS 14-15
+- An .iPSW file for iOS 15-14-13.
 - Approximately 15GB of free storage
 - A computer with macOS or any Linux distro installed (Windows Subsystem on Linux is not supported). Live CDs are also acceptable.
 
@@ -24,7 +24,6 @@ Does not work on iOS 16.
 
 # Recommended Dualboot Versions
 - For devices with A11 SoCs, versions 14.2 and earlier will not boot. Therefore, use 14.3 or later versions instead.
-- iOS 13 (only 13.6, 13.7) is supported. To dualboot iOS 13, use the ios13 branch. Switch to this branch using `git checkout ios13`. To return to the main branch, use `git checkout main`. 
 
 # Common Issues
 
