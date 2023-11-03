@@ -77,6 +77,7 @@ Options:
     --boot                 Boots your iDevice into the dualbooted iOS. Use this when you already have the dualbooted iOS installed. Usage : ./dualboot.sh --boot
     --dont-create-part      Skips creating a new disk partition if you have them already, so using this this downloads the boot files. Usage : ./dualboot.sh --dualboot 14.3 --dont-create-part.
     --bootx                 this option will force to this script create and boot as bootx proccess.
+    --use-main-data         this option will do that the dualboot uses the main data partition so you will have the data of the main ios, uses when dualbooting and when you use --dont-create-part
     --restorerootfs         Deletes the dualbooted iOS. (also add --jail-palera1n if you are jailbroken semi-tethered with palera1n)
     --verbose               with verbose you will be able to create the boot files specifing the verbose boot argument in order to see more boot information. Usage: ./dualboot.sh --dualboot 14.3 (also can be used with dontcreatepart arg)
     --recoveryModeAlways    Fixes the main iOS when it is recovery looping.
@@ -124,6 +125,9 @@ parse_opt() {
             ;;
         --bootx)
             bootx=1
+            ;;
+        --use-main-data)
+            mainData=1
             ;;
         --restorerootfs)
             restorerootfs=1
@@ -1302,7 +1306,7 @@ if [ true ]; then
 
             echo "Adding devicetree"
             sleep 1
-            "$dir"/dtree_patcher work/dtree.raw work/dtree.patched -d $(if [[ "$version" = "13."* ]]; then echo ""; else echo "-p"; fi) >/dev/null
+            "$dir"/dtree_patcher work/dtree.raw work/dtree.patched $(if [ "$mainData" = "1" ]; then echo ""; else echo "-d"; fi) $(if [[ "$version" = "13."* ]]; then echo ""; else echo "-p"; fi) >/dev/null
             "$dir"/img4 -i work/dtree.patched -o work/devicetree.img4 -A -M work/IM4M -T rdtr
         else
             echo "Adding StaticTrustCache"
@@ -1310,8 +1314,8 @@ if [ true ]; then
 
             echo "Adding devicetree"
 
-            sleep 1
-            "$dir"/dtree_patcher work/dtree.raw work/dtree.patched -d -p >/dev/null
+            sleep 1 #mainData
+            "$dir"/dtree_patcher work/dtree.raw work/dtree.patched $(if [ "$mainData" = "1" ]; then echo ""; else echo "-d"; fi) -p >/dev/null
             "$dir"/img4 -i work/dtree.patched -o work/devicetred.img4 -A -M work/IM4M -T dtre >/dev/null
 
 
