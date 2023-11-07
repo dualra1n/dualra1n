@@ -1028,6 +1028,10 @@ if [ true ]; then
                 remote_cmd "cp -na /mnt6/* /mnt4/" # copy preboot to prebootB
                 remote_cmd "rm /mnt4/$active/usr/standalone/firmware/FUD/*"
             else
+	        if [ $(remote_cmd "cp -a /mnt2/mobile/Library/Preferences/com.apple.Accessibility* /mnt9/mobile/Library/Preferences/") ]; then # this will copy the assesivetouch config to our data partition
+                    echo "[*] activating assesivetouch"
+                fi
+		
                 remote_cmd "cp -a /mnt6/${active}/* /mnt8/" # copy preboot to ios 13 partition
                 echo "[*] Copying needed files to boot ios 13"
                 remote_cmd "mkdir -p /mnt8/private/xarts && mkdir -p /mnt8/private/preboot/"
