@@ -22,21 +22,20 @@ Does not work on iOS 16.
    - futurerestore --exit-recovery
    - irecovery -n
 
-# about ios version to dualboot
+# imporant info about dualboot Versions
+
 - For devices with A11 SoCs, versions 14.2 and earlier will not boot. Therefore, use 14.3 or later versions instead.
 
-- on ios 13.6 we will not have home button on touch id button devices like iphone 7 or 8. and on ios 13 probably you can have deepsleep bug but it depend on what devices
+- this support dualboot to ios 13.7 and 13.6 don't lower than this. ON IOS 13 THE HOME BUTTON WILL NOT WORK please activate the assesive touch in the main ios and then dualboot so in the second will be activated
 
-# Important
-
-- don't set a passcode on a10 or a11, this will distroy the second ios. you can't set it neither in the main ios non the second one
+- for devices which are 16 gb, you can use --downgrade option instead of --dualboot, this is going to remove the main ios. to restore just use itunes or another tool and the device will comeback to normal
 
 # Common Issues
 
 - iPhone and iPads may have issues with "Deep Sleep" (iOS not "waking up" after the display going to sleep). Installing the tweak [Fiona](https://www.ios-repo-updates.com/repository/julioverne-s-repo/package/com.julioverne.fiona/) or going to dualra1n-loader and clicking the "fixdeepsleep" option may fix this. 
 
 
-# If there are any other issues, please ask for help here [dualra1n Discord server](https://discord.gg/Gjs2P7FBuk)
+# If there are any other issues, please contact me on the [dualra1n Discord server](https://discord.gg/E6jj48hzd5)
 
 # Credits
 

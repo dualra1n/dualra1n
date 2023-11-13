@@ -19,7 +19,7 @@ echo "[*] Command ran:`if [ $EUID = 0 ]; then echo " sudo"; fi` ./dualboot.sh $@
 ipsw="ipsw/*.ipsw" # put your ipsw 
 os=$(uname)
 dir="$(pwd)/binaries/$os"
-max_args=1
+max_args=2
 arg_count=0
 disk=8
 extractedIpsw="ipsw/extracted/"
@@ -69,8 +69,11 @@ Currently, only iOS 14 and 15 are supported. Downgrading from or upgrading to iO
 
 Options:
     --dualboot              Dualboot your iDevice.
-    --jail-palera1n         Use this when you are already jailbroken with semi-tethered palera1n to avoid disk errors. 
+    --downgrade             this is going to remove the main ios in order to get dualboot on device which doesn't have enough storage.
     --jailbreak             Jailbreak dualbooted iOS with Pogo. Usage :  ./dualboot.sh --jailbreak 14.3
+
+Subcommands:
+    --jail-palera1n         Use this when you are already jailbroken with semi-tethered palera1n to avoid disk errors. 
     --taurine               Jailbreak dualbooted iOS with Taurine. (currently ***NOT RECOMMENDED***). Usage: ./dualboot.sh --jailbreak 14.3 --taurine 
     --help                  Print this help.
     --dfuhelper             A helper to help you enter DFU if you are struggling to do it manually.
@@ -95,6 +98,9 @@ parse_opt() {
             ;;
         --dualboot)
             dualboot=1
+            ;;
+        --downgrade)
+            downgrade=1
             ;;
         --boot)
             boot=1
@@ -168,7 +174,11 @@ parse_cmdline() {
         if [[ "$arg" == --* ]] && [ -z "$no_more_opts" ]; then
             parse_opt "$arg";
         elif [ "$arg_count" -lt "$max_args" ]; then
-            parse_arg "$arg";
+            if [[ "$arg" == *"ipsw"* ]]; then
+                ipsw=$arg
+            else
+                parse_arg "$arg";
+            fi
         else
             echo "[-] Too many arguments. Use $0 --help for help.";
             exit 1;
@@ -594,29 +604,118 @@ fi
     # =========
     # extract ipsw 
     # =========
-cd ipsw/
-ipsw_files=(*.ipsw)
-if [[ ${#ipsw_files[@]} -gt 1 ]]; then
-    echo "in ipsw/ directory there is more than one ipsw so delete one and try again please"
-    cd ..
-    exit;
-fi
-cd ..
+mkdir -p ipsw/extracted/$deviceid
+mkdir -p ipsw/extracted/$deviceid/$version
 
-if [ "$dualboot" = "1" ] || [ "$jailbreak" = "1" ]; then
-    # extracting ipsw
-    echo "extracting ipsw, hang on please ..." # this will extract the ipsw into ipsw/extracted
-    unzip -n $ipsw -d "ipsw/extracted"
-    if [ "$fixBoot" = "1" ]; then
-        cd work/
-        "$dir"/pzb -g BuildManifest.plist "$ipswurl"
-        cd ..
+extractedIpsw="ipsw/extracted/$deviceid/$version/"
+
+if [[ "$ipsw" == *".ipsw" ]]; then
+    echo "[*] Argument detected we are gonna use the ipsw specified"
+else
+    ipsw=$(ls ipsw/*.ipsw)
+
+    if [ ${#ipsw[@]} -eq 0 ]; then
+        echo "No .ipsw files found."
+        exit;
     else
-        cp -rv "$extractedIpsw/BuildManifest.plist" work/
+        for file in "${ipsw[@]}"; do
+            if [[ "$file" = *"$version"* ]]; then
+                while true
+                do
+                    echo "[-] we found $file, do you want to use it ? please write, "yes" or "no""
+                    read result
+                    if [ "$result" = "yes" ]; then
+                        ipsw=$file
+                        break
+                    elif [ "$result" = "no" ]; then
+                        break
+                    fi
+                done
+            fi
+        done
+    fi
+fi
+
+# Check if ipsw is an array
+if [[ "$(declare -p ipsw)" =~ "declare -a" ]]; then
+    while true
+    do
+        echo "Choose an IPSW by entering its number:"
+        for i in "${!ipsw[@]}"; do
+            echo "$((i+1)). ${ipsw[i]}"
+        done
+        read -p "Enter your choice: " choice
+
+        if [[ ! "$choice" =~ ^[1-${#ipsw[@]}]$ ]]; then
+            echo "Invalid IPSW number. Please enter a valid number."
+        else
+            echo "[*] We are gonna use ${ipsw[$choice-1]}"
+            ipsw="${ipsw[$choice-1]}"
+            break
+        fi
+    done
+else
+    echo "The variable ipsw is not an array."
+fi
+
+unzip -o $ipsw BuildManifest.plist -d work/ >/dev/null
+
+if [ "$dualboot" = "1" ] || [ "$downgrade" = "1" ] || [ "$jailbreak" = "1" ]; then
+    echo "[*] Checking if the ipsw is for your device"
+    unzip -o $ipsw BuildManifest.plist -d work/ >/dev/null
+    ipswDevicesid=()
+    ipswVers=""
+    ipswDevId=""
+    counter=0
+
+    while [ ! "$deviceid" = "$ipswDevId" ]
+    do
+        if [ "$os" = 'Darwin' ]; then
+            ipswDevId=$(/usr/bin/plutil -extract "SupportedProductTypes.$counter" xml1 -o - work/BuildManifest.plist | grep '<string>' |cut -d\> -f2 |cut -d\< -f1 | head -1)
+        else
+            ipswDevId=$("$dir"/PlistBuddy work/BuildManifest.plist -c "Print SupportedProductTypes:$counter" | sed 's/"//g')
+        fi
+
+        ipswDevicesid[counter]=$ipswDevId
+
+        if [ "$ipswDevId" = "" ]; then # this is to stop looking for more devices as it pass the limit and can't find deviceid
+            break
+        fi
+
+        ((counter++))
+    done
+    
+    
+    if [ "$ipswDevId" = "" ]; then
+        echo "[/] it looks like this ipsw file is wrong, please check your ipsw"
+        
+        for element in "${ipswDevicesid[@]}"; do
+            echo "this are the ipsw devices support: $element"
+        done
+        
+        echo "and your device $deviceid is not in the list"
+        read -p "want to continue ? click enter ..."
     fi
 
+
+    echo "[*] Checking ipsw version"
     if [ "$os" = 'Darwin' ]; then
-        if [ ! -f "ipsw/out.dmg" ]; then # this would create a dmg file which can be mounted an restore a patition
+        ipswVers=$(/usr/bin/plutil -extract "ProductVersion" xml1 -o - work/BuildManifest.plist | grep '<string>' |cut -d\> -f2 |cut -d\< -f1 | head -1)
+    else
+        ipswVers=$("$dir"/PlistBuddy work/BuildManifest.plist -c "Print ProductVersion" | sed 's/"//g')
+    fi
+    
+    if [[ ! "$version" = "$ipswVers" ]]; then
+        echo "ipsw version is $ipswVers, and you specify $version"
+        read -p "wrong ipsw version detected, click ENTER to continue or just ctrl + c to exit"
+    fi
+
+    # extracting ipsw
+    echo "extracting ipsw, hang on please ..." # this will extract the ipsw into ipsw/extracted
+    unzip -n $ipsw -d $extractedIpsw
+
+    if [ "$os" = 'Darwin' ]; then
+        if [ ! -f "$extractedIpsw/out.dmg" ]; then # this would create a dmg file which can be mounted an restore a patition
             asr -source "$extractedIpsw$(/usr/bin/plutil -extract "BuildIdentities".0."Manifest"."OS"."Info"."Path" xml1 -o - work/BuildManifest.plist | grep '<string>' |cut -d\> -f2 |cut -d\< -f1 | head -1)" -target ipsw/out.dmg --embed -erase -noprompt --chunkchecksum --puppetstrings
         fi
     else 
@@ -871,18 +970,45 @@ if [ true ]; then
     fi
     
 
-    if [ "$dualboot" = "1" ]; then
+    if [ "$dualboot" = "1" ] || [ "$downgrade" = "1" ]; then
         if [ -z "$dont_createPart" ]; then # if you have already your second ios you can omited with this
             echo "[*] Starting step 1"
             echo "[*] Verifying if we can continue with the dualboot"
 
+            if [ "$downgrade" = "1" ]; then
+                echo "--downgrade option detected, this will destroy the main ios."
+                read -p "Please if you are not agree about remove the main ios please ctrl + c to exit from the program, or click ENTER to continue. info: this will remove the main ios so your device is not going to boot without this compute --boot, in case that you want to come back to the normal ios and delete this, just use itunes to restore"
+                sleep 4
+                echo "[*] Checking if the main ios has the rootfs"
+                if [ $(remote_cmd "ls /mnt1/usr/libexec/keybagd 2>/dev/null") ]; then
+                    echo "[*] the main ios need to be removed, Before removing partitions we are gonna save the keybags"
+              	    
+                    if [ ! $(remote_cmd "ls /mnt6/$active/keybags 2>/dev/null") ]; then
+                        remote_cmd "cp -a /mnt2/keybags /mnt6/$active/"
+                    fi
+                    
+                    remote_cmd "/sbin/umount /dev/disk0s1s2 && /sbin/umount /dev/disk0s1s1 2>/dev/null"
+                    echo "[*] keybags saved"
+                    echo "[*] Removing root and data partition"
+                    remote_cmd "/sbin/apfs_deletefs /dev/disk0s1s1 && /sbin/apfs_deletefs /dev/disk0s1s2 2>/dev/null"
+                    echo "[*] Removed them correctly"
+                    echo "[*] Creating the main ios paritions empty"
+                    remote_cmd "/sbin/newfs_apfs -o role=s -A -v System /dev/disk0s1"
+        	        if [ $(remote_cmd "/sbin/newfs_apfs -o role=d -A -v Data -P /dev/disk0s1") ]; then # data volumen is created as protected as it panic each time that we need to mount the dualboot
+                        echo "[*] an error happend creating the data partitions but we can continue, continuing..."
+                        remote_cmd "/sbin/newfs_apfs -o role=d -A -v Data /dev/disk0s1"
+	                fi
+                fi
+            fi
+
+            echo "[*] Verifying if we can continue with the dualboot"
             if [ "$(remote_cmd "ls /dev/disk0s1s${disk} 2>/dev/null")" ]; then
                 if [ "$(remote_cmd "/System/Library/Filesystems/apfs.fs/apfs.util -p /dev/disk0s1s${disk}")" == 'Xystem' ]; then
                     echo "that look like you have the palera1n semitethered jailbreak, always add the command --jail-palera1n in order to fix it "
                     exit;
                 else
                     echo "you have a system installed on the partition that will be used by this, so ctrl+c and try to restorerootfs or ignore this by pressing [enter]. (probably dualboot wont boot into the second ios if you dont --restorerootfs before this)."
-                    read -p "click enter if you want to c>/dev/nullontinue"
+                    read -p "click enter if you want to continue"
                 fi
             else
                 echo "[*] Sucessfull verified"
@@ -911,8 +1037,16 @@ if [ true ]; then
                 sleep 1
             fi
 
-            if [ ! $(remote_cmd "cp -a /mnt2/keybags /mnt9/") ]; then # this are keybags without this the system wont work 
-                echo "[*] copied keybags"
+            if [ "$downgrade" = "1" ]; then
+                if [ $(remote_cmd "cp -a /mnt6/$active/keybags /mnt9/") ]; then # this are keybags without this the system wont work 
+                    echo "[*] ERROR copying keybags"
+                    exit;
+                fi
+            else
+                if [ $(remote_cmd "cp -a /mnt2/keybags /mnt9/") ]; then
+                    echo "[*] ERROR copying keybags"
+                    exit;
+                fi
             fi
              
 
@@ -1028,10 +1162,9 @@ if [ true ]; then
                 remote_cmd "cp -na /mnt6/* /mnt4/" # copy preboot to prebootB
                 remote_cmd "rm /mnt4/$active/usr/standalone/firmware/FUD/*"
             else
-	        if [ $(remote_cmd "cp -a /mnt2/mobile/Library/Preferences/com.apple.Accessibility* /mnt9/mobile/Library/Preferences/") ]; then # this will copy the assesivetouch config to our data partition
+	            if [ $(remote_cmd "cp -a /mnt2/mobile/Library/Preferences/com.apple.Accessibility* /mnt9/mobile/Library/Preferences/") ]; then # this will copy the assesivetouch config to our data partition
                     echo "[*] activating assesivetouch"
                 fi
-		
                 remote_cmd "cp -a /mnt6/${active}/* /mnt8/" # copy preboot to ios 13 partition
                 echo "[*] Copying needed files to boot ios 13"
                 remote_cmd "mkdir -p /mnt8/private/xarts && mkdir -p /mnt8/private/preboot/"
