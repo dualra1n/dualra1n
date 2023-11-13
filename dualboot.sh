@@ -16,7 +16,14 @@ echo "[*] Command ran:`if [ $EUID = 0 ]; then echo " sudo"; fi` ./dualboot.sh $@
 # =========
 # Variables
 # ========= 
-ipsw="ipsw/*.ipsw" # put your ipsw 
+cd ipsw/
+ipsw_files=(*.ipsw)
+if [[ ${#ipsw_files[@]} -gt 1 ]]; then
+    cd ..
+else
+    ipsw="ipsw/*.ipsw" # put your ipsw 
+fi
+cd ..
 os=$(uname)
 dir="$(pwd)/binaries/$os"
 max_args=2
