@@ -670,39 +670,38 @@ unzip -o $ipsw BuildManifest.plist -d work/ >/dev/null
 if [ "$dualboot" = "1" ] || [ "$downgrade" = "1" ] || [ "$jailbreak" = "1" ]; then
     echo "[*] Checking if the ipsw is for your device"
     unzip -o $ipsw BuildManifest.plist -d work/ >/dev/null
-    ipswDevicesid=()
     ipswVers=""
     ipswDevId=""
     counter=0
+    declare -a ipswDevicesid
 
-    while [ ! "$deviceid" = "$ipswDevId" ]
-    do
+    while [ ! "$deviceid" = "$ipswDevId" ]; do
         if [ "$os" = 'Darwin' ]; then
-            ipswDevId=$(/usr/bin/plutil -extract "SupportedProductTypes.$counter" xml1 -o - work/BuildManifest.plist | grep '<string>' |cut -d\> -f2 |cut -d\< -f1 | head -1)
+            ipswDevId=$(/usr/bin/plutil -extract "SupportedProductTypes.$counter" xml1 -o - work/BuildManifest.plist | grep '<string>' | cut -d\> -f2 | cut -d\< -f1 | head -1)
         else
             ipswDevId=$("$dir"/PlistBuddy work/BuildManifest.plist -c "Print SupportedProductTypes:$counter" | sed 's/"//g')
         fi
 
         ipswDevicesid[counter]=$ipswDevId
 
-        if [ "$ipswDevId" = "" ]; then # this is to stop looking for more devices as it pass the limit and can't find deviceid
+        if [ "$ipswDevId" = "" ]; then
             break
         fi
 
         ((counter++))
     done
     
-    
     if [ "$ipswDevId" = "" ]; then
-        echo "[/] it looks like this ipsw file is wrong, please check your ipsw"
-        
+        echo "[/] It looks like this ipsw file is wrong. Please check your ipsw."
+
         for element in "${ipswDevicesid[@]}"; do
-            echo "this are the ipsw devices support: $element"
+            echo "These are the ipsw devices supported: $element"
         done
-        
-        echo "and your device $deviceid is not in the list"
-        read -p "want to continue ? click enter ..."
+
+        echo "Your device $deviceid is not in the list."
+        read -p "Want to continue? Press enter ..."
     fi
+
 
 
     echo "[*] Checking ipsw version"
