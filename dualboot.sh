@@ -661,8 +661,6 @@ if [[ "$(declare -p ipsw)" =~ "declare -a" ]]; then
             break
         fi
     done
-else
-    echo "The variable ipsw is not an array."
 fi
 
 unzip -o $ipsw BuildManifest.plist -d work/ >/dev/null
@@ -688,7 +686,7 @@ if [ "$dualboot" = "1" ] || [ "$downgrade" = "1" ] || [ "$jailbreak" = "1" ]; th
             break
         fi
 
-        ((counter++))
+        let "counter=counter+1" # ((counter++)) this counter break the script on linus
     done
     
     if [ "$ipswDevId" = "" ]; then
