@@ -1,7 +1,9 @@
 #!/usr/bin/env bash
 
+
 mkdir -p logs
 mkdir -p boot
+mkdir -p ipsw/extracted
 set -e
 
 log="last".log
@@ -29,7 +31,6 @@ dir="$(pwd)/binaries/$os"
 max_args=2
 arg_count=0
 disk=8
-extractedIpsw="ipsw/extracted/"
 
 if [ ! -d "ramdisk/" ]; then
     echo "[*] Please wait patiently; it is currently cloning the ramdisk..."
