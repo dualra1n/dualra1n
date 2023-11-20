@@ -539,7 +539,7 @@ if [ "$debug" = "1" ]; then
 fi
 
 if [ "$clean" = "1" ]; then
-    rm -rf  work/* blobs/* boot/"$deviceid"/  ipsw/extracted ipsw/out.dmg
+    rm -rf  work/* blobs/* boot/"$deviceid"/  ipsw/extracted $extractedIpsw/out.dmg
     echo "[*] Removed the created boot files"
     exit
 fi
@@ -721,7 +721,7 @@ if [ "$dualboot" = "1" ] || [ "$downgrade" = "1" ] || [ "$jailbreak" = "1" ]; th
 
     if [ "$os" = 'Darwin' ]; then
         if [ ! -f "$extractedIpsw/out.dmg" ]; then # this would create a dmg file which can be mounted an restore a patition
-            asr -source "$extractedIpsw$(/usr/bin/plutil -extract "BuildIdentities".0."Manifest"."OS"."Info"."Path" xml1 -o - work/BuildManifest.plist | grep '<string>' |cut -d\> -f2 |cut -d\< -f1 | head -1)" -target ipsw/out.dmg --embed -erase -noprompt --chunkchecksum --puppetstrings
+            asr -source "$extractedIpsw$(/usr/bin/plutil -extract "BuildIdentities".0."Manifest"."OS"."Info"."Path" xml1 -o - work/BuildManifest.plist | grep '<string>' |cut -d\> -f2 |cut -d\< -f1 | head -1)" -target "$extractedIpsw/out.dmg" --embed -erase -noprompt --chunkchecksum --puppetstrings
         fi
     else 
         dmgfile="$(binaries/Linux/PlistBuddy work/BuildManifest.plist -c "Print BuildIdentities:0:Manifest:OS:Info:Path" | sed 's/"//g')" # that is to know what is the name of rootfs
@@ -1063,8 +1063,8 @@ if [ true ]; then
             
             echo "[*] copying rootfs filesystem so hang on, that could take 20 minute because is trought ssh"
             if [ "$os" = "Darwin" ]; then
-                if [ ! $("$dir"/sshpass -p 'alpine' rsync -rvz -e 'ssh -p 2222' ipsw/out.dmg root@localhost:/mnt8 2>/dev/null) ]; then
-                    remote_cp ipsw/out.dmg root@localhost:/mnt8 >/dev/null 2>&1 # this will copy the root file in order to it is mounted and restore partition      
+                if [ ! $("$dir"/sshpass -p 'alpine' rsync -rvz -e 'ssh -p 2222' $extractedIpsw/out.dmg root@localhost:/mnt8 2>/dev/null) ]; then
+                    remote_cp $extractedIpsw/out.dmg root@localhost:/mnt8 >/dev/null 2>&1 # this will copy the root file in order to it is mounted and restore partition      
                 fi
             else 
                 if [ ! $("$dir"/sshpass -p 'alpine' rsync -rvz -e 'ssh -p 2222' "$extractedIpsw$(binaries/Linux/PlistBuddy work/BuildManifest.plist -c "Print BuildIdentities:0:Manifest:OS:Info:Path" | sed 's/"//g')" root@localhost:/mnt8 2>/dev/null) ]; then
