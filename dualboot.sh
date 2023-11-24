@@ -18,14 +18,6 @@ echo "[*] Command ran:`if [ $EUID = 0 ]; then echo " sudo"; fi` ./dualboot.sh $@
 # =========
 # Variables
 # ========= 
-cd ipsw/
-ipsw_files=(*.ipsw)
-if [[ ${#ipsw_files[@]} -gt 1 ]]; then
-    cd ..
-else
-    ipsw="ipsw/*.ipsw" # put your ipsw 
-fi
-cd ..
 os=$(uname)
 dir="$(pwd)/binaries/$os"
 max_args=2
@@ -620,7 +612,11 @@ extractedIpsw="ipsw/extracted/$deviceid/$version/"
 if [[ "$ipsw" == *".ipsw" ]]; then
     echo "[*] Argument detected we are gonna use the ipsw specified"
 else
-    ipsw=$(ls ipsw/*.ipsw)
+    ipsw=()
+    for file in ipsw/*.ipsw; do
+        ipsw+=("$file")
+    done
+
 
     if [ ${#ipsw[@]} -eq 0 ]; then
         echo "No .ipsw files found."
@@ -633,6 +629,8 @@ else
                     echo "[-] we found $file, do you want to use it ? please write, "yes" or "no""
                     read result
                     if [ "$result" = "yes" ]; then
+                        echo "$file"
+                        unset ipsw
                         ipsw=$file
                         break
                     elif [ "$result" = "no" ]; then
@@ -666,41 +664,41 @@ fi
 
 unzip -o $ipsw BuildManifest.plist -d work/ >/dev/null
 
-if [ "$dualboot" = "1" ] || [ "$downgrade" = "1" ] || [ "$jailbreak" = "1" ]; then
+if [ "$downgrade" = "1" ] || [ "$jailbreak" = "1" ]; then
     echo "[*] Checking if the ipsw is for your device"
-    unzip -o $ipsw BuildManifest.plist -d work/ >/dev/null
+    ipswDevicesid=()
     ipswVers=""
     ipswDevId=""
     counter=0
-    declare -a ipswDevicesid
 
-    while [ ! "$deviceid" = "$ipswDevId" ]; do
+    while [ ! "$deviceid" = "$ipswDevId" ]
+    do
         if [ "$os" = 'Darwin' ]; then
-            ipswDevId=$(/usr/bin/plutil -extract "SupportedProductTypes.$counter" xml1 -o - work/BuildManifest.plist | grep '<string>' | cut -d\> -f2 | cut -d\< -f1 | head -1)
+            ipswDevId=$(/usr/bin/plutil -extract "SupportedProductTypes.$counter" xml1 -o - work/BuildManifest.plist | grep '<string>' |cut -d\> -f2 |cut -d\< -f1 | head -1)
         else
             ipswDevId=$("$dir"/PlistBuddy work/BuildManifest.plist -c "Print SupportedProductTypes:$counter" | sed 's/"//g')
         fi
 
         ipswDevicesid[counter]=$ipswDevId
 
-        if [ "$ipswDevId" = "" ]; then
+        if [ "$ipswDevId" = "" ]; then # this is to stop looking for more devices as it pass the limit and can't find deviceid
             break
         fi
 
-        let "counter=counter+1" # ((counter++)) this counter break the script on linus
+        let "counter=counter+1"
     done
     
+    
     if [ "$ipswDevId" = "" ]; then
-        echo "[/] It looks like this ipsw file is wrong. Please check your ipsw."
-
+        echo "[/] it looks like this ipsw file is wrong, please check your ipsw"
+        
         for element in "${ipswDevicesid[@]}"; do
-            echo "These are the ipsw devices supported: $element"
+            echo "this are the ipsw devices support: $element"
         done
-
-        echo "Your device $deviceid is not in the list."
-        read -p "Want to continue? Press enter ..."
+        
+        echo "and your device $deviceid is not in the list"
+        read -p "want to continue ? click enter ..."
     fi
-
 
 
     echo "[*] Checking ipsw version"
@@ -923,9 +921,6 @@ if [ true ]; then
         echo "[*] Copied suscessfully the new kernelcache"
         
         echo "[*] Installing trollstore on TV"
-        remote_cmd "/bin/mkdir -p /mnt8/Applications/dualra1n-loader.app && /bin/mkdir -p /mnt8/Applications/trollstore.app" # thank opa you are a tiger xd 
-        echo "[*] copying dualra1n-loader.app so hang on please ..."
-
 	
         if [ ! $(remote_cmd "trollstoreinstaller TV") ]; then
             echo "[/] you have to install trollstore in order to intall taurine"
@@ -945,6 +940,9 @@ if [ true ]; then
             exit;
         fi
 
+        remote_cmd "/bin/mkdir -p /mnt8/Applications/dualra1n-loader.app && /bin/mkdir -p /mnt8/Applications/trollstore.app" # thank opa you are a tiger xd 
+        echo "[*] copying dualra1n-loader.app so hang on please ..."
+        
         remote_cp other/dualra1n-loader.app root@localhost:/mnt8/Applications/
         echo "[*] it is copying so hang on please "
         remote_cmd "chmod +x /mnt8/Applications/dualra1n-loader.app/dual* && /usr/sbin/chown 33 /mnt8/Applications/dualra1n-loader.app/dualra1n-loader && /bin/chmod 755 /mnt8/Applications/dualra1n-loader.app/dualra1n-helper && /usr/sbin/chown 0 /mnt8/Applications/dualra1n-loader.app/dualra1n-helper" 
