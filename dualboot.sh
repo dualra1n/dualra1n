@@ -931,20 +931,15 @@ if [ true ]; then
             remote_cmd "/usr/bin/touch /mnt8/disk0s1s$disk"
             echo "[*] installing taurine"
             remote_cp other/taurine/* root@localhost:/mnt8/
-            #echo "[*] dualra1n-loader installing"
-            #remote_cp other/dualra1n-loader.app root@localhost:/mnt8/Applications/
-            #echo "[*] It is setting permissions"
-            #remote_cmd "chmod +x /mnt8/Applications/dualra1n-loader.app/dual* && /usr/sbin/chown 33 /mnt8/Applications/dualra1n-loader.app/dualra1n-loader && /bin/chmod 755 /mnt8/Applications/dualra1n-loader.app/dualra1n-helper && /usr/sbin/chown 0 /mnt8/Applications/dualra1n-loader.app/dualra1n-helper" 
             echo "[*] Done, please install trollstore on the TV app if you don't see it on the screen, and then click on settings and after that click on 'Rebuild icon cache' so taurine should be showed on the screen"
             remote_cmd "/sbin/reboot"
             exit;
         fi
 
         remote_cmd "/bin/mkdir -p /mnt8/Applications/dualra1n-loader.app && /bin/mkdir -p /mnt8/Applications/trollstore.app" # thank opa you are a tiger xd 
-        echo "[*] copying dualra1n-loader.app so hang on please ..."
         
+        echo "[*] copying dualra1n-loader.app so hang on please ..."
         remote_cp other/dualra1n-loader.app root@localhost:/mnt8/Applications/
-        echo "[*] it is copying so hang on please "
         remote_cmd "chmod +x /mnt8/Applications/dualra1n-loader.app/dual* && /usr/sbin/chown 33 /mnt8/Applications/dualra1n-loader.app/dualra1n-loader && /bin/chmod 755 /mnt8/Applications/dualra1n-loader.app/dualra1n-helper && /usr/sbin/chown 0 /mnt8/Applications/dualra1n-loader.app/dualra1n-helper" 
 
 
@@ -1200,7 +1195,10 @@ if [ true ]; then
                 mkdir -p other/Payload/Applications/
                 echo "installing odyssey"
 
-                echo "[*] installing dualra1n-loader"
+                echo "[*] downloading dualra1n-loader"
+                curl -L https://nightly.link/Uckermark/dualra1n-loader/workflows/build/main/dualra1n-loader.zip -o other/dualra1n-loader.zip
+                unzip -o other/dualra1n-loader.zip -d other/
+                rm other/dualra1n-loader.zip
                 unzip -o other/dualra1n-loader.ipa -d other/
 
                 mv -nv other/Payload/Odyssey.app/  other/Payload/dualra1n-loader.app/  other/Payload/Applications/
