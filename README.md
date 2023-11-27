@@ -55,8 +55,7 @@ Does not work on iOS 16.
 
 - [Dualboot guide](https://dualbootfun.github.io/) for the guide
 - [palera1n](https://github.com/palera1n) for some of the code
-- [opa334](https://github.com/opa334/TrollStore) amazing app
-- [blacktop](https://github.com/blacktop) for the iPSW downloader
+- [opa334](https://github.com/opa334/TrollStore) for the amazing app TrollStore
 - [Nathan](https://github.com/verygenericname) for the ramdisk
 - [Amy](https://github.com/elihwyma) for [Pogo](https://github.com/elihwyma/Pogo) app
 - [Mineek](https://github.com/mineek) thank you for the Kernel15patcher which is a kpf modified to use with bootx.
@@ -65,7 +64,6 @@ Does not work on iOS 16.
 - [tihmstar](https://github.com/tihmstar) for [pzb](https://github.com/tihmstar/partialZipBrowser)/original [iBoot64Patcher](https://github.com/tihmstar/iBoot64Patcher)/original [liboffsetfinder64](https://github.com/tihmstar/liboffsetfinder64)/[img4tool](https://github.com/tihmstar/img4tool)
 - [xerub](https://github.com/xerub) for [img4lib](https://github.com/xerub/img4lib) and [restored_external](https://github.com/xerub/sshrd) in the ramdisk
 - [libimobiledevice](https://github.com/libimobiledevice) for several tools used in this project (irecovery, ideviceenterrecovery etc), and [nikias](https://github.com/nikias) for keeping it up to date
-- [Dora](https://github.com/dora2-iOS) for kpf
 - [Sam Bingner](https://github.com/sbingner) for [Substitute](https://github.com/sbingner/substitute)
 - [CoolStar](https://github.com/coolstar) for [Libhooker](https://github.com/coolstar/libhooker) 
 - [Taurine](https://github.com/Odyssey-Team/Taurine) for taurine jailbreak
