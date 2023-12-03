@@ -664,7 +664,7 @@ fi
 
 unzip -o $ipsw BuildManifest.plist -d work/ >/dev/null
 
-if [ "$downgrade" = "1" ] || [ "$jailbreak" = "1" ]; then
+if [ "$dualboot" = "1" ] || [ "$downgrade" = "1" ] || [ "$jailbreak" = "1" ]; then
     echo "[*] Checking if the ipsw is for your device"
     ipswDevicesid=()
     ipswVers=""
