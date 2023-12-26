@@ -35,7 +35,7 @@ Does not work on iOS 16.
 - iPhone and iPads may have issues with "Deep Sleep" (iOS not "waking up" after the display going to sleep). Installing the tweak [Fiona](https://www.ios-repo-updates.com/repository/julioverne-s-repo/package/com.julioverne.fiona/) or going to dualra1n-loader and clicking the "fixdeepsleep" option may fix this. 
 
 
-# If there are any other issues, please contact me on the [dualra1n Discord server](https://discord.gg/E6jj48hzd5)
+# If there are any other issues, please contact me on the [dualra1n Discord server](https://discord.gg/Gjs2P7FBuk)
 
 # Credits
 
