@@ -17,7 +17,7 @@ and after a respring, open Taurine and select "jailbreak". If your device shows 
 
 # How do I delete the dualbooted iOS?
 
-1. To delete the dualbooted iOS, use the command: <code>./dualboot.sh --restorerootfs (iOSver) </code>. If you are using palera1n.sh (NOT PALERA1N-C) semi-tethered, you must add <code>--jail-palera1n</code> to the command.
+1. To delete the dualbooted iOS, use the command: <code>./dualboot.sh --restorerootfs (iOSver) </code>. If you are using palera1n semi-tethered, you must add <code>--jail-palera1n</code> to the command.
 
 2. If you wish to remove the jailbreak alone, use the "restorerootfs" option in the dualra1n-loader. After rebooting and running --boot, if the device doesn't boot and you previously ran --jailbreak, you need to jailbreak again to boot the secondary iOS version.
 
@@ -29,6 +29,6 @@ and after a respring, open Taurine and select "jailbreak". If your device shows 
 
 - --dualboot (vers) --dont-create-part = this will create the boot files (and can fix some stuff if the device doesn't boot) instead of completely installing the second ios again.
 
-- --dualboot (vers) --jail-palera1n, use --jail-palera1n always when you have the palera1n rootful semitethered jailbreak.
+- --dualboot (vers) --jail-palera1n, use --jail-palera1n always when you have the palera1n semi-tethered jailbreak.
 
 - --downgrade (vers) use this if you don't have enough storage and you are positive that you dont have any important data on the main OS
