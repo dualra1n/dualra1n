@@ -1,6 +1,6 @@
 # dualra1n
 
-A script that lets you dualboot iOS 15-14. and 13.6-7, (semi-tethered) on [checkm8](https://www.theiphonewiki.com/wiki/Checkm8_Exploit)-vulnerable devices. This is not a downgrade, however you can use [downr1n](https://github.com/edwin170/downr1n) instead.
+A script that lets you dualboot iOS 15-14. and 13.6/13.7, (semi-tethered) on [checkm8](https://www.theiphonewiki.com/wiki/Checkm8_Exploit)-vulnerable devices. This is not a downgrade, however you can use [downr1n](https://github.com/edwin170/downr1n) instead.
 
 This will not work on devices with iOS 16.
 
@@ -17,17 +17,17 @@ This will not work on devices with iOS 16.
 - A computer with macOS or any Linux distro installed (Windows Subsystem for Linux is not supported). Live CDs will work.
 
 # Warnings
-- I am **NOT** responsible for any data loss. The user of this program accepts responsibility should something happen to their device.
- **If your device is stuck in recovery, please run one of the following commands:**
+- I am **NOT** responsible for any data loss. The user of this program accepts responsibility if something were happen to their device.
+ **If your device is stuck in recovery mode, please run one of the following commands:**
    - futurerestore --exit-recovery
    - irecovery -n
 
 # imporant info about dualboot Versions
 
-- For devices with A11 SoCs, versions 14.2 and earlier will not boot. Therefore, use 14.3 or later versions instead.
+- For devices with A11 SoCs, iOS 14.2 and earlier will fail to boot. Therefore, use iOS 14.3 or later instead.
 
-- Dualbooting iOS 13 only supports 13.6 and 13.7 and will most likely **NOT** go lower!.
-- iPhones with a capacitive home button (ex. iPhone 7/7+) **WILL NOT HAVE A WORKING HOME BUTTON**. To get around this you can enable assistive touch in the main iOS and it will pass onto the dualbooted OS
+- Dualbooting iOS 13 only supports 13.6 and 13.7 and will most likely **NOT** go lower!
+- iPhones with a capacitive home button (ex. iPhone 7/7+) on iOS 13 **WILL NOT HAVE A WORKING HOME BUTTON**. To get around this you can enable assistive touch in the main iOS and it will pass onto the dualbooted OS
 
 - for devices that only have 16GB of storage,can use the --downgrade option instead of --dualboot, this is going to remove the main iOS and replace it with whatever you chose to downgrade to. To go back to the original iOS that you started with, just restore your device with itunes or whatever tool you use for restoring your device. 
 
@@ -50,7 +50,7 @@ This will not work on devices with iOS 16.
 - [Fatih](https://github.com/swayea) for helping with the readme, testing linux support and being a very good person.
 - [plooshi](https://github.com/plooshi) thank you so much for help to fix the home button issue.
 - [azaz0322](https://github.com/m00nl1ghts) thank you so much for the repo in the dualra1n.loader.
-- [Huy Nguyen](https://github.com/34306), [DarwinUang](https://github.com/DarwinUang) and [aditya11110](https://github.com/aditya11110) for helping with the readme\
+- [Huy Nguyen](https://github.com/34306), [DarwinUang](https://github.com/DarwinUang), [KlutzyT](https://github.com/klutzyT), and [aditya11110](https://github.com/aditya11110) for helping with the readme
 </details>
 <details><summary>Credits for tools used in dualra1n</summary>
 
