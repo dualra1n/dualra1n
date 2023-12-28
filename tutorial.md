@@ -29,6 +29,6 @@ and after a respring, open Taurine and select "jailbreak". If your device shows 
 
 - --dualboot (vers) --dont-create-part = this will create the boot files (and can fix some stuff if the device doesn't boot) instead of completely installing the second ios again.
 
-- --dualboot (vers) --jail-palera1n, use --jail-palera1n always when you have the palera1n.sh (NOT PALERA1N-C) semitethered jailbreak.
+- --dualboot (vers) --jail-palera1n, use --jail-palera1n always when you have the palera1n rootful semitethered jailbreak.
 
 - --downgrade (vers) use this if you don't have enough storage and you are positive that you dont have any important data on the main OS
