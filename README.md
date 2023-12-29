@@ -29,7 +29,7 @@ This will not work on devices with iOS 16.
 - Dualbooting iOS 13 only supports 13.6 and 13.7 and will most likely **NOT** go lower!
 - iPhones with a capacitive home button (ex. iPhone 7/7+) on iOS 13 **WILL NOT HAVE A WORKING HOME BUTTON**. To get around this you can enable assistive touch in the main iOS and it will pass onto the dualbooted OS
 
-- for devices that only have 16GB of storage,can use the --downgrade option instead of --dualboot, this is going to remove the main iOS and replace it with whatever you chose to downgrade to. To go back to the original iOS that you started with, just restore your device with itunes or whatever tool you use for restoring your device. 
+- for devices that only have 16GB of storage, can use the --downgrade option instead of --dualboot, this is going to remove the main iOS and replace it with whatever you chose to downgrade to. To go back to the original iOS that you started with, just restore your device with itunes or whatever tool you use for restoring your device. 
 
 # Common Issues
 
