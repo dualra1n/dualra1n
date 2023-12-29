@@ -2,17 +2,18 @@
 
 1. Clone the repository with the following command: <code>git clone --recursive https://github.com/dualra1n/dualra1n</code>.
 
-2. Download the .iPSW file for the iOS version you intend to dualboot with, and place it in the ipsw/ directory. The file can be obtained from ipsw.me. Keep in mind that only iOS 14.0 to iOS 15.* versions are supported. For versions iOS 13.6 and higher, the ios13 branch should be utilized.
+2. Download the .iPSW file for the iOS version you intend to be dualbooting, and place it in the ipsw/ directory. The file can be obtained from [ipsw.me](https://ipsw.me). Please keep in mind that only iOS 13.6 to iOS 15.* are supported.
 
 3. Execute the command ./dualboot.sh --dualboot (iOSver), replacing "(iOSver)" with the desired iOS version for dualbooting.
 
-4. To switch to the dualbooted iOS version, run <code>./dualboot.sh --boot</code>.
+4. To switch to the dualbooted iOS version after your device rebooted, run <code>./dualboot.sh --boot</code>.
 
-# How to Jailbreak the Dualbooted iOS?
+# How do I Jailbreak the Dualbooted iOS?
 
 - Run ./dualboot.sh --jailbreak (iOSver). Upon completion, open the dualra1n-loader and click on "jailbreak". If your device reboots, simply select "re-jailbreak". (This method is highly recommended over Taurine.)
 
-- To jailbreak with Taurine, use the command <code>./dualboot.sh --jailbreak (iOSver) --taurine </code>. Note that this is not the preferred method and should only be used by experienced jailbreakers. After the process is completed, open the TVAPP, select "install trollstore", refresh, and after a respring, open Taurine and select "jailbroken". If your device shows a blue screen, try a forced reboot. After rebooting, boot again into the second iOS version. If the Sileo app is not visible, retry the Taurine jailbreak. If Sileo is visible, the jailbreak was successful, and you can open dualra1n-loader and click "re-jailbreak" to activate the tweaks.
+- To jailbreak with Taurine, use the command <code>./dualboot.sh --jailbreak (iOSver) --taurine </code>. Note that this is not the preferred method and should only be used by experienced jailbreakers. After the process is completed, open the Apple TV app, select "install trollstore",
+and after a respring, open Taurine and select "jailbreak". If your device shows a blue screen, try a forced reboot. After rebooting, boot again into the second iOS version. If the Sileo app is not visible, retry the Taurine jailbreak. If Sileo is visible, the jailbreak was successful, and you can open dualra1n-loader and click "re-jailbreak" to activate the tweaks.
 
 # How do I delete the dualbooted iOS?
 
@@ -22,12 +23,12 @@
 
 # Known issues 
 
-"Deep Sleep": The device doesn't "wake up" as expected. Installing Fiona will rectify this. or you can activate localboot to fix it.
+"Deep Sleep": The device doesn't "wake up" after you turn it off. Using the "fixdeepsleep" option in the dualra1n-loader app, or by installing the [Fiona](https://www.ios-repo-updates.com/repository/julioverne-s-repo/package/com.julioverne.fiona/)
 
-# commang cobination for person who don't understand very well :_
+# Command Explanation for people who might not understand :_
 
-- --dualboot (vers) --dont-create-part = this will create the boot files (and can fix some stuff if the device doesn't boot) instead install the second ios again.
+- --dualboot (vers) --dont-create-part = this will create the boot files (and can fix some stuff if the device doesn't boot) instead of completely installing the second ios again.
 
-- --dualboot (vers) --jail-palera1n, use --jail-palera1n always when you have the palera1n semitethered jailbreak.
+- --dualboot (vers) --jail-palera1n, use --jail-palera1n always when you have the palera1n semi-tethered jailbreak.
 
-- --downgrade (vers) use it if you don't have enough storage and you are sure that this will remove the main ios
+- --downgrade (vers) use this if you don't have enough storage and you are positive that you dont have any important data on the main OS
