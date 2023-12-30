@@ -1,5 +1,13 @@
 #!/usr/bin/env bash
 
+if [ "$(uname)" == "Linux" ]; then
+    if [ "$EUID" -ne 0 ]; then
+        exec sudo ./dualboot.sh $@
+    fi
+else
+    echo "Please don't run as root on macOS. It just breaks permissions."
+    exit 1
+fi
 
 mkdir -p logs
 mkdir -p boot
