@@ -2,6 +2,8 @@
 
 if [ "$(uname)" == "Linux" ]; then
     if [ "$EUID" -ne 0 ]; then
+    	echo "You have to run this as root on Linux."
+     	echo "Please type your password"
         exec sudo ./dualboot.sh $@
     fi
 else
