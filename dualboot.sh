@@ -149,7 +149,7 @@ parse_opt() {
             exit 0
             ;;
         *)
-            echo "[-] Unknown option $1. Use $0 --help for help."
+            echo "[-] Unknown option selected $1. Use $0 --help for help."
             exit 1;
     esac
 }
@@ -297,8 +297,8 @@ _dfuhelper() {
     else
         step_one="Hold home + power button"
     fi
-    echo "[*] To get into DFU mode, you will be guided through 2 steps:"
-    echo "[*] Press any key when ready for DFU mode"
+    echo "[*] To enter into DFU mode, you will be guided through 2 steps:"
+    echo "[*] Press any key when you are ready to enter DFU mode"
     read -n 1 -s
     step 3 "Get ready"
     step 4 "$step_one" &
@@ -317,7 +317,7 @@ _dfuhelper() {
     fi
 
     if [ "$(get_device_mode)" = "dfu" ]; then
-        echo "[*] Your device has entered DFU!"
+        echo "[*] Your device has entered DFU mode successfully!"
     else
         echo "[-] Your device did not enter DFU mode, please try again!"
        _detect
@@ -345,7 +345,7 @@ _detect() {
     echo $(echo "[*] Detected $(get_device_mode) mode device" | sed 's/dfu/DFU/')
 
     if grep -E 'pongo|checkra1n_stage2|diag' <<< "$(get_device_mode)"; then
-        echo "[-] Detected device in a unsupported mode '$(get_device_mode)'"
+        echo "[-] Detected your device in a unsupported mode '$(get_device_mode)' "
         exit 1;
     fi
 
@@ -496,7 +496,7 @@ fi
 packages=("pyimg4")
  for package in "${packages[@]}"; do
      if ! python3 -c "import pkgutil; exit(not pkgutil.find_loader('$package'))"; then
-         echo "[-] $package is not installed. we can installl it for you, press any key to start installing $package, or press ctrl + c to cancel"
+         echo "[-] $package is not installed. We can installl it for you, press any key to start installing $package, or press ctrl + c to cancel"
          read -n 1 -s
          python3 -m pip install -U "$package" pyliblzfse
      fi
@@ -505,7 +505,7 @@ packages=("pyimg4")
 packages=("lzss")
  for package in "${packages[@]}"; do
      if ! python3 -c "import pkgutil; exit(not pkgutil.find_loader('$package'))"; then
-         echo "[-] $package is not installed. we can installl it for you, press any key to start installing $package, or press ctrl + c to cancel"
+         echo "[-] $package is not installed. We can installl it for you, press any key to start installing $package, or press ctrl + c to cancel"
          read -n 1 -s
          git clone https://github.com/yyogo/pylzss "$dir"/pylzss
          cd "$dir"/pylzss
@@ -550,7 +550,7 @@ if [ "$clean" = "1" ]; then
 fi
 
 if [[ -z "$version" ]]; then
-    echo "[-] error you didnt specify which iOS version you wanted to dualboot. please add that to your command, example: ./dualboot.sh --dualboot 14.3"
+    echo "[-] Error! You didnt specify which iOS version you wanted to dualboot. please add that to your command, example: ./dualboot.sh --dualboot 14.3"
 fi
 
 if [[ "$version" = "13."* ]] && [ "$jailbreak" = "1" ]; then
