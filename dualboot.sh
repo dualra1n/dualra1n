@@ -963,23 +963,23 @@ if [ true ]; then
             exit;
         fi
 
+        echo "[*] downloading dualra1n-loader from the internet"
+        curl -L https://nightly.link/Uckermark/dualra1n-loader/workflows/build/main/dualra1n-loader.zip -o other/dualra1n-loader.zip
+        unzip -o other/dualra1n-loader.zip -d other/
+        rm -f other/dualra1n-loader.zip
+        
         remote_cmd "/bin/mkdir -p /mnt8/Applications/dualra1n-loader.app && /bin/mkdir -p /mnt8/Applications/trollstore.app" # thank opa you are a tiger xd 
         
         echo "[*] copying the dualra1n-loader.app so please wait ..."
         remote_cp other/dualra1n-loader.app root@localhost:/mnt8/Applications/
         remote_cmd "chmod +x /mnt8/Applications/dualra1n-loader.app/dual* && /usr/sbin/chown 33 /mnt8/Applications/dualra1n-loader.app/dualra1n-loader && /bin/chmod 755 /mnt8/Applications/dualra1n-loader.app/dualra1n-helper && /usr/sbin/chown 0 /mnt8/Applications/dualra1n-loader.app/dualra1n-helper" 
 
-
-
+        # this is the jailbreak of palera1n being installing 
         echo "[*] Installing JBINIT, thanks palera1n team"
         echo "[*] Copying files to the rootfs"
-        sleep 1
         remote_cmd "mkdir -p /mnt8/jbin/binpack /mnt8/jbin/loader.app"
-        sleep 1
-
-        # this is the jailbreak of palera1n being installing 
         
-        cp -v other/post.sh other/rootfs/jbin/
+        cp -f other/post.sh other/rootfs/jbin/
         remote_cp other/rootfs/* root@localhost:/mnt8/
         remote_cmd "ldid -s /mnt8/jbin/launchd /mnt8/jbin/jbloader /mnt8/jbin/jb.dylib"
         remote_cmd "chmod +rwx /mnt8/jbin/launchd /mnt8/jbin/jbloader /mnt8/jbin/post.sh"
@@ -1220,14 +1220,13 @@ if [ true ]; then
                 echo "[*] copying odyssey to /applications/"
                 unzip other/odysseymod.ipa -d other/
                 mkdir -p other/Payload/Applications/
-                echo "[*] installing odyssey"
 
                 echo "[*] downloading dualra1n-loader from the internet"
                 curl -L https://nightly.link/Uckermark/dualra1n-loader/workflows/build/main/dualra1n-loader.zip -o other/dualra1n-loader.zip
                 unzip -o other/dualra1n-loader.zip -d other/
-                rm other/dualra1n-loader.zip
-                unzip -o other/dualra1n-loader.ipa -d other/
+                rm -f other/dualra1n-loader.zip
 
+                echo "[*] installing odyssey"
                 mv -nv other/Payload/Odyssey.app/  other/Payload/dualra1n-loader.app/  other/Payload/Applications/
                 remote_cp other/Payload/Applications/ root@localhost:/mnt8/
 
