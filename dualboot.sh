@@ -2,7 +2,7 @@
 
 if [ "$(uname)" == "Linux" ]; then
     if [ "$EUID" -ne 0 ]; then
-    	echo "You have to run this as root on Linux."
+    	echo "You must run this as root on Linux."
      	echo "Please type your password"
         exec sudo ./dualboot.sh $@
     fi
@@ -76,9 +76,9 @@ step() {
 
 print_help() {
     cat << EOF
-Usage: $0 [options] [ subcommand | iOS version that you're on ]
+Usage: $0 [options] [ subcommand | iOS version that you want to dualboot/downgrade to]
 You must have around 15 GB of free storage, and the .iPSW file of the iOS which you wish to dualboot to in dualra1n/ipsw/.
-Currently, only iOS 14 and 15 are supported. Downgrading from or upgrading to iOS 16 is not and will likely never be supported.
+Currently, only iOS 13.6/13.7 and 14 and 15 are supported. Dualbooting from iOS 16 will never be supported!
 
 Options:
     --dualboot              Dualboot your iDevice with the version specified.
@@ -370,7 +370,7 @@ _detect() {
     if [ "$(get_device_mode)" = "ramdisk" ]; then
         # If a device is in ramdisk mode, perhaps iproxy is still running?
         _kill_if_running iproxy
-        echo "[*] Rebooting device in SSH Ramdisk mode"
+        echo "[*] Rebooting device in SSH Ramdisk mode to recovery"
         if [ "$os" = 'Linux' ]; then
             sudo "$dir"/iproxy 2222 22 >/dev/null &
         else
@@ -386,7 +386,7 @@ _detect() {
         version=${version:-$(_info normal ProductVersion)}
         arch=$(_info normal CPUArchitecture)
         if [ "$arch" = "arm64e" ]; then
-            echo "[-] dualboot will not, EVER work on non-checkm8 devices aka:A12+ devices"
+            echo "[-] dualboot will not, EVER work on non-checkm8 devices aka:A12+/M1 devices"
             exit
         fi
         echo "Hello, $(_info normal ProductType) on $version!"
@@ -1088,7 +1088,7 @@ if [ true ]; then
                 echo "[-] you dont have rsync installed so the script will take much longer to copy the rootfs file, so please install rsync if you want this process to be faster."
             fi
             
-            echo "[*] copying the rootfs filesystem file so please wait, this could take as long as 20 minutes or longer because is through ssh"
+            echo "[*] copying the rootfs filesystem file so please wait, this could take as long as 20 minutes or longer because it is through ssh"
             if [ "$os" = "Darwin" ]; then
                 if [ ! $("$dir"/sshpass -p 'alpine' rsync -rvz -e 'ssh -p 2222' $extractedIpsw/out.dmg root@localhost:/mnt8 2>/dev/null) ]; then
                     remote_cp $extractedIpsw/out.dmg root@localhost:/mnt8 >/dev/null 2>&1 # this will copy the root file in order to it is mounted and restore partition      
