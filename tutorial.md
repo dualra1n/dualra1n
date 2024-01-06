@@ -23,7 +23,7 @@ and after a respring, open Taurine and select "jailbreak". If your device shows 
 
 # Known issues 
 
-"Deep Sleep": The device doesn't "wake up" after you turn it off. Using the "fixdeepsleep" option in the dualra1n-loader app, or by installing the [Fiona](https://www.ios-repo-updates.com/repository/julioverne-s-repo/package/com.julioverne.fiona/)
+"Deep Sleep": The device doesn't "wake up" after you turn it off. Using the "fixdeepsleep" option in the dualra1n-loader app, or by installing the [Fiona](https://www.ios-repo-updates.com/repository/julioverne-s-repo/package/com.julioverne.fiona/) tweak will fix this issue
 
 # Command Explanation for people who might not understand :_
 
