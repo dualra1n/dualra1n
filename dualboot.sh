@@ -627,71 +627,78 @@ if [ "$boot" = "1" ]; then # call boot in order to boot it
     
 fi
 
-    # =========
-    # extract ipsw 
-    # =========
+# =========
+# extract ipsw 
+# =========
 mkdir -p ipsw/extracted/$deviceid
 mkdir -p ipsw/extracted/$deviceid/$version
 
 extractedIpsw="ipsw/extracted/$deviceid/$version/"
 
-if [[ "$ipsw" == *".ipsw" ]]; then
-    echo "[*] Argument detected we are going to use the ipsw specified"
-else
-    ipsw=()
-    for file in ipsw/*.ipsw; do
-        ipsw+=("$file")
-    done
-
-
-    if [ ${#ipsw[@]} -eq 0 ]; then
-        echo "[-] we could not find any .ipsw files in the ipsw folder, please place an ipsw in that folder for your device and the version you want to dualboot."
-        exit;
+if [ "$downgrade" = "1" ] || [ "$dualboot" = "1" ] || [ "$jailbreak" = "1" ]; then
+    if [[ "$ipsw" == *".ipsw" ]]; then
+        echo "[*] Argument detected. We are gonna use the specified IPSW: $ipsw"
     else
-        for file in "${ipsw[@]}"; do
-            if [[ "$file" = *"$version"* ]]; then
-                while true
-                do
-                    echo "[-] we found $file, do you want to use this ipsw? please write, "yes" or "no""
+        ipsw=()
+
+        for file in ipsw/*.ipsw; do
+            ipsw+=("$file")
+        done
+
+        if [ ${#ipsw[@]} -eq 0 ]; then
+            echo "No .ipsw files found."
+            exit
+        else
+            for file in "${ipsw[@]}"; do
+                if [[ "$file" = *"$version"* ]]; then
+                    echo "[-] Found matching IPSW: $file"
+                    echo "Do you want to use it? Please write 'yes' or 'no'"
                     read result
                     if [ "$result" = "yes" ]; then
-                        echo "$file"
                         unset ipsw
                         ipsw=$file
                         break
                     elif [ "$result" = "no" ]; then
                         break
                     fi
-                done
+                fi
+            done
+        fi
+    fi
+
+    if [ -z "$ipsw" ]; then
+        echo "No IPSW selected. Exiting."
+        exit
+    fi
+
+    echo "Selected IPSW: $ipsw"
+
+
+    # Check if ipsw is an array
+    if [[ "$(declare -p ipsw)" =~ "declare -a" ]]; then
+        while true
+        do
+            echo "Choose an IPSW by entering its number:"
+            for i in "${!ipsw[@]}"; do
+                echo "$((i+1)). ${ipsw[i]}"
+            done
+            read -p "Enter your choice: " choice
+
+            if [[ ! "$choice" =~ ^[1-${#ipsw[@]}]$ ]]; then
+                echo "Invalid IPSW number. Please enter a valid number."
+            else
+                echo "[*] We are gonna use ${ipsw[$choice-1]}"
+                ipsw="${ipsw[$choice-1]}"
+                break
             fi
         done
     fi
+
+    unzip -o $ipsw BuildManifest.plist -d work/ >/dev/null
 fi
 
-# Check if ipsw is an array
-if [[ "$(declare -p ipsw)" =~ "declare -a" ]]; then
-    while true
-    do
-        echo "Choose an IPSW by entering its number:"
-        for i in "${!ipsw[@]}"; do
-            echo "$((i+1)). ${ipsw[i]}"
-        done
-        read -p "Enter your choice: " choice
-
-        if [[ ! "$choice" =~ ^[1-${#ipsw[@]}]$ ]]; then
-            echo "Invalid IPSW number. Please enter a valid number."
-        else
-            echo "[*] We are gonna use ${ipsw[$choice-1]}"
-            ipsw="${ipsw[$choice-1]}"
-            break
-        fi
-    done
-fi
-
-unzip -o $ipsw BuildManifest.plist -d work/ >/dev/null
-
-if [ "$dualboot" = "1" ] || [ "$downgrade" = "1" ] || [ "$jailbreak" = "1" ]; then
-    echo "[*] Checking if the ipsw you placed is for your device"
+if [ "$downgrade" = "1" ] || [ "$dualboot" = "1" ] || [ "$jailbreak" = "1" ]; then
+    echo "[*] Checking if the ipsw is for your device"
     ipswDevicesid=()
     ipswVers=""
     ipswDevId=""
@@ -716,18 +723,18 @@ if [ "$dualboot" = "1" ] || [ "$downgrade" = "1" ] || [ "$jailbreak" = "1" ]; th
     
     
     if [ "$ipswDevId" = "" ]; then
-        echo "[/] it looks like this ipsw file is not the type for your device, please check your ipsw and try again"
+        echo "[/] it looks like this ipsw file is wrong, please check your ipsw"
         
         for element in "${ipswDevicesid[@]}"; do
-            echo "these are the ipsw's devices support: $element"
+            echo "this are the ipsw devices support: $element"
         done
         
-        echo "and your device $deviceid is not in this list"
-        read -p "are you sure you want to continue? click enter if you are sure ..."
+        echo "and your device $deviceid is not in the list"
+        read -p "want to continue ? click enter ..."
     fi
 
 
-    echo "[*] Checking the ipsw version"
+    echo "[*] Checking ipsw version"
     if [ "$os" = 'Darwin' ]; then
         ipswVers=$(/usr/bin/plutil -extract "ProductVersion" xml1 -o - work/BuildManifest.plist | grep '<string>' |cut -d\> -f2 |cut -d\< -f1 | head -1)
     else
@@ -736,16 +743,16 @@ if [ "$dualboot" = "1" ] || [ "$downgrade" = "1" ] || [ "$jailbreak" = "1" ]; th
     
     if [[ ! "$version" = "$ipswVers" ]]; then
         echo "ipsw version is $ipswVers, and you specify $version"
-        read -p "incompatible ipsw version detected, click ENTER to continue or ctrl + c to exit"
+        read -p "wrong ipsw version detected, click ENTER to continue or just ctrl + c to exit"
     fi
 
     # extracting ipsw
-    echo "extracting ipsw, please wait..." # this will extract the ipsw into ipsw/extracted
+    echo "extracting ipsw, hang on please ..." # this will extract the ipsw into ipsw/extracted
     unzip -n $ipsw -d $extractedIpsw
 
     if [ "$os" = 'Darwin' ]; then
         if [ ! -f "$extractedIpsw/out.dmg" ]; then # this would create a dmg file which can be mounted an restore a patition
-            asr -source "$extractedIpsw$(/usr/bin/plutil -extract "BuildIdentities".0."Manifest"."OS"."Info"."Path" xml1 -o - work/BuildManifest.plist | grep '<string>' |cut -d\> -f2 |cut -d\< -f1 | head -1)" -target "$extractedIpsw/out.dmg" --embed -erase -noprompt --chunkchecksum --puppetstrings
+            asr -source "$extractedIpsw$(/usr/bin/plutil -extract "BuildIdentities".0."Manifest"."OS"."Info"."Path" xml1 -o - work/BuildManifest.plist | grep '<string>' |cut -d\> -f2 |cut -d\< -f1 | head -1)" -target $extractedIpsw/out.dmg --embed -erase -noprompt --chunkchecksum --puppetstrings
         fi
     else 
         dmgfile="$(binaries/Linux/PlistBuddy work/BuildManifest.plist -c "Print BuildIdentities:0:Manifest:OS:Info:Path" | sed 's/"//g')" # that is to know what is the name of rootfs
@@ -963,23 +970,23 @@ if [ true ]; then
             exit;
         fi
 
+        echo "[*] downloading dualra1n-loader from the internet"
+        curl -L https://nightly.link/Uckermark/dualra1n-loader/workflows/build/main/dualra1n-loader.zip -o other/dualra1n-loader.zip
+        unzip -o other/dualra1n-loader.zip -d other/
+        rm -f other/dualra1n-loader.zip
+        
         remote_cmd "/bin/mkdir -p /mnt8/Applications/dualra1n-loader.app && /bin/mkdir -p /mnt8/Applications/trollstore.app" # thank opa you are a tiger xd 
         
         echo "[*] copying the dualra1n-loader.app so please wait ..."
         remote_cp other/dualra1n-loader.app root@localhost:/mnt8/Applications/
         remote_cmd "chmod +x /mnt8/Applications/dualra1n-loader.app/dual* && /usr/sbin/chown 33 /mnt8/Applications/dualra1n-loader.app/dualra1n-loader && /bin/chmod 755 /mnt8/Applications/dualra1n-loader.app/dualra1n-helper && /usr/sbin/chown 0 /mnt8/Applications/dualra1n-loader.app/dualra1n-helper" 
 
-
-
+        # this is the jailbreak of palera1n being installing 
         echo "[*] Installing JBINIT, thanks palera1n team"
         echo "[*] Copying files to the rootfs"
-        sleep 1
         remote_cmd "mkdir -p /mnt8/jbin/binpack /mnt8/jbin/loader.app"
-        sleep 1
-
-        # this is the jailbreak of palera1n being installing 
         
-        cp -v other/post.sh other/rootfs/jbin/
+        cp -f other/post.sh other/rootfs/jbin/
         remote_cp other/rootfs/* root@localhost:/mnt8/
         remote_cmd "ldid -s /mnt8/jbin/launchd /mnt8/jbin/jbloader /mnt8/jbin/jb.dylib"
         remote_cmd "chmod +rwx /mnt8/jbin/launchd /mnt8/jbin/jbloader /mnt8/jbin/post.sh"
@@ -1220,14 +1227,13 @@ if [ true ]; then
                 echo "[*] copying odyssey to /applications/"
                 unzip other/odysseymod.ipa -d other/
                 mkdir -p other/Payload/Applications/
-                echo "[*] installing odyssey"
 
                 echo "[*] downloading dualra1n-loader from the internet"
                 curl -L https://nightly.link/Uckermark/dualra1n-loader/workflows/build/main/dualra1n-loader.zip -o other/dualra1n-loader.zip
                 unzip -o other/dualra1n-loader.zip -d other/
-                rm other/dualra1n-loader.zip
-                unzip -o other/dualra1n-loader.ipa -d other/
+                rm -f other/dualra1n-loader.zip
 
+                echo "[*] installing odyssey"
                 mv -nv other/Payload/Odyssey.app/  other/Payload/dualra1n-loader.app/  other/Payload/Applications/
                 remote_cp other/Payload/Applications/ root@localhost:/mnt8/
 
