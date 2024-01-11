@@ -2,7 +2,7 @@
 
 if [ "$(uname)" == "Linux" ]; then
     if [ "$EUID" -ne 0 ]; then
-    	echo "You have to run this as root on Linux."
+    	echo "You must run this as root on Linux."
      	echo "Please type your password"
         exec sudo ./dualboot.sh $@
     fi
@@ -76,9 +76,9 @@ step() {
 
 print_help() {
     cat << EOF
-Usage: $0 [options] [ subcommand | iOS version that you're on ]
+Usage: $0 [options] [ subcommand | iOS version that you want to dualboot/downgrade to]
 You must have around 15 GB of free storage, and the .iPSW file of the iOS which you wish to dualboot to in dualra1n/ipsw/.
-Currently, only iOS 14 and 15 are supported. Downgrading from or upgrading to iOS 16 is not and will likely never be supported.
+Currently, only iOS 13.6/13.7 and 14 and 15 are supported. Dualbooting from iOS 16 will never be supported!
 
 Options:
     --dualboot              Dualboot your iDevice with the version specified.
@@ -162,7 +162,7 @@ parse_opt() {
             exit 0
             ;;
         *)
-            echo "[-] Unknown option $1. Use $0 --help for help."
+            echo "[-] Unknown option selected $1. Use $0 --help for help."
             exit 1;
     esac
 }
@@ -310,8 +310,8 @@ _dfuhelper() {
     else
         step_one="Hold home + power button"
     fi
-    echo "[*] To get into DFU mode, you will be guided through 2 steps:"
-    echo "[*] Press any key when ready for DFU mode"
+    echo "[*] To enter into DFU mode, you will be guided through 2 steps:"
+    echo "[*] Press any key when you are ready to enter DFU mode"
     read -n 1 -s
     step 3 "Get ready"
     step 4 "$step_one" &
@@ -330,7 +330,7 @@ _dfuhelper() {
     fi
 
     if [ "$(get_device_mode)" = "dfu" ]; then
-        echo "[*] Your device has entered DFU!"
+        echo "[*] Your device has entered DFU mode successfully!"
     else
         echo "[-] Your device did not enter DFU mode, please try again!"
        _detect
@@ -358,7 +358,7 @@ _detect() {
     echo $(echo "[*] Detected $(get_device_mode) mode device" | sed 's/dfu/DFU/')
 
     if grep -E 'pongo|checkra1n_stage2|diag' <<< "$(get_device_mode)"; then
-        echo "[-] Detected device in a unsupported mode '$(get_device_mode)'"
+        echo "[-] Detected your device in a unsupported mode '$(get_device_mode)' "
         exit 1;
     fi
 
@@ -370,7 +370,7 @@ _detect() {
     if [ "$(get_device_mode)" = "ramdisk" ]; then
         # If a device is in ramdisk mode, perhaps iproxy is still running?
         _kill_if_running iproxy
-        echo "[*] Rebooting device in SSH Ramdisk mode"
+        echo "[*] Rebooting device in SSH Ramdisk mode to recovery"
         if [ "$os" = 'Linux' ]; then
             sudo "$dir"/iproxy 2222 22 >/dev/null &
         else
@@ -386,7 +386,7 @@ _detect() {
         version=${version:-$(_info normal ProductVersion)}
         arch=$(_info normal CPUArchitecture)
         if [ "$arch" = "arm64e" ]; then
-            echo "[-] dualboot will not, EVER work on non-checkm8 devices aka:A12+ devices"
+            echo "[-] dualboot will not, EVER work on non-checkm8 devices aka:A12+/M1 devices"
             exit
         fi
         echo "Hello, $(_info normal ProductType) on $version!"
@@ -509,7 +509,7 @@ fi
 packages=("pyimg4")
  for package in "${packages[@]}"; do
      if ! python3 -c "import pkgutil; exit(not pkgutil.find_loader('$package'))"; then
-         echo "[-] $package is not installed. we can installl it for you, press any key to start installing $package, or press ctrl + c to cancel"
+         echo "[-] $package is not installed. We can installl it for you, press any key to start installing $package, or press ctrl + c to cancel"
          read -n 1 -s
          python3 -m pip install -U "$package" pyliblzfse
      fi
@@ -518,7 +518,7 @@ packages=("pyimg4")
 packages=("lzss")
  for package in "${packages[@]}"; do
      if ! python3 -c "import pkgutil; exit(not pkgutil.find_loader('$package'))"; then
-         echo "[-] $package is not installed. we can installl it for you, press any key to start installing $package, or press ctrl + c to cancel"
+         echo "[-] $package is not installed. We can installl it for you, press any key to start installing $package, or press ctrl + c to cancel"
          read -n 1 -s
          git clone https://github.com/yyogo/pylzss "$dir"/pylzss
          cd "$dir"/pylzss
@@ -563,7 +563,7 @@ if [ "$clean" = "1" ]; then
 fi
 
 if [[ -z "$version" ]]; then
-    echo "[-] error you didnt specify which iOS version you wanted to dualboot. please add that to your command, example: ./dualboot.sh --dualboot 14.3"
+    echo "[-] Error! You didnt specify which iOS version you wanted to dualboot. please add that to your command, example: ./dualboot.sh --dualboot 14.3"
 fi
 
 if [[ "$version" = "13."* ]] && [ "$jailbreak" = "1" ]; then
@@ -1093,7 +1093,7 @@ if [ true ]; then
                 echo "[-] you dont have rsync installed so the script will take much longer to copy the rootfs file, so please install rsync if you want this process to be faster."
             fi
             
-            echo "[*] copying the rootfs filesystem file so please wait, this could take as long as 20 minutes or longer because is through ssh"
+            echo "[*] copying the rootfs filesystem file so please wait, this could take as long as 20 minutes or longer because it is through ssh"
             if [ "$os" = "Darwin" ]; then
                 if [ ! $("$dir"/sshpass -p 'alpine' rsync -rvz -e 'ssh -p 2222' $extractedIpsw/out.dmg root@localhost:/mnt8 2>/dev/null) ]; then
                     remote_cp $extractedIpsw/out.dmg root@localhost:/mnt8 >/dev/null 2>&1 # this will copy the root file in order to it is mounted and restore partition      

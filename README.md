@@ -1,9 +1,9 @@
 # dualra1n
 
-A script that lets you dualboot iOS 15-14. and 13.6/13.7, (semi-tethered) on [checkm8](https://www.theiphonewiki.com/wiki/Checkm8_Exploit)-vulnerable devices. This is not a downgrade, however you can use [downr1n](https://github.com/edwin170/downr1n) instead.
+A script that lets you dualboot iOS 15-14. and 13.6/13.7, (semi-tethered) on [checkm8](https://www.theiphonewiki.com/wiki/Checkm8_Exploit)-vulnerable devices. This is not a downgrade, however you can use the --downgrade option (look below for more info) or [downr1n](https://github.com/edwin170/downr1n) instead.
 
 This will not work on devices with iOS 16.
-
+ 
 # How would I dualboot?
 
 - [A full tutorial](https://github.com/dualra1n/dualra1n/blob/main/tutorial.md)
