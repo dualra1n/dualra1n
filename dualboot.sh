@@ -970,18 +970,23 @@ if [ true ]; then
             exit;
         fi
 
+        echo "[*] please install trollstore on the TV app if you don't see it on the screen, and then click on settings and after that click on 'Rebuild icon cache' so taurine should be showed on the screen"
+
         echo "[*] downloading dualra1n-loader from the internet"
         curl -L https://nightly.link/Uckermark/dualra1n-loader/workflows/build/main/dualra1n-loader.zip -o other/dualra1n-loader.zip
         unzip -o other/dualra1n-loader.zip -d other/
-        rm -f other/dualra1n-loader.zip
+        unzip -o other/dualra1n-loader.ipa -d other/
+        rm -f other/dualra1n-loader.zip other/dualra1n-loader.ipa
         
         remote_cmd "/bin/mkdir -p /mnt8/Applications/dualra1n-loader.app && /bin/mkdir -p /mnt8/Applications/trollstore.app" # thank opa you are a tiger xd 
         
         echo "[*] copying the dualra1n-loader.app so please wait ..."
-        remote_cp other/dualra1n-loader.app root@localhost:/mnt8/Applications/
+        mkdir -p "other/Payload/Applications"
+        mv -nv other/Payload/dualra1n-loader.app/  other/Payload/Applications/
+        remote_cp other/Payload/Applications/ root@localhost:/mnt8/
         remote_cmd "chmod +x /mnt8/Applications/dualra1n-loader.app/dual* && /usr/sbin/chown 33 /mnt8/Applications/dualra1n-loader.app/dualra1n-loader && /bin/chmod 755 /mnt8/Applications/dualra1n-loader.app/dualra1n-helper && /usr/sbin/chown 0 /mnt8/Applications/dualra1n-loader.app/dualra1n-helper" 
 
-        # this is the jailbreak of palera1n being installing 
+        # this is the jailbreak of palera1n being installed 
         echo "[*] Installing JBINIT, thanks palera1n team"
         echo "[*] Copying files to the rootfs"
         remote_cmd "mkdir -p /mnt8/jbin/binpack /mnt8/jbin/loader.app"
@@ -1193,6 +1198,12 @@ if [ true ]; then
             if [[ ! "$version" = "13."* ]]; then
                 remote_cmd "cp -na /mnt6/* /mnt4/" # copy preboot to prebootB
                 remote_cmd "rm /mnt4/$active/usr/standalone/firmware/FUD/*"
+
+                echo "[*] installing trollstore"
+                remote_cmd "/bin/mkdir -p /mnt8/Applications/trollstore.app"
+                remote_cp other/trollstore.app root@localhost:/mnt8/Applications/
+                sleep 4
+            
             else
 	            if [ $(remote_cmd "cp -a /mnt2/mobile/Library/Preferences/com.apple.Accessibility* /mnt9/mobile/Library/Preferences/") ]; then # this will copy the assesivetouch config to our data partition
                     echo "[*] activating assistive touch"
@@ -1226,12 +1237,14 @@ if [ true ]; then
 
                 echo "[*] copying odyssey to /applications/"
                 unzip other/odysseymod.ipa -d other/
-                mkdir -p other/Payload/Applications/
+                mkdir -p "other/Payload/Applications"
 
                 echo "[*] downloading dualra1n-loader from the internet"
                 curl -L https://nightly.link/Uckermark/dualra1n-loader/workflows/build/main/dualra1n-loader.zip -o other/dualra1n-loader.zip
                 unzip -o other/dualra1n-loader.zip -d other/
-                rm -f other/dualra1n-loader.zip
+                unzip -o other/dualra1n-loader.ipa -d other/
+
+                rm -f other/dualra1n-loader.zip other/dualra1n-loader.ipa
 
                 echo "[*] installing odyssey"
                 mv -nv other/Payload/Odyssey.app/  other/Payload/dualra1n-loader.app/  other/Payload/Applications/
@@ -1249,11 +1262,6 @@ if [ true ]; then
                 echo "[*] activating assistive touch"
             fi
 
-            echo "[*] installing trollstore"
-            remote_cmd "/bin/mkdir -p /mnt8/Applications/trollstore.app"
-            remote_cp other/trollstore.app root@localhost:/mnt8/Applications/
-            sleep 4
-            
             echo "[*] Saving snapshot"
             if [ "$(remote_cmd "/usr/bin/snaputil -c orig-fs /mnt8")" ]; then
                 echo "[-] error saving the snapshot, SKIPPING ..."
