@@ -520,7 +520,7 @@ packages=("lzss")
      if ! python3 -c "import pkgutil; exit(not pkgutil.find_loader('$package'))"; then
          echo "[-] $package is not installed. we can installl it for you, press any key to start installing $package, or press ctrl + c to cancel"
          read -n 1 -s
-         git clone https://github.com/yyogo/pylzss "$dir"/pylzss
+         git clone https://github.com/m1stadev/pylzss "$dir"/pylzss
          cd "$dir"/pylzss
          python3 "$dir"/pylzss/setup.py install
          rm -rf "$dir"/pylzss
@@ -1425,7 +1425,7 @@ if [ true ]; then
         "$dir"/img4 -i work/"$(awk "/""${model}""/{x=1}x&&/DeviceTree[.]/{print;exit}" work/BuildManifest.plist | grep '<string>' |cut -d\> -f2 |cut -d\< -f1 | sed 's/Firmware[/]all_flash[/]//')" -o work/dtree.raw
 
         echo "[*] Patching kernel ..." # this will patch the kernel  
-	echo "[*] If this fails, please run python3 -m pip uninstall lzss, and re-run the script"
+	    echo "[*] If this fails, please run python3 -m pip uninstall lzss, and re-run the script"
         if [[ "$deviceid" == "iPhone8"* ]] || [[ "$deviceid" == "iPad6"* ]] || [[ "$deviceid" == *'iPad5'* ]]; then
             python3 -m pyimg4 im4p extract -i work/kernelcache -o work/kcache.raw --extra work/kpp.bin >/dev/null
         else
