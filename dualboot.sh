@@ -17,6 +17,7 @@ fi
 mkdir -p logs
 mkdir -p boot
 mkdir -p ipsw/extracted
+mainDir=$(pwd)
 set -e
 
 log="last".log
@@ -524,6 +525,7 @@ packages=("lzss")
          cd "$dir"/pylzss
          git checkout "8efcda0"
          python3 "$dir"/pylzss/setup.py install
+	 cd $mainDir
          rm -rf "$dir"/pylzss
      fi
  done
