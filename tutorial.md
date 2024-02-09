@@ -12,7 +12,7 @@
 
 - Run ./dualboot.sh --jailbreak (iOSver). Upon completion, open the dualra1n-loader and click on "jailbreak". If your device reboots, simply select "re-jailbreak". (This method is highly recommended over Taurine.)
 
-- To jailbreak with Taurine, use the command <code>./dualboot.sh --jailbreak (iOSver) --taurine </code>. Note that this is not the preferred method and should only be used by experienced jailbreakers. After the process is completed, open the Apple TV app, select "install trollstore",
+- To jailbreak with Taurine, use the command <code>./dualboot.sh --jailbreak (iOSver) --taurine </code>. After the process is completed, open the Apple TV app, select "install trollstore",
 and after a respring, open Taurine and select "jailbreak". If your device shows a blue screen, try a forced reboot. After rebooting, boot again into the second iOS version. If the Sileo app is not visible, retry the Taurine jailbreak. If Sileo is visible, the jailbreak was successful, and you can open dualra1n-loader and click "re-jailbreak" to activate the tweaks.
 
 # How do I delete the dualbooted iOS?
