@@ -371,7 +371,7 @@ _detect() {
     while [ "$(get_device_mode)" = "none" ]; do
         sleep 1;
     done
-    printb $(echo "[*] Detected $(get_device_mode) mode device" | sed 's/dfu/DFU/')
+    echo $(echo "[*] Detected $(get_device_mode) mode device" | sed 's/dfu/DFU/')
 
     if grep -E 'pongo|checkra1n_stage2|diag' <<< "$(get_device_mode)"; then
         printr "[-] Detected device in a unsupported mode '$(get_device_mode)'"
