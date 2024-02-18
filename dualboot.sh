@@ -17,13 +17,13 @@ printr()
 
 if [ "$(uname)" == "Linux" ]; then
     if [ "$EUID" -ne 0 ]; then
-    	printr "You have to run this as root on Linux."
-     	printr "Please type your password"
+    	printr "[!] You must run this as root on Linux."
+     	printr "[!] Please type your password"
         exec sudo ./dualboot.sh $@
     fi
 else
     if [ "$EUID" = "0" ]; then
-        printr "Please don't run as root on macOS. It just breaks permissions."
+        printr "[!] Don't run as root on macOS. It will break permissions."
         exit 1
     fi
 fi
@@ -93,27 +93,27 @@ step() {
 print_help() {
     cat << EOF
 Usage: $0 [options] [ subcommand | iOS version that you're on ]
-You must have around 15 GB of free storage, and the .iPSW file of the iOS which you wish to dualboot to in dualra1n/ipsw/.
-Currently, only iOS 14 and 15 are supported. Downgrading from or upgrading to iOS 16 is not and will likely never be supported.
+You must have atleast 15 GB of free storage, and the .iPSW file of the iOS which you wish to dualboot to in dualra1n/ipsw/.
+Currently, only iOS 14 and 15 are supported. Downgrading from or upgrading to iOS 16 aren't (and most likely never will be) supported.
 
 Options:
     --dualboot              Dualboot your iDevice with the version specified.
     --downgrade             Will do the same thing as dualbooting but before continuing it will remove the files for the main ios (Useful for 16gb devices).
-    --jailbreak             Jailbreak dualbooted iOS with dualra1n-loader. Usage :  ./dualboot.sh --jailbreak 14.3
+    --jailbreak             Jailbreak dualbooted iOS using dualra1n-loader. Usage :  ./dualboot.sh --jailbreak 14.3
 
 Subcommands:
-    --jail-palera1n         Use this when you are already jailbroken with semi-tethered palera1n to avoid disk errors. 
+    --jail-palera1n         Use this when you are already jailbroken with semi-tethered palera1n to avoid disk errors.
     --taurine               Jailbreak dualbooted iOS with Taurine. (currently ***NOT RECOMMENDED***). Usage: ./dualboot.sh --jailbreak 14.3 --taurine 
-    --help                  Print this help.
-    --dfuhelper             A helper to help you enter DFU mode if you are struggling to do it manually.
-    --boot                 Boots your iDevice into the dualbooted iOS. Use this when you already have the dualbooted iOS installed. Usage : ./dualboot.sh --boot
+    --help                  Prints this help.
+    --dfuhelper             Helper for entering DFU mode.
+    --boot                  Boots your iDevice into the dualbooted iOS. Use this when you already have the dualbooted iOS installed. Usage : ./dualboot.sh --boot
     --dont-create-part      Skips creating a new disk partition if you have them already, so using this will only download the boot files. Usage : ./dualboot.sh --dualboot 14.3 --dont-create-part.
     --bootx                 This option will force the script to create and boot as bootx proccess.
-    --use-main-data         This option will tell the dualboot to use the main data partition so you will retain the data from the main iOS, uses when dualbooting and when you use --dont-create-part
-    --restorerootfs         Deletes the dualbooted iOS. (also add --jail-palera1n if you are jailbroken semi-tethered with palera1n)
-    --verbose               This option will tell the iphone to boot in verbose to show more info on the iPhones screen (Useful for extra debugging). Usage: ./dualboot.sh --dualboot 14.3 (also can be used with dontcreatepart arg)
+    --use-main-data         This option will tell the dualboot to use the main data partition so data from main iOS will be retained, used when dualbooting and when using --dont-create-part.
+    --restorerootfs         Deletes the dualbooted iOS. (also add --jail-palera1n if you are jailbroken with semi-tethered palera1n).
+    --verbose               This option will tell the iPhone to boot in verbose mode, useful for extra debugging.
     --recoveryModeAlways    Fixes the main iOS if it is recovery looping.
-    --debug                 Makes the script significantly more verbose. (Script will output exactly what command it is running)
+    --debug                 Makes the script output exactly what command it is running, useful for debugging.
 Subcommands:
     clean                   Cleans all files from previous dualboots.
 
