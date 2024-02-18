@@ -2,7 +2,7 @@
 
 A script that lets you dualboot iOS 15-14. and 13.6/13.7, (semi-tethered) on [checkm8](https://www.theiphonewiki.com/wiki/Checkm8_Exploit)-vulnerable devices. This is not a downgrade, however you can use [downr1n](https://github.com/edwin170/downr1n) instead.
 
-This will not work on devices with iOS 16.
+This will **not work** on devices with iOS 16.
 
 # How would I dualboot?
 
@@ -12,7 +12,7 @@ This will not work on devices with iOS 16.
 
 # Prerequisites
 - An A9-A11 device (A10 & A11 will need a deactivated passcode)
-- An .iPSW file for iOS 15-14-13.
+- An .iPSW file for iOS 13 - 15.
 - Approximately 15GB of free storage
 - A computer with macOS or any Linux distro installed (Windows Subsystem for Linux is not supported). Live CDs will work.
 
@@ -22,7 +22,7 @@ This will not work on devices with iOS 16.
    - futurerestore --exit-recovery
    - irecovery -n
 
-# imporant info about dualboot Versions
+# Imporant info about dualboot Versions
 
 - For devices with A11 SoCs, iOS 14.2 and earlier will fail to boot. Therefore, use iOS 14.3 or later instead.
 
