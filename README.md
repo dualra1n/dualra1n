@@ -43,10 +43,10 @@ This will **not work** on devices with iOS 16.
 <details><summary>Thanks to:</summary>
 <p>
 
-- [Edwin](https://github.com/edwin170) owner :)
 - [Uckermark](https://github.com/Uckermark/dualra1n-loader) thank you so much for the amazing dualra1n loader app to jailbreak it.
-- Edward, my brother, for giving me a Hackintosh to test this on
-- [sasa](https://github.com/sasa8810) thank for improve the dfu timing on macos
+- thanks to My brother, for giving me a Hackintosh to test this on
+- [sasa](https://github.com/sasa8810) thank you for improve the dfu timing on macos, and code to detect root on linux.
+- [kjutzn](https://github.com/kjutzn) thank you for improve gramma and give colors to the script.
 - [ElliesSurviving](https://github.com/ElliesSurviving) thank you for a little fix about pylzss
 - [Fatih](https://github.com/swayea) for helping with the readme, testing linux support and being a very good person.
 - [plooshi](https://github.com/plooshi) thank you so much for help to fix the home button issue.
