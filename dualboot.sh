@@ -1,14 +1,29 @@
 #!/usr/bin/env bash
 
+printb() 
+{
+  echo -e "\033[1;36m$1\033[0m"
+}
+
+printg()
+{
+    echo -e "\033[1;32m$1\033[0m"
+}
+
+printr() 
+{
+  echo -e "\033[1;31m$1\033[0m"
+}
+
 if [ "$(uname)" == "Linux" ]; then
     if [ "$EUID" -ne 0 ]; then
-    	echo "You have to run this as root on Linux."
-     	echo "Please type your password"
+    	printr "[!] You must run this as root on Linux."
+     	printr "[!] Please type your password"
         exec sudo ./dualboot.sh $@
     fi
 else
     if [ "$EUID" = "0" ]; then
-        echo "Please don't run as root on macOS. It just breaks permissions."
+        printr "[!] Don't run as root on macOS. It will break permissions."
         exit 1
     fi
 fi
@@ -27,7 +42,7 @@ cd ..
 
 {
 
-echo "[*] Command ran:`if [ $EUID = 0 ]; then echo " sudo"; fi` ./dualboot.sh $@"
+printb "[*] Command ran:`if [ $EUID = 0 ]; then echo " sudo"; fi` ./dualboot.sh $@"
 
 # =========
 # Variables
@@ -39,7 +54,7 @@ arg_count=0
 disk=8
 
 if [ ! -d "ramdisk/" ]; then
-    echo "[*] Please wait patiently; We are currently cloning the ramdisk..."
+    printb "[*] Please wait patiently; We are currently cloning the ramdisk..."
     git clone https://github.com/dualra1n/ramdisk.git
 fi
 
@@ -78,29 +93,29 @@ step() {
 print_help() {
     cat << EOF
 Usage: $0 [options] [ subcommand | iOS version that you're on ]
-You must have around 15 GB of free storage, and the .iPSW file of the iOS which you wish to dualboot to in dualra1n/ipsw/.
-Currently, only iOS 14 and 15 are supported. Downgrading from or upgrading to iOS 16 is not and will likely never be supported.
+You must have atleast 15 GB of free storage, and the .iPSW file of the iOS which you wish to dualboot to in dualra1n/ipsw/.
+Currently, only iOS 14 and 15 are supported. Downgrading from or upgrading to iOS 16 isn't (and most likely never will be) supported.
 
 Options:
     --dualboot              Dualboot your iDevice with the version specified.
     --downgrade             Will do the same thing as dualbooting but before continuing it will remove the files for the main ios (Useful for 16gb devices).
-    --jailbreak             Jailbreak dualbooted iOS with dualra1n-loader. Usage :  ./dualboot.sh --jailbreak 14.3
+    --jailbreak             Jailbreak dualbooted iOS using dualra1n-loader. Usage :  ./dualboot.sh --jailbreak 14.3
 
 Subcommands:
-    --jail-palera1n         Use this when you are already jailbroken with semi-tethered palera1n to avoid disk errors. 
+    --jail-palera1n         Use this when you are already jailbroken with semi-tethered palera1n to avoid disk errors.
     --taurine               Jailbreak dualbooted iOS with Taurine. (currently ***NOT RECOMMENDED***). Usage: ./dualboot.sh --jailbreak 14.3 --taurine 
-    --help                  Print this help.
-    --dfuhelper             A helper to help you enter DFU mode if you are struggling to do it manually.
-    --boot                 Boots your iDevice into the dualbooted iOS. Use this when you already have the dualbooted iOS installed. Usage : ./dualboot.sh --boot
+    --help                  Prints this help.
+    --dfuhelper             Helper for entering DFU mode.
+    --boot                  Boots your iDevice into the dualbooted iOS. Use this when you already have the dualbooted iOS installed. Usage : ./dualboot.sh --boot
     --dont-create-part      Skips creating a new disk partition if you have them already, so using this will only download the boot files. Usage : ./dualboot.sh --dualboot 14.3 --dont-create-part.
     --bootx                 This option will force the script to create and boot as bootx proccess.
-    --use-main-data         This option will tell the dualboot to use the main data partition so you will retain the data from the main iOS, uses when dualbooting and when you use --dont-create-part
-    --restorerootfs         Deletes the dualbooted iOS. (also add --jail-palera1n if you are jailbroken semi-tethered with palera1n)
-    --verbose               This option will tell the iphone to boot in verbose to show more info on the iPhones screen (Useful for extra debugging). Usage: ./dualboot.sh --dualboot 14.3 (also can be used with dontcreatepart arg)
+    --use-main-data         This option will tell the dualboot to use the main data partition so data from main iOS will be retained, used when dualbooting and when using --dont-create-part.
+    --restorerootfs         Deletes the dualbooted iOS. (also add --jail-palera1n if you are jailbroken with semi-tethered palera1n).
+    --verbose               This option will tell the iPhone to boot in verbose mode, useful for extra debugging.
     --recoveryModeAlways    Fixes the main iOS if it is recovery looping.
-    --debug                 Makes the script significantly more verbose. (meaning it will output exactly what command it is running)
+    --debug                 Makes the script output exactly what command it is running, useful for debugging.
 Subcommands:
-    clean                   clean everything for a new dualboot.
+    clean                   Cleans all files from previous dualboots.
 
 EOF
 }
@@ -163,7 +178,7 @@ parse_opt() {
             exit 0
             ;;
         *)
-            echo "[-] Unknown option $1. Use $0 --help for help."
+            printr "[-] Unknown option $1. Use $0 --help for help."
             exit 1;
     esac
 }
@@ -194,7 +209,7 @@ parse_cmdline() {
                 parse_arg "$arg";
             fi
         else
-            echo "[-] Too many arguments. Use $0 --help for help.";
+            printr "[-] Too many arguments. Use $0 --help for help.";
             exit 1;
         fi
     done
@@ -216,7 +231,7 @@ _info() {
 _pwn() {
     pwnd=$(_info recovery PWND)
     if [ "$pwnd" = "" ]; then
-        echo "[*] Pwning device"
+        printb "[*] Pwning device"
         "$dir"/gaster pwn
         sleep 2
         #"$dir"/gaster reset
@@ -225,7 +240,7 @@ _pwn() {
 }
 
 _reset() {
-        echo "[*] Resetting DFU state"
+        printb "[*] Resetting DFU state"
         "$dir"/gaster reset >/dev/null
 }
 
@@ -269,7 +284,7 @@ get_device_mode() {
     if [ "$device_count" = "0" ]; then
         device_mode=none
     elif [ "$device_count" -ge "2" ]; then
-        echo "[-] Please attach only one device at a time" > /dev/tty
+        printr "[-] Please attach only one device at a time" > /dev/tty
         kill -30 0
         exit 1;
     fi
@@ -281,12 +296,12 @@ get_device_mode() {
     if grep -qE '(ramdisk tool|SSHRD_Script) (Jan|Feb|Mar|Apr|May|Jun|Jul|Aug|Sep|Oct|Nov|Dec) [0-9]{1,2} [0-9]{4} [0-9]{2}:[0-9]{2}:[0-9]{2}' <<< "$usbserials"; then
         device_mode=ramdisk
     fi
-    echo "$device_mode"
+    printb "$device_mode"
 }
 
 _wait() {
     if [ "$(get_device_mode)" != "$1" ]; then
-        echo "[*] Waiting for device in $1 mode"
+        printb "[*] Waiting for device in $1 mode"
     fi
 
     while [ "$(get_device_mode)" != "$1" ]; do
@@ -300,7 +315,7 @@ _wait() {
 
 _dfuhelper() {
     if [ "$(get_device_mode)" = "dfu" ]; then
-        echo "[*] Device already in dfu mode"
+        printb "[*] Device already in dfu mode"
         return;
     fi
 
@@ -311,8 +326,8 @@ _dfuhelper() {
     else
         step_one="Hold home + power button"
     fi
-    echo "[*] To get into DFU mode, you will be guided through 2 steps:"
-    echo "[*] Press any key when ready for DFU mode"
+    printb "[*] To get into DFU mode, you will be guided through 2 steps:"
+    printb "[*] Press any key when ready for DFU mode"
     read -n 1 -s
     step 3 "Get ready"
     step 4 "$step_one" &
@@ -331,9 +346,9 @@ _dfuhelper() {
     fi
 
     if [ "$(get_device_mode)" = "dfu" ]; then
-        echo "[*] Your device has entered DFU!"
+        printb "[*] Your device has entered DFU!"
     else
-        echo "[-] Your device did not enter DFU mode, please try again!"
+        printr "[-] Your device did not enter DFU mode, please try again!"
        _detect
        _dfuhelper
     fi
@@ -352,26 +367,26 @@ _kill_if_running() {
 
 _detect() {
     # Get device's iOS version from ideviceinfo if in normal mode
-    echo "[*] Looking for devices"
+    printb "[*] Looking for devices"
     while [ "$(get_device_mode)" = "none" ]; do
         sleep 1;
     done
     echo $(echo "[*] Detected $(get_device_mode) mode device" | sed 's/dfu/DFU/')
 
     if grep -E 'pongo|checkra1n_stage2|diag' <<< "$(get_device_mode)"; then
-        echo "[-] Detected device in a unsupported mode '$(get_device_mode)'"
+        printr "[-] Detected device in a unsupported mode '$(get_device_mode)'"
         exit 1;
     fi
 
     if [ "$(get_device_mode)" != "normal" ] && [ -z "$version" ] && [ "$dfuhelper" != "1" ]; then
-        echo "[-] You must put in what version you want your device to dualboot"
+        printr "[-] You must put in what version you want your device to dualboot"
         exit
     fi
 
     if [ "$(get_device_mode)" = "ramdisk" ]; then
         # If a device is in ramdisk mode, perhaps iproxy is still running?
         _kill_if_running iproxy
-        echo "[*] Rebooting device in SSH Ramdisk mode"
+        printb "[*] Rebooting device in SSH Ramdisk mode"
         if [ "$os" = 'Linux' ]; then
             sudo "$dir"/iproxy 2222 22 >/dev/null &
         else
@@ -387,12 +402,12 @@ _detect() {
         version=${version:-$(_info normal ProductVersion)}
         arch=$(_info normal CPUArchitecture)
         if [ "$arch" = "arm64e" ]; then
-            echo "[-] dualboot will not, EVER work on non-checkm8 devices aka:A12+ devices"
+            printr "[-] dualboot will NEVER work on non-checkm8 devices aka:A12+ devices"
             exit
         fi
-        echo "Hello, $(_info normal ProductType) on $version!"
+        printb "$(_info normal ProductType) connected on $version!"
 
-        echo "[*] Switching device into recovery mode..."
+        printb "[*] Switching device into recovery mode..."
         "$dir"/ideviceenterrecovery $(_info normal UniqueDeviceID)
         _wait recovery
     fi
@@ -404,7 +419,7 @@ _boot() {
     _reset
     sleep 1
     
-    echo "[*] Booting device!"
+    printb "[*] Booting device!"
 
     "$dir"/irecovery -f "blobs/"$deviceid"-"$version".der"
     sleep 1
@@ -415,7 +430,7 @@ _boot() {
     fi
 
     "$dir"/irecovery -f "boot/${deviceid}/iBEC.img4"
-    echo "[*] The device should now be showing alot of code on the screen, that means it is booting, if it gets stuck or reboots into recovery or doesn't show the apple logo please try --boot again, if it still does not boot after running --boot please report it to the dualra1n discord (link on the github). If this didnt exit on its own plase press 'ctrl-c' to exit"
+    printb "[*] The device should now be showing alot of code on the screen, that means it is booting, if it gets stuck or reboots into recovery or doesn't show the apple logo please try --boot again, if it still does not boot after running --boot please report it to the dualra1n discord (link on the github). If this didnt exit on its own plase press 'ctrl-c' to exit"
     exit;
 }
 
@@ -425,7 +440,7 @@ _bootx() {
     _reset
     sleep 1
     
-    echo "[*] Booting device"
+    printb "[*] Booting device"
 
     "$dir"/irecovery -f "blobs/"$deviceid"-"$version".der"
     sleep 1
@@ -472,7 +487,7 @@ _exit_handler() {
     fi
 
     [ $? -eq 0 ] && exit
-    echo "[-] An error has occurred, Please try again!"
+    printr "[-] An error has occurred, Please try again!"
 
     if [ -d "logs" ]; then
         cd logs
@@ -480,7 +495,7 @@ _exit_handler() {
         cd ..
     fi
 
-    echo "[*] A failure log has been made. If you need to ask for help, please attach the latest log on the dualra1n discord or in issues"
+    printb "[*] A failure log has been made. If you need to ask for help, please attach the latest log on the dualra1n discord or in issues"
 }
 trap _exit_handler EXIT
 
@@ -498,7 +513,7 @@ fi
 
 for cmd in unzip python3 git ssh scp killall sudo grep pgrep ${linux_cmds}; do
     if ! command -v "${cmd}" > /dev/null; then
-        echo "[-] Command '${cmd}' is not installed, please install it!";
+        printr "[-] Command '${cmd}' is not installed, please install it!";
         cmd_not_found=1
     fi
 done
@@ -510,7 +525,7 @@ fi
 packages=("pyimg4")
  for package in "${packages[@]}"; do
      if ! python3 -c "import pkgutil; exit(not pkgutil.find_loader('$package'))"; then
-         echo "[-] $package is not installed. we can installl it for you, press any key to start installing $package, or press ctrl + c to cancel"
+         printr "[-] $package is not installed. we can installl it for you, press any key to start installing $package, or press ctrl + c to cancel"
          read -n 1 -s
          python3 -m pip install -U "$package" pyliblzfse
      fi
@@ -519,7 +534,7 @@ packages=("pyimg4")
 packages=("lzss")
  for package in "${packages[@]}"; do
      if ! python3 -c "import pkgutil; exit(not pkgutil.find_loader('$package'))"; then
-         echo "[-] $package is not installed. we can installl it for you, press any key to start installing $package, or press ctrl + c to cancel"
+         printr "[-] $package is not installed. we can installl it for you, press any key to start installing $package, or press ctrl + c to cancel"
          read -n 1 -s
          git clone https://github.com/yyogo/pylzss "$dir"/pylzss
          cd "$dir"/pylzss
@@ -549,9 +564,9 @@ chmod +x "$dir"/*
 # Start
 # ============
 
-echo "dualboot | Version: 8.0"
-echo "Created by edwin :) | Some code from palera1n.sh, Thanks Nathan for the ramdisks | thanks MatthewPierson, Ralph0045, and to all of the creaters of path file boot"
-echo ""
+printb "dualboot | Version: 8.0"
+printb "Created by edwin :) | Some code from palera1n.sh, Thanks Nathan for the ramdisks | thanks MatthewPierson, Ralph0045, and to all of the creaters of path file boot"
+printb ""
 
 parse_cmdline "$@"
 
@@ -561,33 +576,33 @@ fi
 
 if [ "$clean" = "1" ]; then
     rm -rf  work/* blobs/* boot/"$deviceid"/  ipsw/extracted $extractedIpsw/out.dmg
-    echo "[*] Removed the created boot files"
+    printb "[*] Removed all created boot files"
     exit
 fi
 
 if [[ -z "$version" ]]; then
-    echo "[-] error you didnt specify which iOS version you wanted to dualboot. please add that to your command, example: ./dualboot.sh --dualboot 14.3"
+    printr "[-] You didn't specify which iOS version you want to dualboot. Please add it to your command, for example: ./dualboot.sh --dualboot 14.3"
 fi
 
 if [[ "$version" = "13."* ]] && [ "$jailbreak" = "1" ]; then
-    echo "[/] you can't use the --jailbreak option on ios 13 because we automatically install a jailbreak on ios 13"
+    printr "[!] You can't use --jailbreak flag on iOS 13 because it will automatically be installed"
     exit;
 fi
 
 _detect
 
 # Grab more info
-echo "[*] Getting your device info..."
+printb "[*] Getting your device info..."
 cpid=$(_info recovery CPID)
 model=$(_info recovery MODEL)
 deviceid=$(_info recovery PRODUCT)
 
-echo "Detected cpid, your cpid is $cpid"
-echo "Detected model, your model is $model"
-echo "Detected deviceid, your deviceid is $deviceid"
+printb "[*] Detected cpid, your cpid is $cpid"
+printb "[*] Detected model, your model is $model"
+printb "[*] Detected deviceid, your deviceid is $deviceid"
 
 if [ "$dfuhelper" = "1" ]; then
-    echo "[*] Running the DFU helper tool"
+    printb "[*] Running the DFU helper tool"
     _dfuhelper "$cpid"
     exit
 fi
@@ -608,7 +623,7 @@ fi
 if [ "$(get_device_mode)" != "dfu" ]; then
     recovery_fix_auto_boot;
     _dfuhelper "$cpid" || {
-        echo "[-] failed to enter DFU mode, please ctrl-c and run dualboot.sh again to try again"
+        printr "[-] Failed to enter DFU mode, press ctrl-c and run dualboot.sh again to try again"
         exit -1
     }
 fi
@@ -617,14 +632,14 @@ sleep 2
 
 if [ "$boot" = "1" ]; then # call boot in order to boot it
     if [ ! -e boot/"$deviceid"/iBEC.img4 ]; then
-        echo "[-] you don't have any boot files created, Please try to dualboot or if you know you are already dualbooted try --dualboot (VERS) --dont-create-part this will create only the boot files."
+        printr "[-] You don't have any boot files created, Please try to dualboot or if you know you are already dualbooted try --dualboot (iOS Version) --dont-create-part (command only for creating the boot files.)"
         exit;
     fi
     if [ -e boot/"$deviceid"/kernelcache.img4 ] || [[ "$version" = "13."* ]] || [ "$bootx" = "1" ]; then
-        echo "[*] looks like you have bootx boot files for this dualboot, so we are going to use the bootx boot process"
+        printb "[*] Bootx boot files are present, using bootx for booting"
         _bootx
     else
-        echo "[*] we are going to use the localboot boot process"
+        printb "[*] Using localboot for booting"
         _boot    
     fi
     
@@ -640,7 +655,7 @@ extractedIpsw="ipsw/extracted/$deviceid/$version/"
 
 if [ "$downgrade" = "1" ] || [ "$dualboot" = "1" ] || [ "$jailbreak" = "1" ]; then
     if [[ "$ipsw" == *".ipsw" ]]; then
-        echo "[*] Argument detected. We are gonna use the specified IPSW: $ipsw"
+        printb "[*] Argument detected. We are gonna use this specified IPSW: $ipsw"
     else
         ipsw=()
 
@@ -649,13 +664,13 @@ if [ "$downgrade" = "1" ] || [ "$dualboot" = "1" ] || [ "$jailbreak" = "1" ]; th
         done
 
         if [ ${#ipsw[@]} -eq 0 ]; then
-            echo "No .ipsw files found."
+            printr "[!] No .ipsw files found."
             exit
         else
             for file in "${ipsw[@]}"; do
                 if [[ "$file" = *"$version"* ]]; then
-                    echo "[-] Found matching IPSW: $file"
-                    echo "Do you want to use it? Please write 'yes' or 'no'"
+                    printr "[?] Found matching IPSW: $file"
+                    printr "[?] Do you want to use it? Please write 'yes' or 'no'"
                     read result
                     if [ "$result" = "yes" ]; then
                         unset ipsw
@@ -670,27 +685,27 @@ if [ "$downgrade" = "1" ] || [ "$dualboot" = "1" ] || [ "$jailbreak" = "1" ]; th
     fi
 
     if [ -z "$ipsw" ]; then
-        echo "No IPSW selected. Exiting."
+        printr "[!] No IPSW selected. Exiting."
         exit
     fi
 
-    echo "Selected IPSW: $ipsw"
+    printb "[*] Selected IPSW: $ipsw"
 
 
     # Check if ipsw is an array
     if [[ "$(declare -p ipsw)" =~ "declare -a" ]]; then
         while true
         do
-            echo "Choose an IPSW by entering its number:"
+            printb "Choose an IPSW by entering its number:"
             for i in "${!ipsw[@]}"; do
                 echo "$((i+1)). ${ipsw[i]}"
             done
             read -p "Enter your choice: " choice
 
             if [[ ! "$choice" =~ ^[1-${#ipsw[@]}]$ ]]; then
-                echo "Invalid IPSW number. Please enter a valid number."
+                printb "Invalid IPSW number. Please enter a valid number."
             else
-                echo "[*] We are gonna use ${ipsw[$choice-1]}"
+                printb "[*] We are gonna use ${ipsw[$choice-1]}"
                 ipsw="${ipsw[$choice-1]}"
                 break
             fi
@@ -701,7 +716,7 @@ if [ "$downgrade" = "1" ] || [ "$dualboot" = "1" ] || [ "$jailbreak" = "1" ]; th
 fi
 
 if [ "$downgrade" = "1" ] || [ "$dualboot" = "1" ] || [ "$jailbreak" = "1" ]; then
-    echo "[*] Checking if the ipsw is for your device"
+    printb "[*] Checking if the ipsw is for your device"
     ipswDevicesid=()
     ipswVers=""
     ipswDevId=""
@@ -726,18 +741,18 @@ if [ "$downgrade" = "1" ] || [ "$dualboot" = "1" ] || [ "$jailbreak" = "1" ]; th
     
     
     if [ "$ipswDevId" = "" ]; then
-        echo "[/] it looks like this ipsw file is wrong, please check your ipsw"
+        printr "[!] Selected IPSW doesn't match device, please if your ipsw is correct"
         
         for element in "${ipswDevicesid[@]}"; do
-            echo "this are the ipsw devices support: $element"
+            printb "this are the ipsw devices support: $element"
         done
         
-        echo "and your device $deviceid is not in the list"
+        printb "and your device $deviceid is not in the list"
         read -p "want to continue ? click enter ..."
     fi
 
 
-    echo "[*] Checking ipsw version"
+    printb "[*] Checking ipsw version"
     if [ "$os" = 'Darwin' ]; then
         ipswVers=$(/usr/bin/plutil -extract "ProductVersion" xml1 -o - work/BuildManifest.plist | grep '<string>' |cut -d\> -f2 |cut -d\< -f1 | head -1)
     else
@@ -745,12 +760,12 @@ if [ "$downgrade" = "1" ] || [ "$dualboot" = "1" ] || [ "$jailbreak" = "1" ]; th
     fi
     
     if [[ ! "$version" = "$ipswVers" ]]; then
-        echo "ipsw version is $ipswVers, and you specify $version"
+        printb "[*] ipsw version is $ipswVers, and you specify $version"
         read -p "wrong ipsw version detected, click ENTER to continue or just ctrl + c to exit"
     fi
 
     # extracting ipsw
-    echo "extracting ipsw, hang on please ..." # this will extract the ipsw into ipsw/extracted
+    printb "[*] Extracting ipsw, this could take a while..." # this will extract the ipsw into ipsw/extracted
     unzip -n $ipsw -d $extractedIpsw
 
     if [ "$os" = 'Darwin' ]; then
@@ -773,10 +788,10 @@ if [ true ]; then
 
     cd ramdisk
     chmod +x sshrd.sh
-    echo "[*] Creating the ramdisk"
+    printb "[*] Creating the ramdisk"
     ./sshrd.sh 15.6
 
-    echo "[*] Booting the ramdisk"
+    printb "[*] Booting the ramdisk"
     ./sshrd.sh boot
     cd ..
     # remove special lines from known_hosts
@@ -798,7 +813,7 @@ if [ true ]; then
     fi
 
     if ! ("$dir"/sshpass -p 'alpine' ssh -o StrictHostKeyChecking=no -p2222 root@localhost "echo connected" &> /dev/null); then
-        echo "[*] Waiting for the ramdisk to finish booting"
+        printb "[*] Waiting for the ramdisk to finish booting"
     fi
 
     i=1
@@ -807,16 +822,16 @@ if [ true ]; then
         i=$((i+1))
         if [ "$i" == 15 ]; then
             if [ "$os" = 'Linux' ]; then
-                echo -e "as a root user or your user, please execute this command in another terminal:  \e[1;37mssh-keygen -f /root/.ssh/known_hosts -R \"[localhost]:2222\"\e[0m"
+                printb -e "As a root user or your user, please execute this command in another terminal:  \e[1;37mssh-keygen -f /root/.ssh/known_hosts -R \"[localhost]:2222\"\e[0m"
                 read -p "Press [ENTER] to continue"
             else
-                echo "Huh it looks like ssh is not working, please try to reboot your computer or send the log through discord"
+                printr "[!] It looks like ssh is not working, please try to reboot your computer or send the log through discord"
                 read -p "Press [ENTER] to continue"
             fi
         fi
     done
 
-    echo "[*] Testing for baseband presence"
+    printb "[*] Checking baseband presence"
     if [ "$(remote_cmd "/usr/bin/mgask HasBaseband | grep -E 'true|false'")" = "true" ] && [[ "${cpid}" == *"0x700"* ]]; then # checking if your device has baseband 
         disk=7
     elif [ "$(remote_cmd "/usr/bin/mgask HasBaseband | grep -E 'true|false'")" = "false" ]; then
@@ -833,18 +848,18 @@ if [ true ]; then
     fi
     dataB=$(($disk + 1))
     prebootB=$(($dataB + 1))
-    echo "the root partition will be: $disk"
-    echo "the data partition will be: $dataB"
-    echo "the preboot partition will be: $prebootB"
+    printb "Root partition will be: $disk"
+    printb "Data partition will be: $dataB"
+    printb "Preboot partition will be: $prebootB"
 
     remote_cmd "/usr/bin/mount_filesystems >/dev/null 2>&1"
 
     has_active=$(remote_cmd "ls /mnt6/active" 2> /dev/null)
     if [ ! "$has_active" = "/mnt6/active" ]; then
-        echo "[!] Active file does not exist! Please use SSH to create it"
-        echo "    /mnt6/active should contain the name of the UUID in /mnt6"
-        echo "    When done, type reboot in the SSH session, then rerun the script"
-        echo "    ssh root@localhost -p 2222"
+        printr "[!] Active file does not exist! Please use SSH to create it"
+        printr "    /mnt6/active should contain the name of the UUID in /mnt6"
+        printr "    When done, type reboot in the SSH session, then rerun the script"
+        printr "    ssh root@localhost -p 2222"
         exit
     fi
     active=$(remote_cmd "cat /mnt6/active" 2> /dev/null)
@@ -852,17 +867,17 @@ if [ true ]; then
     mkdir -p "boot/${deviceid}"
 
     if [ "$restorerootfs" = "1" ]; then
-        echo "[*] Removing some boot image file caches in the preboot"
+        printb "[*] Removing some boot image file caches in the preboot"
         if [ ! $(remote_cmd "rm /mnt6/"$active"/System/Library/Caches/com.apple.kernelcaches/kernelcachd /mnt6/"$active"/usr/standalone/firmware/root_hasd.img4 /mnt6/"$active"/usr/standalone/firmware/devicetred.img4 /mnt6/"$active"/usr/standalone/firmware/FUD/StaticTrustCachd.img4") ];  then
-            echo "[-] There is not boot images, Omitting ..."
+            printr "[-] There is not boot images, Omitting ..."
         fi
 
-        echo "[*] Removing the dualboot partitions"
+        printb "[*] Removing the dualboot partitions"
         
         partition_type="$(remote_cmd "/System/Library/Filesystems/apfs.fs/apfs.util -p /dev/disk0s1s${disk}")"
         if [ ! "$partition_type" == 'SystemB' ]; then
             # Print an error message and prompt the user to continue or exit
-            echo "[-] error this partition may be important and could be deleted by apfs_deletefs."
+            printr "[-] error this partition may be important and could be deleted by apfs_deletefs."
             read -p "Press [ENTER] to continue, or [CTRL]+[C] to exit."
         fi
 
@@ -873,8 +888,8 @@ if [ true ]; then
             remote_cmd "/sbin/apfs_deletefs disk0s1s${prebootB} > /dev/null || true"
         fi
         
-        echo "[*] the dualboot has been removed"
-        echo "[*] Checking if there is more partitions and removing them"
+        printb "[*] the dualboot has been removed"
+        printb "[*] Checking if there is more partitions and removing them"
         i=$((prebootB + 1))
         
         if [[ "$version" = "13."* ]]; then
@@ -883,14 +898,14 @@ if [ true ]; then
         
 
         while [ "$(remote_cmd "ls /dev/disk0s1s$i 2>/dev/null")" ]; do
-            echo "Found /dev/disk0s1s$i deleting ..."
+            printr "Found /dev/disk0s1s$i deleting ..."
             cmd="/sbin/apfs_deletefs disk0s1s$i &>/dev/null || true"
             remote_cmd "$cmd"
             i=$((i + 1))
         done
         
         remote_cmd "/usr/sbin/nvram auto-boot=true"
-        echo "[*] the dualboot was sucessfully removed, now we are rebooting your device"
+        printb "[*] the dualboot was sucessfully removed, now we are rebooting your device"
         remote_cmd "/sbin/reboot"
         exit;
     fi
@@ -901,12 +916,12 @@ if [ true ]; then
     if [ "$jailbreak" = "1" ]; then
     
         if [ ! -f boot/"${deviceid}"/iBEC.img4 ]; then
-            echo "[-] you don't have any boot files created, if you are doing this before dualbooting please dualboot first then when the device finishes booting then try to jailbreak"
+            printr "[-] you don't have any boot files created, if you are doing this before dualbooting please dualboot first then when the device finishes booting then try to jailbreak"
             exit;
         fi
         
-        echo "[*] we are now patching the kernel" # this will send and patch the kernel
-	echo "[*] If this fails, please run python3 -m pip uninstall lzss, and re-run the script"
+        printb "[*] Patching the kernel" # this will send and patch the kernel
+	printr "[!] If this fails, please run python3 -m pip uninstall lzss, and re-run the script"
         cp "$extractedIpsw$(awk "/""${model}""/{x=1}x&&/kernelcache.release/{print;exit}" work/BuildManifest.plist | grep '<string>' |cut -d\> -f2 |cut -d\< -f1)" "work/kernelcache"
                 
         if [[ "$deviceid" == "iPhone8"* ]] || [[ "$deviceid" == "iPad6"* ]] || [[ "$deviceid" == *'iPad5'* ]]; then
@@ -928,7 +943,7 @@ if [ true ]; then
             sleep 1
 
             if [ ! $(remote_cmd "/mnt8/private/var/root/kpf15.ios /mnt4/$active/System/Library/Caches/com.apple.kernelcaches/kcache.raw /mnt4/$active/System/Library/Caches/com.apple.kernelcaches/kcache.patched 2>/dev/null") ]; then
-                echo "you already have the kernelpath installed "
+                printb "[*] Kernelpath is already installed "
             fi
             sleep 2
             remote_cp root@localhost:/mnt4/"$active"/System/Library/Caches/com.apple.kernelcaches/kcache.patched work/ # that will return the kernelpatcher in order to be patched again and boot with it 
@@ -955,27 +970,27 @@ if [ true ]; then
         #"$dir"/kerneldiff work/kcache.raw work/kcache.patchedB work/kc.bpatch
         #"$dir"/img4 -i work/"$(awk "/""${model}""/{x=1}x&&/kernelcache.release/{print;exit}" work/BuildManifest.plist | grep '<string>' |cut -d\> -f2 |cut -d\< -f1)" -o work/kernelcache.img4 -M work/IM4M -T rkrn -P work/kc.bpatch `if [ "$os" = 'Linux' ]; then echo "-J"; fi`
         #remote_cp root@localhost:/mnt4/$active/System/Library/Caches/com.apple.kernelcaches/kernelcachd work/kernelcache.img4
-        echo "[*] Copied the new kernelcache Successfully!"
+        printb "[*] Copied the new kernelcache Successfully!"
         
-        echo "[*] Installing trollstore on the Apple TV app"
+        printb "[*] Installing trollstore on the Apple TV app"
 	
         if [ ! $(remote_cmd "trollstoreinstaller TV") ]; then
-            echo "[/] you have to install trollstore in order to intall taurine"
+            printb "[*] You have to install trollstore in order to intall taurine"
         fi
 
         if [ "$taurine" = 1 ]; then
-            echo "[*] Creating a file to specify the partition to taurine, it will be /disk$disk"
+            printb "[*] Creating a file to specify the partition to taurine, it will be /disk$disk"
             remote_cmd "/usr/bin/touch /mnt8/disk0s1s$disk"
-            echo "[*] installing taurine"
+            printb "[*] installing taurine"
             remote_cp other/taurine/* root@localhost:/mnt8/
-            echo "[*] Done, please install trollstore through the Apple TV app, after that if you dont see Taurine on the home screen, open trollstore and click on 'Rebuild icon cache' if it is still not there, plase ask us on the dualra1n discord server"
+            printb "[*] Done, please install trollstore through the Apple TV app, after that if you dont see Taurine on the home screen, open trollstore and click on 'Rebuild icon cache' if it is still not there, plase ask us on the dualra1n discord server"
             remote_cmd "/sbin/reboot"
             exit;
         fi
 
-        echo "[*] please install trollstore on the TV app if you don't see it on the screen, and then click on settings and after that click on 'Rebuild icon cache' so taurine should be showed on the screen"
+        printb "[*] please install trollstore on the TV app if you don't see it on the screen, and then click on settings and after that click on 'Rebuild icon cache' so taurine should be showed on the screen"
 
-        echo "[*] downloading dualra1n-loader from the internet"
+        printb "[*] downloading dualra1n-loader"
         curl -L https://nightly.link/Uckermark/dualra1n-loader/workflows/build/main/dualra1n-loader.zip -o other/dualra1n-loader.zip
         unzip -o other/dualra1n-loader.zip -d other/
         unzip -o other/dualra1n-loader.ipa -d other/
@@ -983,15 +998,15 @@ if [ true ]; then
         
         remote_cmd "/bin/mkdir -p /mnt8/Applications/dualra1n-loader.app && /bin/mkdir -p /mnt8/Applications/trollstore.app" # thank opa you are a tiger xd 
         
-        echo "[*] copying the dualra1n-loader.app so please wait ..."
+        printb "[*] copying the dualra1n-loader.app so please wait ..."
         mkdir -p "other/Payload/Applications"
         mv -nv other/Payload/dualra1n-loader.app/  other/Payload/Applications/
         remote_cp other/Payload/Applications/ root@localhost:/mnt8/
         remote_cmd "chmod +x /mnt8/Applications/dualra1n-loader.app/dual* && /usr/sbin/chown 33 /mnt8/Applications/dualra1n-loader.app/dualra1n-loader && /bin/chmod 755 /mnt8/Applications/dualra1n-loader.app/dualra1n-helper && /usr/sbin/chown 0 /mnt8/Applications/dualra1n-loader.app/dualra1n-helper" 
 
         # this is the jailbreak of palera1n being installed 
-        echo "[*] Installing JBINIT, thanks palera1n team"
-        echo "[*] Copying files to the rootfs"
+        printb "[*] Installing JBINIT, thanks palera1n team"
+        printb "[*] Copying files to the rootfs"
         remote_cmd "mkdir -p /mnt8/jbin/binpack /mnt8/jbin/loader.app"
         
         cp -f other/post.sh other/rootfs/jbin/
@@ -999,12 +1014,12 @@ if [ true ]; then
         remote_cmd "ldid -s /mnt8/jbin/launchd /mnt8/jbin/jbloader /mnt8/jbin/jb.dylib"
         remote_cmd "chmod +rwx /mnt8/jbin/launchd /mnt8/jbin/jbloader /mnt8/jbin/post.sh"
         remote_cmd "ln -fs /jbin/binpack/ /mnt2/pkg"
-        echo "[*] Extracting the binpack"
+        printb "[*] Extracting the binpack"
         remote_cmd "tar -xf /mnt8/jbin/binpack/binpack.tar -C /mnt8/jbin/binpack/"
         sleep 1
         remote_cmd "rm /mnt8/jbin/binpack/binpack.tar"
         remote_cmd "/usr/sbin/nvram auto-boot=true"
-        echo "[*] Done! We are going to reboot your device, please run --boot again to boot into the dualboot"        
+        printb "[*] Done! We are going to reboot your device, please run --boot again to boot into the dualboot"        
         remote_cmd "/sbin/reboot"
         exit;
     fi
@@ -1012,62 +1027,62 @@ if [ true ]; then
 
     if [ "$dualboot" = "1" ] || [ "$downgrade" = "1" ]; then
         if [ -z "$dont_createPart" ]; then # if you have already your second ios you can omited with this
-            echo "[*] Starting step 1"
-            echo "[*] Checking if we can continue with the dualboot"
+            printb "[*] Starting step 1"
+            printb "[*] Checking if we can continue with the dualboot"
 
             if [ "$downgrade" = "1" ]; then
-                echo "--downgrade option detected, this will destroy the main ios."
+                printr " --downgrade option detected, this will destroy the main ios."
                 read -p "Please if you do not agree to remove the main ios please ctrl + c to exit from the program and run --dualboot instead or dont do this at all, if you do agree to remove the main iOS click ENTER to continue. info: This option is meant for 16gb users, this will also mean if you ever want to boot your device you are going to need to run --boot as this will make your device tethered, in the case that you want to return to the main iOS, just use itunes to restore"
                 sleep 4
-                echo "[*] Checking if the main ios has the rootfs"
+                printb "[*] Checking if the main ios has the rootfs"
                 if [ $(remote_cmd "ls /mnt1/usr/libexec/keybagd 2>/dev/null") ]; then
-                    echo "[*] User has chosen to remove the main iOS, Before removing it we are going to save the keybags"
+                    printr "[*] User has chosen to remove the main iOS, Before removing it we are going to save the keybags"
               	    
                     if [ ! $(remote_cmd "ls /mnt6/$active/keybags 2>/dev/null") ]; then
                         remote_cmd "cp -a /mnt2/keybags /mnt6/$active/"
                     fi
                     
                     remote_cmd "/sbin/umount /dev/disk0s1s2 && /sbin/umount /dev/disk0s1s1 2>/dev/null"
-                    echo "[*] keybags saved!"
-                    echo "[*] Removing the root and data partitions"
+                    printb "[*] keybags saved!"
+                    printb "[*] Removing the root and data partitions"
                     remote_cmd "/sbin/apfs_deletefs /dev/disk0s1s1 && /sbin/apfs_deletefs /dev/disk0s1s2 2>/dev/null"
-                    echo "[*] Removed them successfully (no going back now)"
-                    echo "[*] Creating the partitions iOS needs"
+                    printb "[*] Removed them successfully (no going back now)"
+                    printb "[*] Creating the partitions iOS needs"
                     remote_cmd "/sbin/newfs_apfs -o role=s -A -v System /dev/disk0s1"
         	        if [ $(remote_cmd "/sbin/newfs_apfs -o role=d -A -v Data -P /dev/disk0s1") ]; then # data volumen is created as protected as it panic each time that we need to mount the dualboot
-                        echo "[*] An error occurred creating the data partitions but we can continue, continuing..."
+                        printb "[*] An error occurred creating the data partitions but we can continue, continuing..."
                         remote_cmd "/sbin/newfs_apfs -o role=d -A -v Data /dev/disk0s1"
 	                fi
                 fi
             fi
 
-            echo "[*] Verifying if we can continue with the dualboot"
+            printb "[*] Verifying if we can continue with the dualboot"
             if [ "$(remote_cmd "ls /dev/disk0s1s${disk} 2>/dev/null")" ]; then
                 if [ "$(remote_cmd "/System/Library/Filesystems/apfs.fs/apfs.util -p /dev/disk0s1s${disk}")" == 'Xystem' ]; then
-                    echo "[-] It looks like you have the palera1n semitethered rootful jailbreak installed, please add the command --jail-palera1n in order to remove it"
+                    printr "[-] It looks like you have the palera1n semitethered rootful jailbreak installed, please add the command --jail-palera1n in order to remove it"
                     exit;
                 else
-                    echo "[-] it looks like you have a system installed on the partitions that we ae going to use, please ctrl+c and restorerootfs or ignore this by pressing [enter]. (the dualboot most likely wont boot into the second ios if you dont --restorerootfs before this)."
+                    printr "[-] it looks like you have a system installed on the partitions that we ae going to use, please ctrl+c and restorerootfs or ignore this by pressing [enter]. (the dualboot most likely wont boot into the second ios if you dont --restorerootfs before this)."
                     read -p "click enter if you want to continue"
                 fi
             else
-                echo "[*] Sucessfully verified"
+                printb "[*] Sucessfully verified"
             fi
 
-            echo "[*] Creating partitions"
+            printb "[*] Creating partitions"
 
         	if [ ! $(remote_cmd "/sbin/newfs_apfs -o role=n -A -v SystemB /dev/disk0s1") ] && [ ! $(remote_cmd "/sbin/newfs_apfs -o role=0 -A -v DataB /dev/disk0s1") ]; then # i put this in case that resturn a error the script can continuing
-                echo "[*] partitions created, continuing..."
+                printb "[*] Partitions created, continuing..."
 	        fi
 		    
             if [[ ! "$version" = "13."* ]]; then
                 if [ ! $(remote_cmd "/sbin/newfs_apfs -o role=D -A -v PrebootB /dev/disk0s1") ]; then
-                    echo "[*] Preboot partitions already created, continuing ..."
+                    printb "[*] Preboot partitions already created, continuing ..."
                 fi
             fi
 
-            echo "[*] partitions are already created!"
-            echo "[*] mounting the filesystems"
+            printb "[*] partitions are already created!"
+            printb "[*] mounting the filesystems"
             remote_cmd "/sbin/mount_apfs /dev/disk0s1s${disk} /mnt8/"
             sleep 1
             remote_cmd "/sbin/mount_apfs /dev/disk0s1s${dataB} /mnt9/" # this mount partitions which are needed by dualboot
@@ -1079,24 +1094,24 @@ if [ true ]; then
 
             if [ "$downgrade" = "1" ]; then
                 if [ $(remote_cmd "cp -a /mnt6/$active/keybags /mnt9/") ]; then # this are keybags without this the system wont work 
-                    echo "[-] ERROR copying the keybags over"
+                    printr "[-] ERROR copying the keybags over"
                     exit;
                 fi
             else
                 if [ $(remote_cmd "cp -a /mnt2/keybags /mnt9/") ]; then
-                    echo "[-] ERROR copying the keybags over"
+                    printr "[-] ERROR copying the keybags over"
                     exit;
                 fi
             fi
              
 
             if command -v rsync &>/dev/null; then
-                echo "[*] rsync is installed on this PC"
+                printb "[*] rsync is installed on this PC"
             else 
-                echo "[-] you dont have rsync installed so the script will take much longer to copy the rootfs file, so please install rsync if you want this process to be faster."
+                printr "[-] rsync isn't installed so the script will take much longer to copy the rootfs file, install rsync if you want this process to be faster."
             fi
             
-            echo "[*] copying the rootfs filesystem file so please wait, this could take as long as 20 minutes or longer because is through ssh"
+            printb "[*] copying the rootfs filesystem file so please wait, this could take as long as 20 minutes or longer because is through ssh"
             if [ "$os" = "Darwin" ]; then
                 if [ ! $("$dir"/sshpass -p 'alpine' rsync -rvz -e 'ssh -p 2222' $extractedIpsw/out.dmg root@localhost:/mnt8 2>/dev/null) ]; then
                     remote_cp $extractedIpsw/out.dmg root@localhost:/mnt8 >/dev/null 2>&1 # this will copy the root file in order to it is mounted and restore partition      
@@ -1114,7 +1129,7 @@ if [ true ]; then
                 else 
                     remote_cmd "/sbin/mount_apfs -o ro ""$dmg_disk""s1 /mnt5/"
                 fi
-                echo "[*] it is extracting the files so please hang on ......."
+                printb "[*] it is extracting the files so please hang on ......."
                 
                 remote_cmd "cp -na /mnt5/* /mnt8/"
                 sleep 2
@@ -1145,9 +1160,9 @@ if [ true ]; then
 
             # checking if we have acess to our partitions 
   	        if [ $(remote_cmd "ls /dev/disk0s1s$disk") ]; then
-                echo "[*] Found disk0s1s$disk"
+                printb "[*] Found disk0s1s$disk"
             else
-                echo "[-] Error: We couldn't detect disk0s1s$disk, so you'll need to wait until the device reboots and boots into your main iOS. After that, put your device back in recovery mode and we will continue when we detect your device."
+                printt "[-] Error: We couldn't detect disk0s1s$disk, so you'll need to wait until the device reboots and boots into your main iOS. After that, put your device back in recovery mode and we will continue when we detect your device."
                 remote_cmd "/usr/sbin/nvram auto-boot=true"
                 remote_cmd "/sbin/reboot"
                 _wait recovery
@@ -1162,12 +1177,12 @@ if [ true ]; then
                     sleep 1
                 done
 
-                echo "[*] Checking if we have access to disk0s1s$disk"
+                printb "[*] Checking if we have access to disk0s1s$disk"
 
                 if [ $(remote_cmd "ls /dev/disk0s1s$disk") ]; then
-                    echo "[*] Detected that we have access! continuing ..."
+                    printb "[*] Detected that we have access! continuing ..."
                 else
-                    echo "[-] Error: we can't access the root partition, so please --restorerootfs and report this error to the dualra1n discord server"
+                    printr "[-] Error: we can't access the root partition, so please --restorerootfs and report this error to the dualra1n discord server"
                     remote_cmd "/usr/sbin/nvram auto-boot=true"
                     remote_cmd "/sbin/reboot"
                     exit;
@@ -1175,7 +1190,7 @@ if [ true ]; then
 
             fi
 
-	        echo "[*] Attempting to mount the partitions"
+	        printb "[*] Attempting to mount the partitions"
      
             if [ "$os" = "Darwin" ]; then
                 remote_cmd "/System/Library/Filesystems/apfs.fs/apfs_invert -d /dev/disk0s1 -s ${disk} -n out.dmg" # this will mount the root file system and would restore the partition 
@@ -1189,30 +1204,30 @@ if [ true ]; then
                 remote_cmd "/sbin/mount_apfs /dev/disk0s1s${prebootB} /mnt4/"
             fi
 
-            echo "[*] Copying /var ..."
+            printb "[*] Copying /var ..."
             if [ ! $(remote_cmd "cp -a /mnt8/private/var/. /mnt9/.") ]; then # this will copy all file which is needed by dataB
-                echo "[*] /var was copied"
+                printb "[*] /var was copied"
             fi
             sleep 2
             
             remote_cmd "/usr/bin/mount_filesystems >/dev/null 2>&1"
             
-            echo "[*] Copying /preboot ..."
+            printb "[*] Copying /preboot ..."
             if [[ ! "$version" = "13."* ]]; then
                 remote_cmd "cp -na /mnt6/* /mnt4/" # copy preboot to prebootB
                 remote_cmd "rm /mnt4/$active/usr/standalone/firmware/FUD/*"
 
-                echo "[*] installing trollstore"
+                printb "[*] installing trollstore"
                 remote_cmd "/bin/mkdir -p /mnt8/Applications/trollstore.app"
                 remote_cp other/trollstore.app root@localhost:/mnt8/Applications/
                 sleep 4
             
             else
 	            if [ $(remote_cmd "cp -a /mnt2/mobile/Library/Preferences/com.apple.Accessibility* /mnt9/mobile/Library/Preferences/") ]; then # this will copy the assesivetouch config to our data partition
-                    echo "[*] activating assistive touch"
+                    printb "[*] Activating assistive touch"
                 fi
                 remote_cmd "cp -a /mnt6/${active}/* /mnt8/" # copy preboot to ios 13 partition
-                echo "[*] Copying needed files to boot ios 13"
+                printb "[*] Copying needed files to boot ios 13"
                 remote_cmd "mkdir -p /mnt8/private/xarts && mkdir -p /mnt8/private/preboot/"
 	            
                 if [ $(remote_cmd "ls /mnt8/usr/standalone/firmware/FUD/AOP.img4") ]; then
@@ -1221,7 +1236,7 @@ if [ true ]; then
 
                 remote_cmd "cp -a /mnt6/* /mnt8/private/preboot/"
 
-                echo "[*] we are backing up the apfs binaries from the original iOS and changing them to ios 14 apfs.fs" # maybe must of ipad will not work becuase that apfs.fs is from my iphone ipsw ios14 so you can mount a dmg rootfs of ios 14 and extract the apfs.fs and sbin/fsck and remplace it or paste it to the second ios which is ios 13 
+                printb "[*] we are backing up the apfs binaries from the original iOS and changing them to ios 14 apfs.fs" # maybe must of ipad will not work becuase that apfs.fs is from my iphone ipsw ios14 so you can mount a dmg rootfs of ios 14 and extract the apfs.fs and sbin/fsck and remplace it or paste it to the second ios which is ios 13 
                 remote_cmd "mv /mnt8/sbin/fsck /mnt8/sbin/fsckBackup && mv /mnt8/System/Library/Filesystems/apfs.fs /mnt8/System/Library/Filesystems/apfs.fsBackup "
                 remote_cp other/apfsios14/* root@localhost:/mnt8/
 
@@ -1232,28 +1247,28 @@ if [ true ]; then
                 done
 
                 if [ ! $(remote_cmd "rm -rv /mnt8/System/Library/Caches/com.apple.factorydata") ]; then 
-                    echo "[.] com.apple.factorydata does not exist so continuing ..."
+                    printr "[!] com.apple.factorydata does not exist, continuing anyway"
                 fi
 
                 remote_cmd "/sbin/mount_apfs /dev/disk0s1s${factoryDataPart} /mnt5/"
                 remote_cmd "cp -a /mnt5/FactoryData/* /mnt8/"
 
-                echo "[*] copying odyssey to /applications/"
+                printb "[*] copying odyssey to /applications/"
                 unzip other/odysseymod.ipa -d other/
                 mkdir -p "other/Payload/Applications"
 
-                echo "[*] downloading dualra1n-loader from the internet"
+                printb "[*] downloading dualra1n-loader"
                 curl -L https://nightly.link/Uckermark/dualra1n-loader/workflows/build/main/dualra1n-loader.zip -o other/dualra1n-loader.zip
                 unzip -o other/dualra1n-loader.zip -d other/
                 unzip -o other/dualra1n-loader.ipa -d other/
 
                 rm -f other/dualra1n-loader.zip other/dualra1n-loader.ipa
 
-                echo "[*] installing odyssey"
+                printb "[*] installing odyssey"
                 mv -nv other/Payload/Odyssey.app/  other/Payload/dualra1n-loader.app/  other/Payload/Applications/
                 remote_cp other/Payload/Applications/ root@localhost:/mnt8/
 
-                echo "[*] Fixing odyssey"
+                printb "[*] Fixing odyssey"
                 remote_cmd "chmod +x /mnt8/Applications/Odyssey.app/Odyssey && /usr/bin/ldid -S /mnt8/Applications/Odyssey.app/Odyssey" 
 
             fi
@@ -1262,15 +1277,15 @@ if [ true ]; then
             
 
             if [ $(remote_cmd "cp -a /mnt2/mobile/Library/Preferences/com.apple.Accessibility* /mnt9/mobile/Library/Preferences/") ]; then # this will copy the assesivetouch config to our data partition
-                echo "[*] activating assistive touch"
+                printb "[*] Activating assistive touch"
             fi
 
-            echo "[*] Saving snapshot"
+            printb "[*] Saving snapshot"
             if [ "$(remote_cmd "/usr/bin/snaputil -c orig-fs /mnt8")" ]; then
-                echo "[-] error saving the snapshot, SKIPPING ..."
+                printr "[-] error saving the snapshot, SKIPPING ..."
             fi
 
-            echo "[*] Adding the kernel to /preboot"
+            printb "[*] Adding the kernel to /preboot"
             "$dir"/img4 -i "$extractedIpsw$(awk "/""${model}""/{x=1}x&&/kernelcache.release/{print;exit}" work/BuildManifest.plist | grep '<string>' |cut -d\> -f2 |cut -d\< -f1)" -o work/kernelcache -M work/IM4M -T krnl
             
             if [[ ! "$version" = "13."* ]]; then
@@ -1278,11 +1293,11 @@ if [ true ]; then
             else
                 remote_cp work/kernelcache root@localhost:/mnt8/System/Library/Caches/com.apple.kernelcaches/kernelcache
             fi
-            echo "[*] Step 1 is complete. You can use the --dont-create-part option to avoid copying and creating partitions, along with redoing any necessary configuration if needed."
+            printb "[*] Step 1 is complete. You can use the --dont-create-part option to avoid copying and creating partitions, along with redoing any necessary configuration if needed."
         fi
         
-        echo "[*] Starting step 2"
-        echo "[*] Fixing firmwares"
+        printb "[*] Starting step 2"
+        printb "[*] Fixing firmwares"
         fixHard=1
 
         if [ "$dont_createPart" = "1" ]; then
@@ -1296,13 +1311,13 @@ if [ true ]; then
         fi
 
         if [ "$(remote_cmd "ls /mnt6/$active/usr/standalone/firmware/FUD/AOP.img4 2>/dev/null")" ]; then
-            echo "AOP FOUND"
+            printb "AOP FOUND"
             cp "$extractedIpsw$(awk "/""${model}""/{x=1}x&&/aop/{print;exit}" work/BuildManifest.plist | grep '<string>' |cut -d\> -f2 |cut -d\< -f1)" "work/"
             "$dir"/img4 -i work/"$(awk "/""${model}""/{x=1}x&&/aop/{print;exit}" work/BuildManifest.plist | grep '<string>' |cut -d\> -f2 |cut -d\< -f1 | sed 's/Firmware[/]AOP[/]//')" -o work/AOP.img4 -M work/IM4M
         fi
         
         if [ "$(remote_cmd "ls /mnt6/$active/usr/standalone/firmware/FUD/StaticTrustCache.img4 2>/dev/null")" ]; then
-            echo "[*] StaticTrustCache FOUND"
+            printb "[*] StaticTrustCache FOUND"
             if [ "$os" = 'Darwin' ]; then
                 "$dir"/img4 -i "$extractedIpsw"/Firmware/"$(/usr/bin/plutil -extract "BuildIdentities".0."Manifest"."OS"."Info"."Path" xml1 -o - work/BuildManifest.plist | grep '<string>' |cut -d\> -f2 |cut -d\< -f1 | head -1)".trustcache -o work/StaticTrustCache.img4 -M work/IM4M -T trst
             else
@@ -1310,18 +1325,18 @@ if [ true ]; then
             fi
         fi
         if [ "$(remote_cmd "ls /mnt6/$active/usr/standalone/firmware/FUD/Homer.img4 2>/dev/null")" ]; then
-            echo "[*] Homer FOUND"
+            printb "[*] Homer FOUND"
             cp "$extractedIpsw$(awk "/""${model}""/{x=1}x&&/homer/{print;exit}" work/BuildManifest.plist | grep '<string>' |cut -d\> -f2 |cut -d\< -f1)" "work/"
             "$dir"/img4 -i work/"$(awk "/""${model}""/{x=1}x&&/homer/{print;exit}" work/BuildManifest.plist | grep '<string>' |cut -d\> -f2 |cut -d\< -f1 | sed 's/Firmware[/]//')" -o work/Homer.img4 -M work/IM4M
         fi
         
         if [ "$(remote_cmd "ls /mnt6/$active/usr/standalone/firmware/FUD/Multitouch.img4 2>/dev/null")" ]; then
-            echo "[*] Multitouch FOUND"
+            printb "[*] Multitouch FOUND"
             cp "$extractedIpsw$(awk "/""${model}""/{x=1}x&&/_Multitouch[.]/{print;exit}" work/BuildManifest.plist | grep '<string>' |cut -d\> -f2 |cut -d\< -f1)" "work/"
             "$dir"/img4 -i work/"$(awk "/""${model}""/{x=1}x&&/_Multitouch[.]/{print;exit}" work/BuildManifest.plist | grep '<string>' |cut -d\> -f2 |cut -d\< -f1 | sed 's/Firmware[/]//')" -o work/Multitouch.img4 -M work/IM4M
         fi
         if [ "$(remote_cmd "ls /mnt6/$active/usr/standalone/firmware/FUD/AVE.img4 2>/dev/null")" ]; then
-            echo "[*] AVE FOUND"
+            printb "[*] AVE FOUND"
 
             if [[ ! "$version" = "13."* ]]; then
                 remote_cmd "cp /mnt6/$active/usr/standalone/firmware/FUD/AVE.img4" "/mnt4/$active/usr/standalone/firmware/FUD/"
@@ -1332,53 +1347,53 @@ if [ true ]; then
         fi
         
         if [ "$(remote_cmd "ls /mnt6/$active/usr/standalone/firmware/FUD/AudioCodecFirmware.img4 2>/dev/null")" ]; then
-            echo "[*] AudioCodecFirmware FOUND"
+            printb "[*] AudioCodecFirmware FOUND"
             cp "$extractedIpsw$(awk "/""${model}""/{x=1}x&&/_CallanFirmware[.]/{print;exit}" work/BuildManifest.plist | grep '<string>' |cut -d\> -f2 |cut -d\< -f1)" "work/"
             "$dir"/img4 -i work/"$(awk "/""${model}""/{x=1}x&&/_CallanFirmware[.]/{print;exit}" work/BuildManifest.plist | grep '<string>' |cut -d\> -f2 |cut -d\< -f1 | sed 's/Firmware[/]//')" -o work/AudioCodecFirmware.img4 -M work/IM4M
         fi
         if [ "$(remote_cmd "ls /mnt6/$active/usr/standalone/firmware/FUD/ISP.img4 2>/dev/null")" ]; then
-            echo "[*] ISP FOUND"
+            printb "[*] ISP FOUND"
             cp "$extractedIpsw$(awk "/""${model}""/{x=1}x&&/adc/{print;exit}" work/BuildManifest.plist | grep '<string>' |cut -d\> -f2 |cut -d\< -f1)" "work/"
             "$dir"/img4 -i work/"$(awk "/""${model}""/{x=1}x&&/adc/{print;exit}" work/BuildManifest.plist | grep '<string>' |cut -d\> -f2 |cut -d\< -f1 | sed 's/Firmware[/]isp_bni[/]//')" -o work/ISP.img4 -M work/IM4M
         fi
         if [[ ! "$version" = "13."* ]]; then
 
             if [ ! "$(remote_cp work/*.img4 root@localhost:/mnt4/"$active"/usr/standalone/firmware/FUD/ )" ]; then
-                echo "uh"
+                printr "uh?"
             fi
         else
             if [ ! "$(remote_cp work/*.img4 root@localhost:/mnt8/usr/standalone/firmware/FUD/ )" ]; then
-                echo "uh"
+                printr "uh?"
             fi
         fi
 
         if [[ ! "$version" = "13."* ]]; then
 
             if [ "$(remote_cmd "ls /mnt4/$active/usr/standalone/firmware/FUD/*.img4 2>/dev/null")" ]; then
-                echo "[*] Fixed firmwares suscessfully"
+                printb "[*] Fixed firmwares suscessfully"
                 rm work/*.img4
             else
-                echo "[-] error fixing the firmware (this means certain hardware features ex microphone will not work, please run this manually later), skipping ..."
+                printr "[-] Error fixing the firmware (Certain hardware features, microphone, etc will not work, please run this manually later), skipping ..."
                 fixHard=0
             fi
         else
             
             if [ "$(remote_cmd "ls /mnt8/usr/standalone/firmware/FUD/*.img4 2>/dev/null")" ]; then
-                echo "[*] Fixed firmwares suscessfully"
+                printb "[*] Fixed firmwares suscessfully"
                 rm work/*.img4
             else
-                echo "[-] error fixing the firmware (this means certain hardware features ex microphone will not work, please run this manually later), skipping ..."
+                printr "[-] error fixing the firmware (Certain hardware features ex microphone will not work, please run this manually later), skipping ..."
                 fixHard=0
             fi
         fi
         
         if [[ "$version" = "13."* ]] || [ "$bootx" = "1" ]; then
-            echo "IOS 13 dualboot or bootx option detected, we are going to use the bootx boot process" # bootx is the boot process which is normaly used when we want to boot a ramdisk to restore. we can't use localboot on ios 13.
+            printb "IOS 13 dualboot or bootx option detected, we are going to use the bootx boot process" # bootx is the boot process which is normaly used when we want to boot a ramdisk to restore. we can't use localboot on ios 13.
         else
-            echo "IOS 14 or 15 dualboot detected, we are going to use the localboot boot process" # localboot is the boot process that normaly is used when you power on your iphone, it means that can be more stable
+            printb "IOS 14 or 15 dualboot detected, we are going to use the localboot boot process" # localboot is the boot process that normaly is used when you power on your iphone, it means that can be more stable
         fi
         
-        echo "[*] Adding the new modified boot images: kernelcache, root_hash, StaticTrustCache, devicetree... "
+        printb "[*] Adding the new modified boot images: kernelcache, root_hash, StaticTrustCache, devicetree... "
         if [ "$fixBoot" = "1" ]; then # i put it because my friend tested on his ipad and that does not boot so when we download all file from the internet so not extracting ipsw that boot fine idk why 
             cd work
             #that will download the files needed
@@ -1423,25 +1438,25 @@ if [ true ]; then
             fi
         fi
 
-        echo "[*] Copying the new boot images to work with"
+        printb "[*] Copying the new boot images to work with"
         cp "$extractedIpsw$(awk "/""${model}""/{x=1}x&&/kernelcache.release/{print;exit}" work/BuildManifest.plist | grep '<string>' |cut -d\> -f2 |cut -d\< -f1)" "work/kernelcache"
         "$dir"/img4 -i work/"$(awk "/""${model}""/{x=1}x&&/DeviceTree[.]/{print;exit}" work/BuildManifest.plist | grep '<string>' |cut -d\> -f2 |cut -d\< -f1 | sed 's/Firmware[/]all_flash[/]//')" -o work/dtree.raw
 
-        echo "[*] Patching kernel ..." # this will patch the kernel  
-	    echo "[*] If this fails, please run python3 -m pip uninstall lzss, and re-run the script"
+        printb "[*] Patching kernel ..." # this will patch the kernel  
+	    printb "[*] If this fails, please run python3 -m pip uninstall lzss, and re-run the script"
         if [[ "$deviceid" == "iPhone8"* ]] || [[ "$deviceid" == "iPad6"* ]] || [[ "$deviceid" == *'iPad5'* ]]; then
             python3 -m pyimg4 im4p extract -i work/kernelcache -o work/kcache.raw --extra work/kpp.bin >/dev/null
         else
             python3 -m pyimg4 im4p extract -i work/kernelcache -o work/kcache.raw >/dev/null
         fi
 
-        echo "[*] Checking if a jailbreak is installed"
+        printb "[*] Checking if a jailbreak is installed"
         
         if [ "$dont_createPart" = "1" ] && [ $(remote_cmd "ls /mnt8/jbin/jbloader 2>/dev/null") ] || [[ "$version" = "13."* ]]; then
             if [[ "$version" = "13."* ]]; then
-                echo "[*] ios 13 detected so we will be automatically installing a jailbreak"
+                printb "[*] ios 13 detected so we will be automatically installing a jailbreak"
             fi
-            echo "[*] Jailbreak detected"
+            printb "[*] Jailbreak detected"
             remote_cmd "mkdir -p /mnt8/private/var/root/work"
             remote_cp work/kcache.raw root@localhost:"$(if [[ "$version" = "13."* ]]; then echo "/mnt8/"; else echo "/mnt4/"$active"/"; fi)"System/Library/Caches/com.apple.kernelcaches/kcache.raw
             remote_cp binaries/$(if [[ "$version" = "13."* ]]; then echo "Kernel13Patcher.ios"; else echo "Kernel15Patcher.ios"; fi) root@localhost:/mnt8/private/var/root/work/kpf15.ios
@@ -1451,7 +1466,7 @@ if [ true ]; then
 
             if [[ "$version" = "13."* ]]; then
                 if [ ! "$(remote_cmd "/mnt8/private/var/root/work/kpf15.ios /mnt8/System/Library/Caches/com.apple.kernelcaches/kcache.raw /mnt8/System/Library/Caches/com.apple.kernelcaches/kcache.patched 2>/dev/null")" ]; then
-                    echo "[-] you have the kernelpath already installed, Omitting ..."
+                    printr "[-] you have the kernelpath already installed, Omitting ..."
                 fi
 
                 remote_cp root@localhost:/mnt8/System/Library/Caches/com.apple.kernelcaches/kcache.patched work/ # that will return the kernelpatcher in order to be patched again and boot with it 
@@ -1459,7 +1474,7 @@ if [ true ]; then
 
             else
                 if [ ! "$(remote_cmd "/mnt8/private/var/root/work/kpf15.ios /mnt4/$active/System/Library/Caches/com.apple.kernelcaches/kcache.raw /mnt4/$active/System/Library/Caches/com.apple.kernelcaches/kcache.patched 2>/dev/null")" ]; then
-                    echo "[-] you have the kernelpath already installed, Omitting ..."
+                    printr "[-] you have the kernelpath already installed, Omitting ..."
                 fi
                 remote_cp root@localhost:/mnt4/"$active"/System/Library/Caches/com.apple.kernelcaches/kcache.patched work/ # that will return the kernelpatcher in order to be patched again and boot with it 
                 remote_cmd "rm -r /mnt8/private/var/root/work"
@@ -1480,39 +1495,39 @@ if [ true ]; then
         python3 -m pyimg4 img4 create -p work/kcache.im4p -o $(if [[ "$version" = "13."* ]] || [ "$bootx" = "1" ]; then echo "work/kernelcache.img4"; else echo "work/kernelcachd"; fi) -m work/IM4M >/dev/null
         
         
-        echo "[*] Finished adding the kernel"
+        printb "[*] Finished adding the kernel"
 
         if [[ "$version" = "13."* ]] || [ "$bootx" = "1" ]; then
-            echo "[*] Adding StaticTrustCache"
+            printb "[*] Adding StaticTrustCache"
 
             "$dir"/img4 -i work/*.trustcache -o work/trustcache.img4 -M work/IM4M -T rtsc
 
-            echo "[*] Adding devicetree"
+            printb "[*] Adding devicetree"
             sleep 1
             "$dir"/dtree_patcher work/dtree.raw work/dtree.patched $(if [ "$mainData" = "1" ]; then echo ""; else echo "-d"; fi) $(if [[ "$version" = "13."* ]]; then echo ""; else echo "-p"; fi) >/dev/null
             "$dir"/img4 -i work/dtree.patched -o work/devicetree.img4 -A -M work/IM4M -T rdtr
         else
-            echo "[*] Adding StaticTrustCache"
+            printb "[*] Adding StaticTrustCache"
             remote_cmd "cp -a /mnt4/$active/usr/standalone/firmware/FUD/StaticTrustCache.img4 /mnt6/$active/usr/standalone/firmware/FUD/StaticTrustCachd.img4"
 
-            echo "[*] Adding devicetree"
+            printb "[*] Adding devicetree"
 
             sleep 1 #mainData
             "$dir"/dtree_patcher work/dtree.raw work/dtree.patched $(if [ "$mainData" = "1" ]; then echo ""; else echo "-d"; fi) -p >/dev/null
             "$dir"/img4 -i work/dtree.patched -o work/devicetred.img4 -A -M work/IM4M -T dtre >/dev/null
 
 
-            echo "[*] Adding root_hash"
+            printb "[*] Adding root_hash"
             "$dir"/img4 -i work/*.root_hash -o work/root_hasd.img4 -M work/IM4M >/dev/null
 
-            echo "[*] Sending the modified boot images to the device"
+            printb "[*] Sending the modified boot images to the device"
             remote_cp work/kernelcachd root@localhost:/mnt6/"$active"/System/Library/Caches/com.apple.kernelcaches/kernelcachd
             remote_cp work/devicetred.img4 work/root_hasd.img4 root@localhost:/mnt6/"$active"/usr/standalone/firmware
             
         fi
         
-        echo "[*] finished successfully!"
-        echo "[*] Rebooting to recovery ..."
+        printb "[*] Finished, continuing..."
+        printb "[*] Rebooting to recovery ..."
         remote_cmd "/usr/sbin/nvram auto-boot=false"
         remote_cmd "/sbin/reboot"
         _wait recovery
@@ -1520,7 +1535,7 @@ if [ true ]; then
         _dfuhelper "$cpid"
         sleep 3
 
-        echo "[*] Patching the files iBoot and ibss ..."
+        printb "[*] Patching the files iBoot and ibss ..."
 
         "$dir"/gaster decrypt work/"$(awk "/""${model}""/{x=1}x&&/iBSS[.]/{print;exit}" work/BuildManifest.plist | grep '<string>' |cut -d\> -f2 |cut -d\< -f1 | sed 's/Firmware[/]dfu[/]//')" work/iBSS.dec
         "$dir"/iBoot64Patcher work/iBSS.dec work/iBSS.patched >/dev/null
@@ -1531,7 +1546,7 @@ if [ true ]; then
         
         "$dir"/iBoot64Patcher work/iBEC.dec work/iBEC.patched $(if [ "$verbose" = "1" ] || [ "$bootx" = "1" ] || [[ "$version" = "13."* ]]; then echo "-b"; fi) "$(if [ "$verbose" = "1" ] || [ "$bootx" = "1" ] || [[ "$version" = "13."* ]]; then echo "-v"; fi) $(if [[ "$version" = "13."* ]] || [ "$bootx" = "1" ]; then echo "wdt=-1 keepsyms=1 debug=0x2014e"; fi) `if [ "$cpid" = '0x8960' ] || [ "$cpid" = '0x7000' ] || [ "$cpid" = '0x7001' ]; then echo "-restore"; fi`" -n $(if [[ "$version" = "13."* ]] || [ "$bootx" = "1" ]; then echo ""; else echo "-l"; fi) >/dev/null
         # patching the string in the ibec in order to load different image
-        echo "[*] Patching the string of images to load in the iboot..."
+        printb "[*] Patching the string of images to load in the iboot..."
         if [ "$os" = 'Linux' ]; then
             sed -i 's/\/\kernelcache/\/\kernelcachd/g' work/iBEC.patched
             sed -i 's#\/usr\/standalone\/firmware\/devicetree.img4#\/usr\/standalone\/firmware\/devicetred.img4#g' work/iBEC.patched
@@ -1548,7 +1563,7 @@ if [ true ]; then
             fi
         fi
         
-        echo "[*] Appling path to the iboot"
+        printb "[*] Appling path to the iBoot"
         # this will path the iboot in order to use the custom partition
         "$dir"/kairos work/iBEC.patched work/iBEC.patchedB -d "$disk" >/dev/null
 
@@ -1560,15 +1575,15 @@ if [ true ]; then
             
 
         cp -v work/*.img4 "boot/${deviceid}" # Copying all file img4 to boot
-        echo "Finished step 2!"
+        printb "[*] Finished step 2!"
         #echo "so we finish, now you can execute './dualboot.sh --boot' to boot to second ios after that we need that you record a video when your iphone is booting to see what is the uuid and note that name of the uuid"       
         echo "Starting step 3! Booting your device for the first time ..."
 
         if [[ "$version" = "13."* ]] || [ "$bootx" = "1" ]; then
-            echo "IOS 13 or bootx option DETECTED, booting using the bootx method"
+            printb "[*] IOS 13 or bootx option DETECTED, booting using the bootx method"
             _bootx
         else
-            echo "IOS 14,15 DETECTED, booting using the localboot method"
+            printb "[*] IOS 14,15 DETECTED, booting using the localboot method"
             _boot
         fi
     fi
