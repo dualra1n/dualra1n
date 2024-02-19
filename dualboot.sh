@@ -94,7 +94,7 @@ print_help() {
     cat << EOF
 Usage: $0 [options] [ subcommand | iOS version that you're on ]
 You must have atleast 15 GB of free storage, and the .iPSW file of the iOS which you wish to dualboot to in dualra1n/ipsw/.
-Currently, only iOS 14 and 15 are supported. Downgrading from or upgrading to iOS 16 aren't (and most likely never will be) supported.
+Currently, only iOS 14 and 15 are supported. Downgrading from or upgrading to iOS 16 isn't (and most likely never will be) supported.
 
 Options:
     --dualboot              Dualboot your iDevice with the version specified.
