@@ -42,7 +42,7 @@ cd ..
 
 {
 
-printb "[*] Command ran:`if [ $EUID = 0 ]; then echo " sudo"; fi` ./dualboot.sh $@"
+printg "[*] Command ran:`if [ $EUID = 0 ]; then echo " sudo"; fi` ./dualboot.sh $@"
 
 # =========
 # Variables
@@ -105,7 +105,6 @@ Subcommands:
     --jail-palera1n         Use this when you are already jailbroken with semi-tethered palera1n to avoid disk errors.
     --taurine               Jailbreak dualbooted iOS with Taurine. (currently ***NOT RECOMMENDED***). Usage: ./dualboot.sh --jailbreak 14.3 --taurine 
     --help                  Prints this help.
-    --dfuhelper             Helper for entering DFU mode.
     --boot                  Boots your iDevice into the dualbooted iOS. Use this when you already have the dualbooted iOS installed. Usage : ./dualboot.sh --boot
     --dont-create-part      Skips creating a new disk partition if you have them already, so using this will only download the boot files. Usage : ./dualboot.sh --dualboot 14.3 --dont-create-part.
     --bootx                 This option will force the script to create and boot as bootx proccess.
@@ -151,9 +150,6 @@ parse_opt() {
             ;;
         --taurine)
             taurine=1
-            ;;
-        --dfuhelper)
-            dfuhelper=1
             ;;
         --dont-create-part)
             dont_createPart=1
@@ -296,7 +292,7 @@ get_device_mode() {
     if grep -qE '(ramdisk tool|SSHRD_Script) (Jan|Feb|Mar|Apr|May|Jun|Jul|Aug|Sep|Oct|Nov|Dec) [0-9]{1,2} [0-9]{4} [0-9]{2}:[0-9]{2}:[0-9]{2}' <<< "$usbserials"; then
         device_mode=ramdisk
     fi
-    printb "$device_mode"
+    echo "$device_mode"
 }
 
 _wait() {
@@ -405,7 +401,7 @@ _detect() {
             printr "[-] dualboot will NEVER work on non-checkm8 devices aka:A12+ devices"
             exit
         fi
-        printb "$(_info normal ProductType) connected on $version!"
+        echo "$(_info normal ProductType) connected on $version!"
 
         printb "[*] Switching device into recovery mode..."
         "$dir"/ideviceenterrecovery $(_info normal UniqueDeviceID)
@@ -540,7 +536,7 @@ packages=("lzss")
          cd "$dir"/pylzss
          git checkout "8efcda0"
          python3 "$dir"/pylzss/setup.py install
-	 cd $mainDir
+	     cd $mainDir
          rm -rf "$dir"/pylzss
      fi
  done
@@ -564,8 +560,8 @@ chmod +x "$dir"/*
 # Start
 # ============
 
-printb "dualboot | Version: 8.0"
-printb "Created by edwin :) | Some code from palera1n.sh, Thanks Nathan for the ramdisks | thanks MatthewPierson, Ralph0045, and to all of the creaters of path file boot"
+printg "dualboot | Version: 8.5"
+printg "Created by edwin :) | Some functions code from palera1n.sh, Thanks Nathan for the ramdisks | thanks MatthewPierson, Ralph0045, and to all of the creaters of path file boot"
 printb ""
 
 parse_cmdline "$@"
@@ -640,7 +636,7 @@ if [ "$boot" = "1" ]; then # call boot in order to boot it
         _bootx
     else
         printb "[*] Using localboot for booting"
-        _boot    
+        _boot
     fi
     
 fi
