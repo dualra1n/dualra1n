@@ -808,12 +808,12 @@ if [ true ]; then
         "$dir"/iproxy 2222 22 >/dev/null &
     fi
 
-    if ! ("$dir"/sshpass -p 'alpine' ssh -o StrictHostKeyChecking=no -p2222 root@localhost "echo connected" &> /dev/null); then
+    if ! ("$dir"/sshpass -p 'alpine' ssh -ostricthostkeychecking=false -ouserknownhostsfile=/dev/null -o StrictHostKeyChecking=no -q -p2222 root@localhost "echo connected" &> /dev/null); then
         printb "[*] Waiting for the ramdisk to finish booting"
     fi
 
     i=1
-    while ! ("$dir"/sshpass -p 'alpine' ssh -o StrictHostKeyChecking=no -p2222 root@localhost "echo connected" &> /dev/null); do
+    while ! ("$dir"/sshpass -p 'alpine' ssh -ostricthostkeychecking=false -ouserknownhostsfile=/dev/null -o StrictHostKeyChecking=no -q -p2222 root@localhost "echo connected" &> /dev/null); do
         sleep 1
         i=$((i+1))
         if [ "$i" == 15 ]; then

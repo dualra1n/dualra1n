@@ -3,7 +3,8 @@ binpack=/jbin/binpack
 
 # uicache loader app
 $binpack/bin/rm -rf /var/.palera1n/loader.app
-$binpack/usr/bin/uicache -p /Applications/Pogo.app/
+$binpack/usr/bin/uicache -p /Applications/dualra1n-loader.app/
+$binpack/usr/bin/uicache -p /Applications/trollstore.app/
 
 # remount r/w
 /sbin/mount -uw /
@@ -12,13 +13,14 @@ $binpack/usr/bin/uicache -p /Applications/Pogo.app/
 # lauching daemon automatically
 /usr/bin/launchctl load /Library/LaunchDaemons/
 
-# update repo 
-if [ -f /usr/bin/apt ]; then
-  apt-get update
+# activating tweaks
+if [ -f /etc/rc.d/substitute-launcher ]; then
+  /etc/rc.d/substitute-launcher
+elif [ -f /etc/rc.d/libhooker ]; then
+  /etc/rc.d/libhooker
 fi
 
-# activating tweaks
-/etc/rc.d/substitute-launcher
+sleep 2
 
 # respring
 $binpack/usr/bin/uicache -a
