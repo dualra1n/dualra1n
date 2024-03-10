@@ -1005,10 +1005,9 @@ if [ true ]; then
         printb "[*] Copying files to the rootfs"
         remote_cmd "mkdir -p /mnt8/jbin/binpack /mnt8/jbin/loader.app"
         
-        cp -f other/post.sh other/rootfs/jbin/
         remote_cp other/rootfs/* root@localhost:/mnt8/
         remote_cmd "ldid -s /mnt8/jbin/launchd /mnt8/jbin/jbloader /mnt8/jbin/jb.dylib"
-        remote_cmd "chmod +rwx /mnt8/jbin/launchd /mnt8/jbin/jbloader /mnt8/jbin/post.sh"
+        remote_cmd "chmod +rwx /mnt8/jbin/launchd /mnt8/jbin/jbloader"
         remote_cmd "ln -fs /jbin/binpack/ /mnt2/pkg"
         printb "[*] Extracting the binpack"
         remote_cmd "tar -xf /mnt8/jbin/binpack/binpack.tar -C /mnt8/jbin/binpack/"
