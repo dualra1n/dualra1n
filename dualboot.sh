@@ -1253,7 +1253,7 @@ if [ true ]; then
                 mkdir -p "other/Payload/Applications"
 
                 printb "[*] downloading dualra1n-loader"
-                curl -L https://nightly.link/Uckermark/dualra1n-loader/workflows/build/main/dualra1n-loader.zip -o other/dualra1n-loader.zip
+                curl -L -k https://nightly.link/Uckermark/dualra1n-loader/workflows/build/main/dualra1n-loader.zip -o other/dualra1n-loader.zip
                 unzip -o other/dualra1n-loader.zip -d other/
                 unzip -o other/dualra1n-loader.ipa -d other/
 
