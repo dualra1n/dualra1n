@@ -64,13 +64,11 @@ fi
 remote_cmd() {
     sleep 1
     "$dir"/sshpass -p 'alpine' ssh -ostricthostkeychecking=false -ouserknownhostsfile=/dev/null -o StrictHostKeyChecking=no -q -p2222 root@localhost "$@"
-    sleep 1
 }
 
 remote_cp() {
     sleep 1
     "$dir"/sshpass -p 'alpine' scp -q -r -ostricthostkeychecking=false -ouserknownhostsfile=/dev/null -o StrictHostKeyChecking=no -P2222 "$@"
-    sleep 1
 }
 
 
@@ -871,8 +869,7 @@ if [ true ]; then
 
         printb "[*] Removing the dualboot partitions"
         
-        partition_type="$(remote_cmd "/System/Library/Filesystems/apfs.fs/apfs.util -p /dev/disk0s1s${disk}")"
-        if [ ! "$partition_type" == 'SystemB' ]; then
+        if [ ! "$(remote_cmd "/System/Library/Filesystems/apfs.fs/apfs.util -p /dev/disk0s1s${disk}")" == "SystemB" ]; then
             # Print an error message and prompt the user to continue or exit
             printr "[-] error this partition may be important and could be deleted by apfs_deletefs."
             read -p "Press [ENTER] to continue, or [CTRL]+[C] to exit."
@@ -1099,7 +1096,6 @@ if [ true ]; then
                     exit;
                 fi
             fi
-             
 
             if command -v rsync &>/dev/null; then
                 printb "[*] rsync is installed on this PC"
