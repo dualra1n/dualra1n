@@ -919,9 +919,9 @@ if [ true ]; then
         cp "$extractedIpsw$(awk "/""${model}""/{x=1}x&&/kernelcache.release/{print;exit}" work/BuildManifest.plist | grep '<string>' |cut -d\> -f2 |cut -d\< -f1)" "work/kernelcache"
                 
         if [[ "$deviceid" == "iPhone8"* ]] || [[ "$deviceid" == "iPad6"* ]] || [[ "$deviceid" == *'iPad5'* ]]; then
-            python3 -m pyimg4 im4p extract -i work/kernelcache -o work/kcache.raw --extra work/kpp.bin >/dev/null
+            img4 -i work/kernelcache -o work/kcache.raw >/dev/null #python3 -m pyimg4 im4p extract -i work/kernelcache -o work/kcache.raw --extra work/kpp.bin >/dev/null
         else
-            python3 -m pyimg4 im4p extract -i work/kernelcache -o work/kcache.raw >/dev/null
+            img4 -i work/kernelcache -o work/kcache.raw >/dev/null #python3 -m pyimg4 im4p extract -i work/kernelcache -o work/kcache.raw >/dev/null
         fi
         
         remote_cmd "/sbin/mount_apfs /dev/disk0s1s${disk} /mnt8/"
@@ -943,13 +943,15 @@ if [ true ]; then
             remote_cp root@localhost:/mnt4/"$active"/System/Library/Caches/com.apple.kernelcaches/kcache.patched work/ # that will return the kernelpatcher in order to be patched again and boot with it 
             "$dir"/Kernel64Patcher work/kcache.patched work/kcache.patchedB -l  $(if [[ "$version" = "15."* ]]; then echo "-e -o -r -b15"; fi) $(if [[ "$version" = "14."* ]]; then echo "-b"; fi) >/dev/null
             
+            "$dir"/kerneldiff work/kcache.raw work/kcache.patchedB work/kc.bpatch >/dev/null
+
             if [[ "$deviceid" == *'iPhone8'* ]] || [[ "$deviceid" == *'iPad6'* ]] || [[ "$deviceid" == *'iPad5'* ]]; then
-                python3 -m pyimg4 im4p create -i work/kcache.patchedB -o work/kcache.im4p -f $(if [[ "$version" = "13."* ]] || [ "$bootx" = "1" ]; then echo "rkrn"; else echo "krnl"; fi)  --extra work/kpp.bin --lzss >/dev/null
+                img4 -i work/kernelcache -o $(if [[ "$version" = "13."* ]] || [ "$bootx" = "1" ]; then echo "work/kernelcache.img4"; else echo "work/kernelcachd"; fi) -M work/IM4M -T $(if [[ "$version" = "13."* ]] || [ "$bootx" = "1" ]; then echo "rkrn"; else echo "krnl"; fi) -P work/kc.bpatch #python3 -m pyimg4 im4p create -i work/kcache.patchedB -o work/kcache.im4p -f $(if [[ "$version" = "13."* ]] || [ "$bootx" = "1" ]; then echo "rkrn"; else echo "krnl"; fi)  --extra work/kpp.bin --lzss >/dev/null
             else
-                python3 -m pyimg4 im4p create -i work/kcache.patchedB -o work/kcache.im4p -f $(if [[ "$version" = "13."* ]] || [ "$bootx" = "1" ]; then echo "rkrn"; else echo "krnl"; fi)  --lzss >/dev/null
+                img4 -i work/kernelcache -o $(if [[ "$version" = "13."* ]] || [ "$bootx" = "1" ]; then echo "work/kernelcache.img4"; else echo "work/kernelcachd"; fi) -M work/IM4M -T $(if [[ "$version" = "13."* ]] || [ "$bootx" = "1" ]; then echo "rkrn"; else echo "krnl"; fi) -P work/kc.bpatch #python3 -m pyimg4 im4p create -i work/kcache.patchedB -o work/kcache.im4p -f $(if [[ "$version" = "13."* ]] || [ "$bootx" = "1" ]; then echo "rkrn"; else echo "krnl"; fi)  --lzss >/dev/null
             fi
         
-            python3 -m pyimg4 img4 create -p work/kcache.im4p -o $(if [[ "$version" = "13."* ]] || [ "$bootx" = "1" ]; then echo "work/kernelcache.img4"; else echo "work/kernelcachd"; fi) -m work/IM4M >/dev/null
+            #python3 -m pyimg4 img4 create -p work/kcache.im4p -o $(if [[ "$version" = "13."* ]] || [ "$bootx" = "1" ]; then echo "work/kernelcache.img4"; else echo "work/kernelcachd"; fi) -m work/IM4M >/dev/null
             remote_cp work/kernelcachd root@localhost:/mnt6/"$active"/System/Library/Caches/com.apple.kernelcaches/kernelcachd
         fi
 
@@ -1437,9 +1439,9 @@ if [ true ]; then
         printb "[*] Patching kernel ..." # this will patch the kernel  
 	    printb "[*] If this fails, please run python3 -m pip uninstall lzss, and re-run the script"
         if [[ "$deviceid" == "iPhone8"* ]] || [[ "$deviceid" == "iPad6"* ]] || [[ "$deviceid" == *'iPad5'* ]]; then
-            python3 -m pyimg4 im4p extract -i work/kernelcache -o work/kcache.raw --extra work/kpp.bin >/dev/null
+            img4 -i work/kernelcache -o work/kcache.raw >/dev/null #python3 -m pyimg4 im4p extract -i work/kernelcache -o work/kcache.raw --extra work/kpp.bin >/dev/null
         else
-            python3 -m pyimg4 im4p extract -i work/kernelcache -o work/kcache.raw >/dev/null
+            img4 -i work/kernelcache -o work/kcache.raw >/dev/null #python3 -m pyimg4 im4p extract -i work/kernelcache -o work/kcache.raw >/dev/null
         fi
 
         printb "[*] Checking if a jailbreak is installed"
@@ -1477,14 +1479,15 @@ if [ true ]; then
         fi
 
         # on ios 15 we can't use root_hash from another ios version idk why, so we need to use bootx.
-        
+        "$dir"/kerneldiff work/kcache.raw work/kcache.patchedB work/kc.bpatch >/dev/null
+
         if [[ "$deviceid" == *'iPhone8'* ]] || [[ "$deviceid" == *'iPad6'* ]] || [[ "$deviceid" == *'iPad5'* ]]; then
-            python3 -m pyimg4 im4p create -i work/kcache.patchedB -o work/kcache.im4p -f $(if [[ "$version" = "13."* ]] || [ "$bootx" = "1" ]; then echo "rkrn"; else echo "krnl"; fi) --extra work/kpp.bin --lzss >/dev/null
+            img4 -i work/kernelcache -o $(if [[ "$version" = "13."* ]] || [ "$bootx" = "1" ]; then echo "work/kernelcache.img4"; else echo "work/kernelcachd"; fi) -M work/IM4M -T $(if [[ "$version" = "13."* ]] || [ "$bootx" = "1" ]; then echo "rkrn"; else echo "krnl"; fi) -P work/kc.bpatch #python3 -m pyimg4 im4p create -i work/kcache.patchedB -o work/kcache.im4p -f $(if [[ "$version" = "13."* ]] || [ "$bootx" = "1" ]; then echo "rkrn"; else echo "krnl"; fi) --extra work/kpp.bin --lzss >/dev/null
         else
-            python3 -m pyimg4 im4p create -i work/kcache.patchedB -o work/kcache.im4p -f $(if [[ "$version" = "13."* ]] || [ "$bootx" = "1" ]; then echo "rkrn"; else echo "krnl"; fi) --lzss >/dev/null
+            img4 -i work/kernelcache -o $(if [[ "$version" = "13."* ]] || [ "$bootx" = "1" ]; then echo "work/kernelcache.img4"; else echo "work/kernelcachd"; fi) -M work/IM4M -T $(if [[ "$version" = "13."* ]] || [ "$bootx" = "1" ]; then echo "rkrn"; else echo "krnl"; fi) -P work/kc.bpatch #python3 -m pyimg4 im4p create -i work/kcache.patchedB -o work/kcache.im4p -f $(if [[ "$version" = "13."* ]] || [ "$bootx" = "1" ]; then echo "rkrn"; else echo "krnl"; fi) --lzss >/dev/null
         fi
         
-        python3 -m pyimg4 img4 create -p work/kcache.im4p -o $(if [[ "$version" = "13."* ]] || [ "$bootx" = "1" ]; then echo "work/kernelcache.img4"; else echo "work/kernelcachd"; fi) -m work/IM4M >/dev/null
+        #python3 -m pyimg4 img4 create -p work/kcache.im4p -o $(if [[ "$version" = "13."* ]] || [ "$bootx" = "1" ]; then echo "work/kernelcache.img4"; else echo "work/kernelcachd"; fi) -m work/IM4M >/dev/null
         
         
         printb "[*] Finished adding the kernel"
