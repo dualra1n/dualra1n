@@ -8,8 +8,6 @@ This will **not work** on devices with iOS 16.
 
 - [A full tutorial](https://github.com/dualra1n/dualra1n/blob/main/tutorial.md)
 
-- [Video tutorial from burhanrana](https://www.youtube.com/watch?v=4iCZv7Ox5AA)
-
 # Prerequisites
 - An A9-A11 device (A10 & A11 will need a deactivated passcode)
 - An .iPSW file for iOS 13 - 15.
