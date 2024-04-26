@@ -915,7 +915,7 @@ if [ true ]; then
         fi
         
         printb "[*] Patching the kernel" # this will send and patch the kernel
-	printr "[!] If this fails, please run python3 -m pip uninstall lzss, and re-run the script"
+	    printr "[!] If this fails, please run python3 -m pip uninstall lzss, and re-run the script"
         cp "$extractedIpsw$(awk "/""${model}""/{x=1}x&&/kernelcache.release/{print;exit}" work/BuildManifest.plist | grep '<string>' |cut -d\> -f2 |cut -d\< -f1)" "work/kernelcache"
                 
         if [[ "$deviceid" == "iPhone8"* ]] || [[ "$deviceid" == "iPad6"* ]] || [[ "$deviceid" == *'iPad5'* ]]; then
@@ -1156,7 +1156,7 @@ if [ true ]; then
   	        if [ $(remote_cmd "ls /dev/disk0s1s$disk") ]; then
                 printb "[*] Found disk0s1s$disk"
             else
-                printt "[-] Error: We couldn't detect disk0s1s$disk, so you'll need to wait until the device reboots and boots into your main iOS. After that, put your device back in recovery mode and we will continue when we detect your device."
+                printr "[-] Error: We couldn't detect disk0s1s$disk, so you'll need to wait until the device reboots and boots into your main iOS. After that, put your device back in recovery mode and we will continue when we detect your device."
                 remote_cmd "/usr/sbin/nvram auto-boot=true"
                 remote_cmd "/sbin/reboot"
                 _wait recovery
