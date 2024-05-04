@@ -420,7 +420,11 @@ _boot() {
 
     if [[ ! "$cpid" == *"0x801"* ]]; then
         "$dir"/irecovery -f "boot/${deviceid}/iBSS.img4"
-        sleep 4
+        if [ "$cpid" = '0x7000' ] || [ "$cpid" = '0x7001' ]; then
+            sleep 10
+        else
+            sleep 4
+        fi
     fi
 
     "$dir"/irecovery -f "boot/${deviceid}/iBEC.img4"
@@ -441,12 +445,20 @@ _bootx() {
 
     if [[ ! "$cpid" == *"0x801"* ]]; then
         "$dir"/irecovery -f "boot/${deviceid}/iBSS.img4"
-        sleep 1
+        if [ "$cpid" = '0x7000' ] || [ "$cpid" = '0x7001' ]; then
+            sleep 10
+        else
+            sleep 4
+        fi
     fi
     
     "$dir"/irecovery -f "boot/${deviceid}/iBEC.img4"
-    sleep 2
-    
+    if [ "$cpid" = '0x7000' ] || [ "$cpid" = '0x7001' ]; then
+        sleep 10
+    else
+        sleep 2
+    fi
+
     if [[ "$cpid" == *"0x801"* ]]; then
         "$dir"/irecovery -c "go"
         sleep 3
@@ -1154,7 +1166,7 @@ if [ true ]; then
   	        if [ $(remote_cmd "ls /dev/disk0s1s$disk") ]; then
                 printb "[*] Found disk0s1s$disk"
             else
-                printt "[-] Error: We couldn't detect disk0s1s$disk, so you'll need to wait until the device reboots and boots into your main iOS. After that, put your device back in recovery mode and we will continue when we detect your device."
+                printr "[-] Error: We couldn't detect disk0s1s$disk, so you'll need to wait until the device reboots and boots into your main iOS. After that, put your device back in recovery mode and we will continue when we detect your device."
                 remote_cmd "/usr/sbin/nvram auto-boot=true"
                 remote_cmd "/sbin/reboot"
                 _wait recovery
@@ -1435,7 +1447,7 @@ if [ true ]; then
         "$dir"/img4 -i work/"$(awk "/""${model}""/{x=1}x&&/DeviceTree[.]/{print;exit}" work/BuildManifest.plist | grep '<string>' |cut -d\> -f2 |cut -d\< -f1 | sed 's/Firmware[/]all_flash[/]//')" -o work/dtree.raw
 
         printb "[*] Patching kernel ..." # this will patch the kernel  
-	    printb "[*] If this fails, please run python3 -m pip uninstall lzss, and re-run the script"
+	    printb "[*] If this fails, please run python3 -m pip uninstall lzss pylzss, and re-run the script with --dont-create-part, or change to kerneldiff branch"
         if [[ "$deviceid" == "iPhone8"* ]] || [[ "$deviceid" == "iPad6"* ]] || [[ "$deviceid" == *'iPad5'* ]]; then
             python3 -m pyimg4 im4p extract -i work/kernelcache -o work/kcache.raw --extra work/kpp.bin >/dev/null
         else
