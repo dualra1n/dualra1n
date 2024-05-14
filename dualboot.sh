@@ -98,6 +98,7 @@ Options:
     --dualboot              Dualboot your iDevice with the version specified.
     --downgrade             Will do the same thing as dualbooting but before continuing it will remove the files for the main ios (Useful for 16gb devices).
     --jailbreak             Jailbreak dualbooted iOS using dualra1n-loader. Usage :  ./dualboot.sh --jailbreak 14.3
+    --restorerootfs         Deletes the dualbooted iOS. (also add --jail-palera1n if you are jailbroken with semi-tethered palera1n).
 
 Subcommands:
     --jail-palera1n         Use this when you are already jailbroken with semi-tethered palera1n to avoid disk errors.
@@ -106,8 +107,6 @@ Subcommands:
     --boot                  Boots your iDevice into the dualbooted iOS. Use this when you already have the dualbooted iOS installed. Usage : ./dualboot.sh --boot
     --dont-create-part      Skips creating a new disk partition if you have them already, so using this will only download the boot files. Usage : ./dualboot.sh --dualboot 14.3 --dont-create-part.
     --bootx                 This option will force the script to create and boot as bootx proccess.
-    --use-main-data         This option will tell the dualboot to use the main data partition so data from main iOS will be retained, used when dualbooting and when using --dont-create-part.
-    --restorerootfs         Deletes the dualbooted iOS. (also add --jail-palera1n if you are jailbroken with semi-tethered palera1n).
     --verbose               This option will tell the iPhone to boot in verbose mode, useful for extra debugging.
     --recoveryModeAlways    Fixes the main iOS if it is recovery looping.
     --debug                 Makes the script output exactly what command it is running, useful for debugging.
@@ -116,6 +115,7 @@ Subcommands:
 
 EOF
 }
+#--use-main-data         This option will tell the dualboot to use the main data partition so data from main iOS will be used in the dualbooted system [NOT RECOMMENDED OPTION], used when dualbooting with --dualboot.
 
 parse_opt() {
     case "$1" in
@@ -487,6 +487,20 @@ _bootx() {
     exit;
 }
 
+check_and_install_package() {
+    local package=$1
+    local required_version=$2
+    local installed_version=$(python3 -c "import pkg_resources; print(pkg_resources.get_distribution('$package').version)" 2>/dev/null || echo "not installed")
+
+    if [ "$installed_version" != "$required_version" ]; then
+        echo "[-] $package version $required_version is not installed (current version: $installed_version). We can install it for you. Press any key to start installing $package $required_version, or press Ctrl + C to cancel."
+        read -n 1 -s
+        python3 -m pip install "$package==$required_version"
+    else
+        echo "[+] $package version $required_version is already installed."
+    fi
+}
+
 _exit_handler() {
     if [ "$os" = "Darwin" ]; then
         killall -CONT AMPDevicesAgent AMPDeviceDiscoveryAgent MobileDeviceUpdater || true
@@ -527,30 +541,11 @@ if [ "$cmd_not_found" = "1" ]; then
     exit 1
 fi
 
-# Check for pyimg4
-packages=("pyimg4")
- for package in "${packages[@]}"; do
-     if ! python3 -c "import pkgutil; exit(not pkgutil.find_loader('$package'))"; then
-         printr "[-] $package is not installed. we can installl it for you, press any key to start installing $package, or press ctrl + c to cancel"
-         read -n 1 -s
-         python3 -m pip install -U "$package" pyliblzfse
-     fi
- done
- # LZSS gets its own check
-packages=("lzss")
- for package in "${packages[@]}"; do
-     if ! python3 -c "import pkgutil; exit(not pkgutil.find_loader('$package'))"; then
-         printr "[-] $package is not installed. we can installl it for you, press any key to start installing $package, or press ctrl + c to cancel"
-         read -n 1 -s
-         rm -rf "$dir"/pylzss
-         git clone https://github.com/yyogo/pylzss "$dir"/pylzss
-         cd "$dir"/pylzss
-         git checkout "8efcda0"
-         python3 "$dir"/pylzss/setup.py install
-	     cd $mainDir
-         rm -rf "$dir"/pylzss
-     fi
- done
+# Check and install pyimg4
+check_and_install_package "pyimg4" "0.8"
+
+# Check and install pylzss
+check_and_install_package "pylzss" "0.3.4"
 
 
 # Update submodules
