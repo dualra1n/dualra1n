@@ -4,6 +4,11 @@ A script that lets you dualboot iOS 15-14. and 13.6/13.7, (semi-tethered) using 
 
 This will **not work** on devices with iOS 16.
 
+do you want to dualboot or downgrade to lower than ios 12? 
+
+1: [Semaphorin](https://github.com/y08wilm/Semaphorin) this is free and works great
+2: limefix (paid) i didn't test it but it should work nice (this uses a blackbird exploit which makes it more stable than dualra1n)
+
 # How can you dualboot?
 
 - [A full tutorial](https://github.com/dualra1n/dualra1n/blob/main/tutorial.md)
