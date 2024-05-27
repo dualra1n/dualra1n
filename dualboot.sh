@@ -490,11 +490,21 @@ _bootx() {
 check_and_install_package() {
     local package=$1
     local required_version=$2
-    local installed_version=$(python3 -c "import pkg_resources; print(pkg_resources.get_distribution('$package').version)" 2>/dev/null || echo "not installed")
+    local installed_version
+
+    if installed_version=$(python3 -c "import pkg_resources; print(pkg_resources.get_distribution('$package').version)" 2>/dev/null); then
+        echo "[+] Found installed version of $package: $installed_version"
+    else
+        installed_version="not installed"
+    fi
 
     if [ -z "$required_version" ]; then
-        echo "[-] No version specified for $package. Installing the latest version."
-        python3 -m pip install "$package"
+        if [ "$installed_version" == "not installed" ]; then
+            echo "[-] No version specified for $package and it is not installed. Installing the latest version."
+            python3 -m pip install "$package"
+        else
+            echo "[+] $package is already installed with version $installed_version."
+        fi
     elif [ "$installed_version" != "$required_version" ]; then
         echo "[-] $package version $required_version is not installed (current version: $installed_version). We can install it for you. Press any key to start installing $package $required_version, or press Ctrl + C to cancel."
         read -n 1 -s
@@ -503,6 +513,7 @@ check_and_install_package() {
         echo "[+] $package version $required_version is already installed."
     fi
 }
+
 
 _exit_handler() {
     if [ "$os" = "Darwin" ]; then
@@ -545,10 +556,30 @@ if [ "$cmd_not_found" = "1" ]; then
 fi
 
 # Check and install pyimg4
-check_and_install_package "pyimg4" "0.8"
+check_and_install_package "pyimg4" #"0.8"
 
 # Check and install pylzss
-check_and_install_package "pylzss" "0.3.4"
+#check_and_install_package "pylzss" "0.3.4"
+
+packages=("lzss")
+tempDir=$(mktemp -d)
+
+for package in "${packages[@]}"; do
+    if ! python3 -c "import importlib.util; exit(importlib.util.find_spec('$package') is None)"; then
+        echo "[-] $package is not installed. We can install it for you. Press any key to start installing $package, or press Ctrl + C to cancel."
+        read -n 1 -s
+        git clone https://github.com/yyogo/pylzss "$tempDir/pylzss"
+        cd "$tempDir/pylzss"
+        git checkout "8efcda0"
+        python3 setup.py install
+        cd "$mainDir"
+        rm -rf "$tempDir/pylzss"
+    else
+        echo "[+] $package is already installed."
+    fi
+done
+
+rm -rf "$tempDir"
 
 # Check and install pyliblzfse
 check_and_install_package "pyliblzfse"
@@ -927,7 +958,7 @@ if [ true ]; then
         fi
         
         printb "[*] Patching the kernel" # this will send and patch the kernel
-	printr "[!] If this fails, please run python3 -m pip uninstall lzss, and re-run the script"
+	    #printr "[!] If this fails, please run python3 -m pip uninstall lzss, and re-run the script"
         cp "$extractedIpsw$(awk "/""${model}""/{x=1}x&&/kernelcache.release/{print;exit}" work/BuildManifest.plist | grep '<string>' |cut -d\> -f2 |cut -d\< -f1)" "work/kernelcache"
                 
         if [[ "$deviceid" == "iPhone8"* ]] || [[ "$deviceid" == "iPad6"* ]] || [[ "$deviceid" == *'iPad5'* ]]; then
@@ -936,6 +967,8 @@ if [ true ]; then
             python3 -m pyimg4 im4p extract -i work/kernelcache -o work/kcache.raw >/dev/null
         fi
         
+        "$dir"/img4 -i work/kernelcache -o work/kcache.raw >/dev/null
+
         remote_cmd "/sbin/mount_apfs /dev/disk0s1s${disk} /mnt8/"
         remote_cmd "/sbin/umount /dev/disk0s1s2"
         remote_cmd "/sbin/mount_apfs /dev/disk0s1s${dataB} /mnt2/"
@@ -1454,6 +1487,8 @@ if [ true ]; then
             python3 -m pyimg4 im4p extract -i work/kernelcache -o work/kcache.raw >/dev/null
         fi
 
+        "$dir"/img4 -i work/kernelcache -o work/kcache.raw >/dev/null
+
         printb "[*] Checking if a jailbreak is installed"
         
         if [ "$dont_createPart" = "1" ] && [ $(remote_cmd "ls /mnt8/jbin/jbloader 2>/dev/null") ] || [[ "$version" = "13."* ]]; then
@@ -1508,7 +1543,7 @@ if [ true ]; then
 
             printb "[*] Adding devicetree"
             sleep 1
-            "$dir"/dtree_patcher work/dtree.raw work/dtree.patched $(if [ "$mainData" = "1" ]; then echo ""; else echo "-d"; fi) $(if [[ "$version" = "13."* ]]; then echo ""; else echo "-p"; fi) >/dev/null
+            "$dir"/dtree_patcher work/dtree.raw work/dtree.patched $(if [ "$mainData" = "1" ]; then echo ""; else echo "-d"; fi) $(if [[ "$version" = "13."* ]]; then echo ""; else echo "-p"; fi) >/dev/null # for the person who is checking this code, i dare you to boot the dualbooted rootfs with the data partition of the first system, by removing the -d or using --use-main-data
             "$dir"/img4 -i work/dtree.patched -o work/devicetree.img4 -A -M work/IM4M -T rdtr
         else
             printb "[*] Adding StaticTrustCache"
@@ -1517,7 +1552,7 @@ if [ true ]; then
             printb "[*] Adding devicetree"
 
             sleep 1 #mainData
-            "$dir"/dtree_patcher work/dtree.raw work/dtree.patched $(if [ "$mainData" = "1" ]; then echo ""; else echo "-d"; fi) -p >/dev/null
+            "$dir"/dtree_patcher work/dtree.raw work/dtree.patched $(if [ "$mainData" = "1" ]; then echo ""; else echo "-d"; fi) -p >/dev/null # for the person who is checking this code, i dare you to boot the dualbooted rootfs with the data partition of the first system, by removing the -d or using --use-main-data
             "$dir"/img4 -i work/dtree.patched -o work/devicetred.img4 -A -M work/IM4M -T dtre >/dev/null
 
 

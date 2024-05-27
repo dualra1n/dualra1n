@@ -33,3 +33,11 @@
 - `--downgrade (vers)`, use this if you don't have enough storage and you are positive that you dont have any important data on the main OS
 
 - You can see all commands and their usage by running `./dualboot.sh --help`
+
+
+# some error fixes
+
+1. × This environment is externally managed error python, on linux.
+1: sudo rm /usr/lib/python3.11/EXTERNALLY-MANAGED. not sure but you should change python3.11 to your python version.
+
+2. if it is stuck on creating ramdisk, please force reboot your device and try again because bad dfu state
