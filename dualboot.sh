@@ -108,6 +108,7 @@ Subcommands:
     --dont-create-part      Skips creating a new disk partition if you have them already, so using this will only download the boot files. Usage : ./dualboot.sh --dualboot 14.3 --dont-create-part.
     --bootx                 This option will force the script to create and boot as bootx proccess.
     --verbose               This option will tell the iPhone to boot in verbose mode, useful for extra debugging.
+    --serial                This option is for dscd cable, to get verbose output through serial, useful for extra debugging.
     --recoveryModeAlways    Fixes the main iOS if it is recovery looping.
     --debug                 Makes the script output exactly what command it is running, useful for debugging.
 Subcommands:
@@ -163,6 +164,9 @@ parse_opt() {
             ;;
         --verbose)
             verbose=1
+            ;;
+        --serial)
+            serial=1
             ;;
         --debug)
             debug=1
@@ -892,8 +896,7 @@ if [ true ]; then
 
     remote_cmd "/usr/bin/mount_filesystems >/dev/null 2>&1"
 
-    has_active=$(remote_cmd "ls /mnt6/active" 2> /dev/null)
-    if [ ! "$has_active" = "/mnt6/active" ]; then
+    if [ ! "$(remote_cmd "ls /mnt6/active" 2> /dev/null)" = "/mnt6/active" ]; then
         printr "[!] Active file does not exist! Please use SSH to create it"
         printr "    /mnt6/active should contain the name of the UUID in /mnt6"
         printr "    When done, type reboot in the SSH session, then rerun the script"
@@ -1306,7 +1309,7 @@ if [ true ]; then
                 remote_cp other/Payload/Applications/ root@localhost:/mnt8/
 
                 printb "[*] Fixing odyssey"
-                remote_cmd "chmod +x /mnt8/Applications/Odyssey.app/Odyssey && /usr/bin/ldid -S /mnt8/Applications/Odyssey.app/Odyssey" 
+                remote_cmd "chmod +x /mnt8/Applications/Odyssey.app/Odyssey && /usr/bin/ldid -S /mnt8/Applications/Odyssey.app/Odyssey"
 
             fi
             
@@ -1508,6 +1511,21 @@ if [ true ]; then
                     printr "[-] you have the kernelpath already installed, Omitting ..."
                 fi
 
+                # this is the jailbreak of palera1n being installed 
+                printb "[*] Installing JBINIT, thanks palera1n team"
+                printb "[*] Copying files to the rootfs"
+                remote_cmd "mkdir -p /mnt8/jbin/binpack /mnt8/jbin/loader.app"
+
+                remote_cp other/rootfs/* root@localhost:/mnt8/
+                remote_cmd "ldid -s /mnt8/jbin/launchd /mnt8/jbin/jbloader /mnt8/jbin/jb.dylib"
+                remote_cmd "chmod +rwx /mnt8/jbin/launchd /mnt8/jbin/jbloader"
+                remote_cmd "ln -fs /jbin/binpack/ /mnt2/pkg"
+                
+                printb "[*] Extracting the binpack"
+                remote_cmd "tar -xf /mnt8/jbin/binpack/binpack.tar -C /mnt8/jbin/binpack/"
+                sleep 1
+                remote_cmd "rm /mnt8/jbin/binpack/binpack.tar"
+
                 remote_cp root@localhost:/mnt8/System/Library/Caches/com.apple.kernelcaches/kcache.patched work/ # that will return the kernelpatcher in order to be patched again and boot with it 
                 "$dir"/Kernel64Patcher work/kcache.patched work/kcache.patchedB -b13 -n `if [ "$fixHard" = "0" ]; then echo "-f"; fi` `if [ $(remote_cmd "ls /mnt8/jbin/jbloader") ]; then echo "-l"; fi` >/dev/null                
 
@@ -1583,7 +1601,7 @@ if [ true ]; then
         "$dir"/gaster decrypt work/"$(awk "/""${model}""/{x=1}x&&/iBoot[.]/{print;exit}" work/BuildManifest.plist | grep '<string>' |cut -d\> -f2 |cut -d\< -f1 | sed 's/Firmware[/]all_flash[/]//')" work/iBEC.dec
 
         
-        "$dir"/iBoot64Patcher work/iBEC.dec work/iBEC.patched $(if [ "$verbose" = "1" ] || [ "$bootx" = "1" ] || [[ "$version" = "13."* ]]; then echo "-b"; fi) "$(if [ "$verbose" = "1" ] || [ "$bootx" = "1" ] || [[ "$version" = "13."* ]]; then echo "-v"; fi) $(if [[ "$version" = "13."* ]] || [ "$bootx" = "1" ]; then echo "wdt=-1 keepsyms=1 debug=0x2014e"; fi) `if [ "$cpid" = '0x8960' ] || [ "$cpid" = '0x7000' ] || [ "$cpid" = '0x7001' ]; then echo "-restore"; fi`" -n $(if [[ "$version" = "13."* ]] || [ "$bootx" = "1" ]; then echo ""; else echo "-l"; fi) >/dev/null
+        "$dir"/iBoot64Patcher work/iBEC.dec work/iBEC.patched $(if [ "$verbose" = "1" ] || [ "$bootx" = "1" ] ||  [ "$serial" = "1" ] || [[ "$version" = "13."* ]]; then echo "-b"; fi) "$(if [ "$verbose" = "1" ] || [ "$bootx" = "1" ] || [[ "$version" = "13."* ]]; then echo "-v"; fi) $(if [ "$serial" = "1" ]; then echo "serial=3" fi) $(if [[ "$version" = "13."* ]] || [ "$bootx" = "1" ]; then echo "wdt=-1 keepsyms=1 debug=0x2014e"; fi) `if [ "$cpid" = '0x8960' ] || [ "$cpid" = '0x7000' ] || [ "$cpid" = '0x7001' ]; then echo "-restore"; fi`" -n $(if [[ "$version" = "13."* ]] || [ "$bootx" = "1" ]; then echo ""; else echo "-l"; fi) >/dev/null
         # patching the string in the ibec in order to load different image
         printb "[*] Patching the string of images to load in the iboot..."
         if [ "$os" = 'Linux' ]; then
