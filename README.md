@@ -12,7 +12,7 @@
 #### However this script lets you dualboot iOS 15-13.6, (semi-tethered) on [checkm8](https://www.theiphonewiki.com/wiki/Checkm8_Exploit)-vulnerable devices.
 #### This is not a downgrade, however you can use [downr1n](https://github.com/edwin170/downr1n) instead.
 
-# Do you want to dualboot or downgrade to lower than iOS 12? 
+# Interested in dualbooting or downgrading to lower firmwares? 
 
 1: [Semaphorin](https://github.com/hostedbyjustus/Semaphorin-Archive) (Free): supports SEP-less tethered downgrades and dualboots <br>‎ ‎ ‎ ‎ ↳ iOS 7.0.6-12.1 (13.x/14.x) on A7-A11 devices
 <br>
