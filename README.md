@@ -14,13 +14,13 @@
 
 # Interested in dualbooting or downgrading to lower firmwares? 
 
-1: [Semaphorin](https://github.com/hostedbyjustus/Semaphorin-Archive) (Free): supports SEP-less tethered downgrades and dualboots <br>‎ ‎ ‎ ‎ ↳ iOS 7.0.6-12.1 (13.x/14.x) on A7-A11 devices
+1: [Semaphorin](https://github.com/hostedbyjustus/Semaphorin-Archive) (Free): supports SEP-less **tethered downgrades and dualboots** <br>‎ ‎ ‎ ‎ ↳ iOS 7.0.6-12.1 (13.x/14.x) on A7-A11 devices
 <br>
 <br>
-2: Limefix SEP Utility (Paid): supports full SEP untethered and tethered downgrades  <br>‎ ‎ ‎ ‎ ↳ iOS 9.0-12.5.7 on A9 devices
+2: Limefix SEP Utility (Paid): supports full SEP **untethered and tethered** downgrades  <br>‎ ‎ ‎ ‎ ↳ iOS 9.0-12.5.7 on A9 devices
 <br>
 <br>
-3: [LEGACY-IOS-KIT](https://github.com/LukeZGD/Legacy-iOS-Kit) (Free): supports untethered and tethered downgrades  <br>‎ ‎ ‎ ‎ ↳ for 32-Bit devices and includes limited 64-Bit support
+3: [LEGACY-IOS-KIT](https://github.com/LukeZGD/Legacy-iOS-Kit) (Free): supports **untethered and tethered** downgrades  <br>‎ ‎ ‎ ‎ ↳ for 32-Bit devices and includes limited 64-Bit support
 
 # How can you dualboot?
 
