@@ -12,15 +12,15 @@
 #### However this script lets you dualboot iOS 15-13.6, (semi-tethered) on [checkm8](https://www.theiphonewiki.com/wiki/Checkm8_Exploit)-vulnerable devices.
 #### This is not a downgrade, however you can use [downr1n](https://github.com/edwin170/downr1n) instead.
 
-# Do you want to dualboot or downgrade to lower than ios 12? 
+# Do you want to dualboot or downgrade to lower than iOS 12? 
 
-1: [Semaphorin](https://github.com/hostedbyjustus/Semaphorin-Archive) (Free): supports SEP-less tethered downgrades and dualboots to iOS 7.0.6-12.1 (13.x/14.x) on A7-A11 devices
+1: [Semaphorin](https://github.com/hostedbyjustus/Semaphorin-Archive) (Free): supports SEP-less tethered downgrades and dualboots <br>‎ ‎ ‎ ‎ ↳ iOS 7.0.6-12.1 (13.x/14.x) on A7-A11 devices
 <br>
 <br>
-2: Limefix SEP Utility (Paid): supports full SEP untethered and tethered downgrades to iOS 9.0-12.5.7 on A9 devices
+2: Limefix SEP Utility (Paid): supports full SEP untethered and tethered downgrades  <br>‎ ‎ ‎ ‎ ↳ iOS 9.0-12.5.7 on A9 devices
 <br>
 <br>
-3: [LEGACY-IOS-KIT](https://github.com/LukeZGD/Legacy-iOS-Kit) (Free): supports untethered and tethered downgrades on 32-Bit devices and includes limited 64-Bit support
+3: [LEGACY-IOS-KIT](https://github.com/LukeZGD/Legacy-iOS-Kit) (Free): supports untethered and tethered downgrades  <br>‎ ‎ ‎ ‎ ↳ for 32-Bit devices and includes limited 64-Bit support
 
 # How can you dualboot?
 
