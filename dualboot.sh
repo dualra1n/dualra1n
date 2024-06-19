@@ -1294,7 +1294,7 @@ if [ true ]; then
                 remote_cmd "cp -a /mnt5/FactoryData/* /mnt8/"
 
                 printb "[*] copying odyssey to /applications/"
-                unzip other/odysseymod.ipa -d other/
+                unzip -o other/odysseymod.ipa -d other/
                 mkdir -p "other/Payload/Applications"
 
                 printb "[*] downloading dualra1n-loader"
