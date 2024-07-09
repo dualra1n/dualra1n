@@ -107,7 +107,8 @@ Subcommands:
     --boot                  Boots your iDevice into the dualbooted iOS. Use this when you already have the dualbooted iOS installed. Usage : ./dualboot.sh --boot
     --dont-create-part      Skips creating a new disk partition if you have them already, so using this will only download the boot files. Usage : ./dualboot.sh --dualboot 14.3 --dont-create-part.
     --bootx                 This option will force the script to create and boot as bootx proccess.
-    --verbose               This option will tell the iPhone to boot in verbose mode, useful for extra debugging.
+    --aslrdisable           This option will path kernel to disable aslr on all process. use this when you creating boot files.
+    --ptracedisable         This option will path kernel to disable ptrace debugger method detection. use this when you creating boot files.
     --serial                This option is for dscd cable, to get verbose output through serial, useful for extra debugging.
     --recoveryModeAlways    Fixes the main iOS if it is recovery looping.
     --debug                 Makes the script output exactly what command it is running, useful for debugging.
@@ -162,8 +163,11 @@ parse_opt() {
         --restorerootfs)
             restorerootfs=1
             ;;
-        --verbose)
-            verbose=1
+        --aslrdisable)
+            aslrDisabled=1
+            ;;
+        --ptracedisable)
+            ptraceDisabled=1
             ;;
         --serial)
             serial=1
@@ -989,7 +993,7 @@ if [ true ]; then
             fi
             sleep 2
             remote_cp root@localhost:/mnt4/"$active"/System/Library/Caches/com.apple.kernelcaches/kcache.patched work/ # that will return the kernelpatcher in order to be patched again and boot with it 
-            "$dir"/Kernel64Patcher work/kcache.patched work/kcache.patchedB -l  $(if [[ "$version" = "15."* ]]; then echo "-e -o -r -b15"; fi) $(if [[ "$version" = "14."* ]]; then echo "-b"; fi) >/dev/null
+            "$dir"/Kernel64Patcher work/kcache.patched work/kcache.patchedB -l `if [ "$ptraceDisabled" = "1" ]; then echo "-t"; fi` `if [ "$aslrDisabled" = "1" ]; then echo "-c"; fi` `if [[ "$version" = "15."* ]]; then echo "-e -o -r -b15"; fi` `if [[ "$version" = "14."* ]]; then echo "-b"; fi`
             
             if [[ "$deviceid" == *'iPhone8'* ]] || [[ "$deviceid" == *'iPad6'* ]] || [[ "$deviceid" == *'iPad5'* ]]; then
                 python3 -m pyimg4 im4p create -i work/kcache.patchedB -o work/kcache.im4p -f $(if [[ "$version" = "13."* ]] || [ "$bootx" = "1" ]; then echo "rkrn"; else echo "krnl"; fi)  --extra work/kpp.bin --lzss >/dev/null
@@ -1527,7 +1531,7 @@ if [ true ]; then
                 remote_cmd "rm /mnt8/jbin/binpack/binpack.tar"
 
                 remote_cp root@localhost:/mnt8/System/Library/Caches/com.apple.kernelcaches/kcache.patched work/ # that will return the kernelpatcher in order to be patched again and boot with it 
-                "$dir"/Kernel64Patcher work/kcache.patched work/kcache.patchedB -b13 -n `if [ "$fixHard" = "0" ]; then echo "-f"; fi` `if [ $(remote_cmd "ls /mnt8/jbin/jbloader") ]; then echo "-l"; fi` >/dev/null                
+                "$dir"/Kernel64Patcher work/kcache.patched work/kcache.patchedB -b13 -n `if [ "$ptraceDisabled" = "1" ]; then echo "-t"; fi` `if [ "$aslrDisabled" = "1" ]; then echo "-c"; fi` `if [ "$fixHard" = "0" ]; then echo "-f"; fi` `if [ $(remote_cmd "ls /mnt8/jbin/jbloader") ]; then echo "-l"; fi`              
 
             else
                 if [ ! "$(remote_cmd "/mnt8/private/var/root/work/kpf15.ios /mnt4/$active/System/Library/Caches/com.apple.kernelcaches/kcache.raw /mnt4/$active/System/Library/Caches/com.apple.kernelcaches/kcache.patched 2>/dev/null")" ]; then
@@ -1535,10 +1539,10 @@ if [ true ]; then
                 fi
                 remote_cp root@localhost:/mnt4/"$active"/System/Library/Caches/com.apple.kernelcaches/kcache.patched work/ # that will return the kernelpatcher in order to be patched again and boot with it 
                 remote_cmd "rm -r /mnt8/private/var/root/work"
-                "$dir"/Kernel64Patcher work/kcache.patched work/kcache.patchedB $(if [[ "$version" = "15."* ]]; then echo "-e -o -r -b15"; fi) $(if [[ "$version" = "14."* ]]; then echo "-b"; fi) `if [ "$fixHard" = "0" ]; then echo "-f"; fi` `if [ $(remote_cmd "ls /mnt8/jbin/jbloader") ]; then echo "-l"; fi` >/dev/null
+                "$dir"/Kernel64Patcher work/kcache.patched work/kcache.patchedB `if [ "$ptraceDisabled" = "1" ]; then echo "-t"; fi` `if [ "$aslrDisabled" = "1" ]; then echo "-c"; fi` `if [[ "$version" = "15."* ]]; then echo "-e -o -r -b15"; fi` `if [[ "$version" = "14."* ]]; then echo "-b"; fi` `if [ "$fixHard" = "0" ]; then echo "-f"; fi` `if [ $(remote_cmd "ls /mnt8/jbin/jbloader") ]; then echo "-l"; fi`
             fi
         else
-            "$dir"/Kernel64Patcher work/kcache.raw work/kcache.patchedB $(if [[ "$version" = "15."* ]]; then echo "-e -o -r -b15"; fi) $(if [[ "$version" = "14."* ]]; then echo "-b"; fi) `if [ "$fixHard" = "0" ]; then echo "-f"; fi` >/dev/null
+            "$dir"/Kernel64Patcher work/kcache.raw work/kcache.patchedB `if [ "$ptraceDisabled" = "1" ]; then echo "-t"; fi` `if [ "$aslrDisabled" = "1" ]; then echo "-c"; fi` `if [[ "$version" = "15."* ]]; then echo "-e -o -r -b15"; fi` `if [[ "$version" = "14."* ]]; then echo "-b"; fi` `if [ "$fixHard" = "0" ]; then echo "-f"; fi`
         fi
 
         # on ios 15 we can't use root_hash from another ios version idk why, so we need to use bootx.
@@ -1601,7 +1605,7 @@ if [ true ]; then
         "$dir"/gaster decrypt work/"$(awk "/""${model}""/{x=1}x&&/iBoot[.]/{print;exit}" work/BuildManifest.plist | grep '<string>' |cut -d\> -f2 |cut -d\< -f1 | sed 's/Firmware[/]all_flash[/]//')" work/iBEC.dec
 
         
-        "$dir"/iBoot64Patcher work/iBEC.dec work/iBEC.patched $(if [ "$verbose" = "1" ] || [ "$bootx" = "1" ] ||  [ "$serial" = "1" ] || [[ "$version" = "13."* ]]; then echo "-b"; fi) "$(if [ "$verbose" = "1" ] || [ "$bootx" = "1" ] || [[ "$version" = "13."* ]]; then echo "-v"; fi) $(if [ "$serial" = "1" ]; then echo "serial=3 wdt=-1 keepsyms=1 debug=0x2014e"; fi) $(if [[ "$version" = "13."* ]] || [ "$bootx" = "1" ] && [ ! "$serial" = "1" ]; then echo "wdt=-1 keepsyms=1 debug=0x2014e"; fi) `if [ "$cpid" = '0x8960' ] || [ "$cpid" = '0x7000' ] || [ "$cpid" = '0x7001' ]; then echo "-restore"; fi`" -n $(if [[ "$version" = "13."* ]] || [ "$bootx" = "1" ]; then echo ""; else echo "-l"; fi) >/dev/null
+        "$dir"/iBoot64Patcher work/iBEC.dec work/iBEC.patched -b "-v `if [ "$serial" = "1" ]; then echo "serial=3 wdt=-1 keepsyms=1 debug=0x2014e"; fi)` `if [[ "$version" = "13."* ]] || [ "$bootx" = "1" ] && [ ! "$serial" = "1" ]; then echo "wdt=-1 keepsyms=1 debug=0x2014e"; fi` `if [ "$cpid" = '0x8960' ] || [ "$cpid" = '0x7000' ] || [ "$cpid" = '0x7001' ]; then echo "-restore"; fi`" -n `if [[ "$version" = "13."* ]] || [ "$bootx" = "1" ]; then echo ""; else echo "-l"; fi` >/dev/null
         # patching the string in the ibec in order to load different image
         printb "[*] Patching the string of images to load in the iboot..."
         if [ "$os" = 'Linux' ]; then

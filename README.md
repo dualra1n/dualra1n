@@ -12,6 +12,11 @@
 #### However this script lets you dualboot iOS 15-13.6, (semi-tethered) on [checkm8](https://www.theiphonewiki.com/wiki/Checkm8_Exploit)-vulnerable devices.
 #### This is not a downgrade, however you can use [downr1n](https://github.com/edwin170/downr1n) instead.
 
+# New Features
+
+1: using --aslrdisable when creating boot files will disable aslr in all process.
+2: using --ptracedisable when creating boot files will disable ptrace debugger detection: PT_DENY_ATTACH in the kernel.
+
 # Interested in dualbooting or downgrading to lower firmwares? 
 
 1: [Semaphorin](https://github.com/hostedbyjustus/Semaphorin-Archive) (Free): supports SEP-less **tethered downgrades and dualboots** <br>‎ ‎ ‎ ‎ ↳ iOS 7.0.6-12.1 (13.x/14.x) on A7-A11 devices
@@ -30,7 +35,7 @@
 - An A9-A11 device (A10 & A11 will need a deactivated passcode)
 - An .iPSW file for iOS 13 - 15.
 - Approximately 15GB of free storage
-- A computer with macOS or any Linux distro installed (Windows Subsystem for Linux is not supported). Live CDs will work.
+- A computer with macOS or debian/ubuntu/other Linux distro installed (Windows Subsystem for Linux is not supported). Live CDs can work.
 
 # Warnings
 - I am **NOT** responsible for any data loss. The user of this program accepts responsibility if something were happen to their device.
@@ -40,7 +45,7 @@
 
 # Important info about dualboot Versions
 
-- For devices with A11 SoCs, iOS 14.2 and earlier will fail to boot. Therefore, use iOS 14.3 or later instead.
+- For devices with A11 SoCs, iOS 14.2 and older will fail to boot. Therefore, use iOS 14.3 or later instead.
 
 - Dualbooting iOS 13 only supports 13.6 and 13.7 and will most likely **NOT** support any lower!
 - iPhones with a capacitive home button (ex. iPhone 7/7+) on iOS 13 **WILL NOT HAVE A WORKING HOME BUTTON**. To get around this you can enable assistive touch in the main iOS and it will pass onto the dualbooted OS
@@ -49,7 +54,7 @@
 
 # Common Issues
 
-- iPhone and iPads may have issues with "Deep Sleep" (iOS not "waking up" after the display goes to sleep). Installing the tweak [Fiona](https://www.ios-repo-updates.com/repository/julioverne-s-repo/package/com.julioverne.fiona/) or using the dualra1n-loader and selecting the "fixdeepsleep" option may fix this. 
+- iPads a8/a8x may have issues with "Deep Sleep" (iOS not "waking up" after the display goes to sleep). Installing the tweak [Fiona](https://www.ios-repo-updates.com/repository/julioverne-s-repo/package/com.julioverne.fiona/) or using the dualra1n-loader and selecting the "fixdeepsleep" option may fix this. 
 
 
 # If there are any other issues, please ask for help on the [dualra1n Discord server](https://discord.gg/Gjs2P7FBuk)
