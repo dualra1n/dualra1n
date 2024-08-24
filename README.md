@@ -5,7 +5,7 @@
    </h1>
 </div>
 
-<h6 align="center"> Supports iOS 13.6-15.8.2 on A9-A11 devices </h6>
+<h6 align="center"> Supports iOS 13.6-15.8.3 on A9-A11 devices </h6>
 
 #### This will **NOT WORK** on devices with iOS 16.
 
