@@ -14,8 +14,8 @@
 
 # New Features
 
-1: using --aslrdisable when creating boot files will disable aslr in all process.
-2: using --ptracedisable when creating boot files will disable ptrace debugger detection: PT_DENY_ATTACH in the kernel.
+1: using --aslrdisable when creating boot files which will disable aslr in all processes.
+2: using --ptracedisable when creating boot files which will disable ptrace debugger detection(aka PT_DENY_ATTACH in the kernel.)
 
 # Interested in dualbooting or downgrading to lower firmwares? 
 
@@ -25,7 +25,7 @@
 2: [Limefix BlackBird SEP Utility](https://limefix.tech/?product=limefix-sep-utility-testing) (Paid): supports full SEP **untethered downgrades with blobs and tethered downgrades without blobs**  <br>‎ ‎ ‎ ‎ ↳ iOS 9.0-12.5.7 with blobs on A9 devices (10.0-10.3.3 without blobs)
 <br>
 <br>
-3: [LEGACY-IOS-KIT](https://github.com/LukeZGD/Legacy-iOS-Kit) (Free): supports **untethered and tethered downgrades on 32 bit devices**  <br>‎ ‎ ‎ ‎ ↳ for 32-Bit devices and includes 64-Bit support for restoring with futurerestore nightly **with blobs**
+3: [LEGACY-IOS-KIT](https://github.com/LukeZGD/Legacy-iOS-Kit) (Free): supports **untethered and tethered downgrades on 32-Bit devices**  <br>‎ ‎ ‎ ‎ ↳ for 32-Bit devices and includes 64-Bit support for restoring with futurerestore nightly **with blobs**
 
 # How can you dualboot?
 
