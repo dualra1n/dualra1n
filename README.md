@@ -25,7 +25,7 @@
 2: [Limefix BlackBird SEP Utility](https://limefix.tech/?product=limefix-sep-utility-testing) (Paid): supports full SEP **untethered downgrades with blobs and tethered downgrades without blobs**  <br>‎ ‎ ‎ ‎ ↳ iOS 9.0-12.5.7 with blobs on A9 devices (10.0-10.3.3 without blobs)
 <br>
 <br>
-3: [LEGACY-IOS-KIT](https://github.com/LukeZGD/Legacy-iOS-Kit) (Free): supports **untethered and tethered downgrades**  <br>‎ ‎ ‎ ‎ ↳ for 32-Bit devices and includes limited 64-Bit support
+3: [LEGACY-IOS-KIT](https://github.com/LukeZGD/Legacy-iOS-Kit) (Free): supports **untethered and tethered downgrades on 32 bit devices**  <br>‎ ‎ ‎ ‎ ↳ for 32-Bit devices and includes 64-Bit support for restoring with futurerestore nightly **with blobs**
 
 # How can you dualboot?
 
