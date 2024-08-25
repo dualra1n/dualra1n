@@ -15,6 +15,7 @@
 # New Features
 
 1: using --aslrdisable when creating boot files which will disable aslr in all processes.
+
 2: using --ptracedisable when creating boot files which will disable ptrace debugger detection (aka PT_DENY_ATTACH in the kernel.)
 
 # Interested in dualbooting or downgrading to lower firmwares? 
