@@ -1036,9 +1036,9 @@ if [ true ]; then
 
         printb "[*] please install trollstore on the TV app if you don't see it on the screen, and then click on settings and after that click on 'Rebuild icon cache' so taurine should be showed on the screen"
 
-        printb "[*] downloading dualra1n-loader"
-        curl -L -k https://nightly.link/Uckermark/dualra1n-loader/workflows/build/main/dualra1n-loader.zip -o other/dualra1n-loader.zip
-        unzip -o other/dualra1n-loader.zip -d other/
+        printb "[*] installing dualra1n-loader"
+        #curl -L -k https://nightly.link/Uckermark/dualra1n-loader/workflows/build/main/dualra1n-loader.zip -o other/dualra1n-loader.zip
+        #unzip -o other/dualra1n-loader.zip -d other/
         unzip -o other/dualra1n-loader.ipa -d other/
         rm -f other/dualra1n-loader.zip other/dualra1n-loader.ipa
         
@@ -1301,9 +1301,9 @@ if [ true ]; then
                 unzip -o other/odysseymod.ipa -d other/
                 mkdir -p "other/Payload/Applications"
 
-                printb "[*] downloading dualra1n-loader"
-                curl -L -k https://nightly.link/Uckermark/dualra1n-loader/workflows/build/main/dualra1n-loader.zip -o other/dualra1n-loader.zip
-                unzip -o other/dualra1n-loader.zip -d other/
+                printb "[*] installing dualra1n-loader"
+                #curl -L -k https://nightly.link/Uckermark/dualra1n-loader/workflows/build/main/dualra1n-loader.zip -o other/dualra1n-loader.zip
+                #unzip -o other/dualra1n-loader.zip -d other/
                 unzip -o other/dualra1n-loader.ipa -d other/
 
                 rm -f other/dualra1n-loader.zip other/dualra1n-loader.ipa
