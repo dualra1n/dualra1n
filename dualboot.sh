@@ -964,11 +964,6 @@ if [ true ]; then
             exit;
         fi
 
-        printb "[*] Saving snapshot if not already is"
-        if [ "$(remote_cmd "/usr/bin/snaputil -c orig-fs /mnt8")" ]; then
-            printg "[/] SKIPPING ..."
-        fi
-
         printb "[*] Patching the kernel" # this will send and patch the kernel
 	    #printr "[!] If this fails, please run python3 -m pip uninstall lzss, and re-run the script"
         cp "$extractedIpsw$(awk "/""${model}""/{x=1}x&&/kernelcache.release/{print;exit}" work/BuildManifest.plist | grep '<string>' |cut -d\> -f2 |cut -d\< -f1)" "work/kernelcache"
@@ -985,6 +980,11 @@ if [ true ]; then
         remote_cmd "/sbin/umount /dev/disk0s1s2"
         remote_cmd "/sbin/mount_apfs /dev/disk0s1s${dataB} /mnt2/"
         remote_cmd "/sbin/mount_apfs /dev/disk0s1s${prebootB} /mnt4/"
+
+        printb "[*] Saving snapshot if not already is"
+        if [ "$(remote_cmd "/usr/bin/snaputil -c orig-fs /mnt8")" ]; then
+            printg "[/] SKIPPING ..."
+        fi
 
         if [ ! "$taurine" = "1" ]; then
             remote_cp work/kcache.raw root@localhost:/mnt4/$active/System/Library/Caches/com.apple.kernelcaches/kcache.raw
